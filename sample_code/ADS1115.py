@@ -19,7 +19,7 @@ i2c = busio.I2C(board.SCL, board.SDA)
 adss = []
 adss.append(ADS.ADS1115(i2c, gain=1))
 adss.append(ADS.ADS1115(i2c, gain=1, address=73))
-adss.append(ADS.ADS1115(i2c, gain=1, address=74))
+# adss.append(ADS.ADS1115(i2c, gain=1, address=74))
 chans = []
 for ads in adss:
     chans.append(AnalogIn(ads, ADS.P0))
@@ -27,14 +27,14 @@ for ads in adss:
     chans.append(AnalogIn(ads, ADS.P2))
     chans.append(AnalogIn(ads, ADS.P3))
 
-values = [0]*12
-voltages = [0]*12
+values = [0]*len(chans)
+voltages = [0]*len(chans)
 while True:
     for i in range(len(chans)):
         values[i] = chans[i].value
         voltages[i] = chans[i].voltage
 
     for i in range(len(chans)):
-        print("value[{i}]={value}, voltage[{i}]={voltage}".format(i, values[i], i, voltages[i]))
+        print("value[{}]={}, voltage[{}]={}".format(i, values[i], i, voltages[i]))
     print()
-    time.sleep(1000)
+    time.sleep(3)
