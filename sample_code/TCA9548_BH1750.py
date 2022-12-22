@@ -11,7 +11,7 @@ try:
 except:
     print("BH1750 or TCA9548A library not present")
 
-bhcount = 9
+bhcount = 2
 i2c = board.I2C()
 tca = adafruit_tca9548a.TCA9548A(i2c)
 bhs = []
@@ -23,9 +23,10 @@ for si in range(bhcount):
 
 luxs = [0]*bhcount
 while True:
+
     for i in range(bhcount):
         luxs[i] = bhs[i].lux
 
     for i in range(bhcount):
-        print("lux[{i}]={luxval}".format(i, luxs[i]))
-    time.sleep(3000)
+        print("lux[{}]={}".format(i, luxs[i]))
+    time.sleep(3)
