@@ -18,13 +18,13 @@ humidities = [0]*2
 
 while True:
     try:
-    for i in range(len(dhts)):
-        temperatures[i] = dhts[i].temperature
-        humidities[i] = dhts[i].humidity
+        for i in range(len(dhts)):
+            temperatures[i] = dhts[i].temperature
+            humidities[i] = dhts[i].humidity
 
     except:
         print('read error ')
-        
+
     for i in range(len(dhts)):
         print("temp["+str(i)+"]="+str(temperature)+", humd["+str(i)+"]="+str(humidity))
     time.sleep(3000)
