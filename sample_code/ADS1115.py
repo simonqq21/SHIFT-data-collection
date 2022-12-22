@@ -1,16 +1,25 @@
+'''
+read and print analog values from nine analog soil moisture sensors, pH sensor, and
+EC sensor from three ADS1115 i2c ADC modules
+convert analog soil moisture sensor values into %, convert pH sensor values into
+pH, and EC sensor values into EC (μS/cm).
+'''
+
 import time
-import board
-import busio
-import adafruit_ads1x15.ads1115 as ADS
-from adafruit_ads1x15.analog_in import AnalogIn
+try:
+    import board
+    import busio
+    import adafruit_ads1x15.ads1115 as ADS
+    from adafruit_ads1x15.analog_in import AnalogIn
+except:
+    print("ads1115 library not present")
 
-gain = 1
-
+gain = 1.0
 i2c = busio.I2C(board.SCL, board.SDA)
 adss = []
-adss.append(ADS.ADS1115(i2c))
-adss.append(ADS.ADS1115(i2c, address=73))
-adss.append(ADS.ADS1115(i2c, address=74))
+adss.append(ADS.ADS1115(i2c, gain=1))
+adss.append(ADS.ADS1115(i2c, gain=1, address=73))
+adss.append(ADS.ADS1115(i2c, gain=1, address=74))
 chans = []
 for ads in adss:
     chans.append(AnalogIn(ads, ADS.P0))
@@ -18,5 +27,14 @@ for ads in adss:
     chans.append(AnalogIn(ads, ADS.P2))
     chans.append(AnalogIn(ads, ADS.P3))
 
+values = [0]*12
+voltages = [0]*12
 while True:
-    
+    for i in range(len(chans)):
+        values[i] = chans[i].value
+        voltages[i] = chans[i].voltage
+
+    for i in range(len(chans)):
+        print("value[{i}]={value}, voltage[{i}]={voltage}".format(i, values[i], i, voltages[i]))
+    print()
+    time.sleep(1000)
