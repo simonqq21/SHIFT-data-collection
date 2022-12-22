@@ -28,4 +28,5 @@ while True:
 
     for i in range(len(dhts)):
         print("temp[{i}]={temperature}, humd[{i}]={humidity}".format(i, temperatures[i], i, humidities[i])
+
     time.sleep(3000)
