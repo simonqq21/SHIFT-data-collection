@@ -22,7 +22,7 @@ while True:
         print('read error ')
         print(e)
 
-    print("temp={temperature}, humd={humidity}".format(temperature, humidity))
+    print("temp={}, humd={}".format(temperature, humidity))
     time.sleep(3000)
 
 # dhts = []
