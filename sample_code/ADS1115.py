@@ -14,7 +14,7 @@ try:
 except:
     print("ads1115 library not present")
 
-gain = 1.0
+gain = 0.667
 i2c = busio.I2C(board.SCL, board.SDA)
 adss = []
 adss.append(ADS.ADS1115(i2c, gain=1))
