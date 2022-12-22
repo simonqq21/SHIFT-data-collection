@@ -45,4 +45,4 @@ while True:
     for i in range(len(dhts)):
         print("temp[{}]={}, humd[{}]={}".format(i, temperatures[i], i, humidities[i]))
 
-    time.sleep(3000)
+    time.sleep(3)
