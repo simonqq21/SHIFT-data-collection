@@ -37,12 +37,12 @@ while True:
         for i in range(len(dhts)):
             temperatures[i] = dhts[i].temperature
             humidities[i] = dhts[i].humidity
+        for i in range(len(dhts)):
+            print("temp[{}]={}, humd[{}]={}".format(i, temperatures[i], i, humidities[i]))
 
     except Exception as e:
         print('read error ')
         print(e)
 
-    for i in range(len(dhts)):
-        print("temp[{}]={}, humd[{}]={}".format(i, temperatures[i], i, humidities[i]))
-
+    print()
     time.sleep(3)
