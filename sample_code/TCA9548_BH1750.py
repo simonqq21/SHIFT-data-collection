@@ -18,7 +18,7 @@ bhs = []
 for si in range(bhcount):
     if (si > 7):
         bhs.append(adafruit_bh1750.BH1750(tca[si%8], address=92))
-    else
+    else:
         bhs.append(adafruit_bh1750.BH1750(tca[si%8]))
 
 luxs = [0]*bhcount
