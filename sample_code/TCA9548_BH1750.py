@@ -11,7 +11,7 @@ try:
 except:
     print("BH1750 or TCA9548A library not present")
 
-bhcount = 1
+bhcount = 2
 i2c = board.I2C()
 tca = adafruit_tca9548a.TCA9548A(i2c, address=112)
 bhs = []
