@@ -23,7 +23,7 @@ while True:
         print(e)
 
     print("temp={}, humd={}".format(temperature, humidity))
-    time.sleep(3000)
+    time.sleep(3)
 
 # dhts = []
 # print(board)
