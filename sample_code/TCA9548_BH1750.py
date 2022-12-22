@@ -13,7 +13,7 @@ except:
 
 bhcount = 2
 i2c = board.I2C()
-tca = adafruit_tca9548a.TCA9548A(i2c)
+tca = adafruit_tca9548a.TCA9548A(i2c, address=112)
 bhs = []
 for si in range(bhcount):
     if (si > 7):
