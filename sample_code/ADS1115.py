@@ -17,8 +17,8 @@ except:
 gain = 0.667
 i2c = busio.I2C(board.SCL, board.SDA)
 adss = []
-adss.append(ADS.ADS1115(i2c, gain=1))
-adss.append(ADS.ADS1115(i2c, gain=1, address=73))
+adss.append(ADS.ADS1115(i2c, gain=gain))
+adss.append(ADS.ADS1115(i2c, gain=gain, address=73))
 # adss.append(ADS.ADS1115(i2c, gain=1, address=74))
 chans = []
 for ads in adss:
