@@ -75,7 +75,11 @@ def captureImage(filepath, filename):
     # growlight.on()
 
 # debugging
-datetimenow = datetime.combine(date.today(), time(hour=10, minute=0, second=0))
+datetimenow = datetime.now()
+# datetimenow = datetime.combine(date.today(), time(hour=10, minute=0, second=0))
+growLightLastChecked = datetime(year=1970, month=1, day=1)
+# growLightCheckInterval = timedelta(minutes=15)
+growLightCheckInterval = timedelta(seconds=10)
 while True:
     # switch on the grow lights during the specified interval
 
@@ -85,19 +89,21 @@ while True:
         dayintervals = getOnIntervalsPerDay(intervals)
 
     # loop to control grow lights
-    for dayinterval in dayintervals:
-        # if the time is between the on
-        
-        if (datetimenow >= dayinterval["on_time"] \
-            and datetimenow < dayinterval["off_time"] \
-            # and not growlight.value \
-            and not growlightval \
-        ):
-            thread = threading.Thread(target=growLightOn, args=(dayinterval["duration"], ), daemon=True)
-            # growlightval=1
-            thread.start()
-    print(growlightval)
-    sleep(1)
+    if (datetime.now() - growLightLastChecked >= growLightCheckInterval):
+        growLightLastChecked = datetime.now()
+        for dayinterval in dayintervals:
+            # if the time is between the on
+            
+            if (datetimenow >= dayinterval["on_time"] \
+                and datetimenow < dayinterval["off_time"] \
+                # and not growlight.value \
+                and not growlightval \
+            ):
+                thread = threading.Thread(target=growLightOn, args=(dayinterval["duration"], ), daemon=True)
+                # growlightval=1
+                thread.start()
+        print("val={}".format(growlightval))
+
 
 # growlight = DigitalOutputDevice(18)
 # cameralight = DigitalOutputDevice(27)
