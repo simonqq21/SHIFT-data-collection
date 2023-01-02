@@ -19,13 +19,15 @@ except:
 # dummy values
 growlightval = 0
 cameralightval = 0
+# flag to indicate if an image is currently being captured
+pictureTaking = 0
 
 # initialize GPIOzero outputs
 try:
     growlight = DigitalOutputDevice(18)
     cameralight = DigitalOutputDevice(27)
     cameraButton = Button(25)
-    # came
+    cameraButton.when_pressed = captureImageButton
 except Exception as err:
     print("not running on pi, using dummy output values")
 
@@ -109,7 +111,6 @@ def switchGrowLights(state):
         else:
             growlight.off()
     except Exception as e: 
-        print(e) 
         print("not running on rpi, switching dummy growlights")
     if state:
         print("growlight on")
@@ -125,7 +126,6 @@ def switchCameraLights(state):
         else:
             cameralight.off()
     except Exception as e: 
-        print(e) 
         print("not running on rpi, switching dummy cameralights")
         cameralightval = state
     if state:
@@ -141,54 +141,71 @@ def growLightOn(ondelta):
 
 # thread function to toggle the grow lights and camera lights and capture an image using the Pi Camera
 def captureImage(filepath, filename):
+    pictureTaking = 1
     switchGrowLights(0)
     switchCameraLights(1)
     try:
         camera.start_preview() 
     except:
         print("no camera object, using dummy camera")
-    time.sleep(2)
+    sleep(2)
     try:
         camera.capture(filepath, filename)
     except:
-        print("no camera object, using dummy camera")
+        pass
     print("image captured")
-    time.sleep(0.5)
+    sleep(0.5)
     switchCameraLights(0)
     switchGrowLights(1)
+    pictureTaking = 0
+
+#wrapper function to capture an image every time the capture button is pressed 
+def captureImageButton():
+    # change the filepath and filename
+    captureImage("./", "image_button.jpg")
+
+lastTimePhotoTaken = datetime(year=1970, month=1, day=1)
 
 # debugging
-datetimenow = datetime.now()
-# datetimenow = datetime.combine(date.today(), time(hour=10, minute=0, second=0))
-growLightLastChecked = datetime(year=1970, month=1, day=1)
-# growLightCheckInterval = timedelta(minutes=15)
-growLightCheckInterval = timedelta(seconds=10)
+# datetimenow = datetime.now()
+datetimenow = datetime.combine(date.today(), time(hour=10, minute=0, second=0))
+intervalLastChecked = datetime(year=1970, month=1, day=1)
+# checkingInterval = timedelta(minutes=15)
+checkingInterval = timedelta(seconds=10)
 
 while True:
-    # switch on the grow lights during the specified interval
-
+    # datetimenow = datetime.now()
     # update the growLightIntervals with the times of the day 
     if (date.today() > lastUpdatedDate):
         lastUpdatedDate = date.today() 
         growLightDailyIntervals = getGrowLightIntervalsPerDay(growLightIntervals)
+        cameraDailyIntervals = getCameraIntervalsPerDay(cameraIntervals)
 
-    # loop to check the time intervals
-    if (datetime.now() - growLightLastChecked >= growLightCheckInterval):
-        growLightLastChecked = datetime.now()
+    # loop to check the camera and growlights
+    if (datetime.now() - intervalLastChecked >= checkingInterval):
+        intervalLastChecked = datetime.now()
 
-        # loop to check grow lights
+        # loop to check switch grow lights
         for dayinterval in growLightDailyIntervals:
             # If the time is between the on and off time and the grow lights are off, switch them on.
             if (datetimenow >= dayinterval["on_time"] \
                 and datetimenow < dayinterval["off_time"] \
-                and not growlightval \
-            ):
+                and not growlightval and not pictureTaking):
                 thread = threading.Thread(target=growLightOn, args=(dayinterval["duration"], ), daemon=True)
                 thread.start()
         print("val={}".format(growlightval))
+        '''
+        while the camera is capturing an image, the growlight code must be overriden.
+        '''
 
         # loop to capture image 
-        # for dayinterval in cameraDailyIntervals:
-
-
-    # time.sleep(10)
+        for dayinterval in cameraDailyIntervals: 
+            if (datetimenow >= dayinterval["start_time"] \
+                and datetimenow <= dayinterval["end_time"] \
+                and datetime.now() - lastTimePhotoTaken >= dayinterval["interval"]):
+                lastTimePhotoTaken = datetime.now()
+                # change the filepath and filename
+                thread = threading.Thread(target=captureImage, args=("./", "image.jpg"), daemon=True)
+                thread.start()
+        
+    sleep(1)
