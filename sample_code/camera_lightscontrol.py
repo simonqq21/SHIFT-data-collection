@@ -12,7 +12,7 @@ from datetime import datetime, date, time, timedelta
 import threading
 try:
     from picamera import PiCamera
-    from gpiozero import DigitalOutputDevice
+    from gpiozero import DigitalOutputDevice, Button
 except:
     print("picamera or gpiozero library not present")
 
@@ -24,6 +24,8 @@ cameralightval = 0
 try:
     growlight = DigitalOutputDevice(18)
     cameralight = DigitalOutputDevice(27)
+    cameraButton = Button(25)
+    # came
 except Exception as err:
     print("not running on pi, using dummy output values")
 
@@ -53,7 +55,6 @@ try:
     cameraIntervals = json.load(j)["intervals"]
 except:
     print("error opening file, or file doesn't exist")  
-print(cameraIntervals)
 
 # compute for the grow light intervals for each new day
 def getGrowLightIntervalsPerDay(intervals):
@@ -67,10 +68,11 @@ def getGrowLightIntervalsPerDay(intervals):
     return growLightIntervals
 
 def getCameraIntervalsPerDay(intervals):
-    cameraIntervals = [] 
+    cameraIntervals = []
     for interval in intervals: 
-        newCameraInterval = {} 
+        newCameraInterval = {}
         newCameraInterval["start_time"] = datetime.combine(date.today(), interval["start_time"]) 
+        newCameraInterval["interval"] = interval["interval"]
         newCameraInterval["end_time"] = datetime.combine(date.today(), interval["end_time"]) 
         cameraIntervals.append(newCameraInterval)
     return cameraIntervals
@@ -83,8 +85,9 @@ for interval in growLightIntervals:
     # ensure that duration doesn't exceed 24h
     if (interval["duration"] > timedelta(hours=24)):
         interval["duration"] = timedelta(hours=24)
-print(growLightIntervals)
+# print(growLightIntervals)
 growLightDailyIntervals = getGrowLightIntervalsPerDay(growLightIntervals) 
+print("grow light daily intervals")
 print(growLightDailyIntervals)
 
 # initial processing of camera intervals 
@@ -93,11 +96,13 @@ for interval in cameraIntervals:
     interval["interval"] = timedelta(hours=int(interval["interval"][:2]), minutes=int(interval["interval"][3:]))
     interval["end_time"] = datetime.strptime(interval["end_time"], "%H:%M").time()
 cameraDailyIntervals = getCameraIntervalsPerDay(cameraIntervals)
-print(cameraIntervals)
+print("camera daily intervals")
+print(cameraDailyIntervals)
 
 # switch the state of the grow lights
 def switchGrowLights(state):
     global growlightval
+    growlightval = state
     try:
         if state:
             growlight.on()
@@ -106,7 +111,6 @@ def switchGrowLights(state):
     except Exception as e: 
         print(e) 
         print("not running on rpi, switching dummy growlights")
-        growlightval = state
     if state:
         print("growlight on")
     else:
@@ -160,7 +164,6 @@ growLightLastChecked = datetime(year=1970, month=1, day=1)
 # growLightCheckInterval = timedelta(minutes=15)
 growLightCheckInterval = timedelta(seconds=10)
 
-
 while True:
     # switch on the grow lights during the specified interval
 
@@ -169,22 +172,23 @@ while True:
         lastUpdatedDate = date.today() 
         growLightDailyIntervals = getGrowLightIntervalsPerDay(growLightIntervals)
 
-    # loop to control grow lights
+    # loop to check the time intervals
     if (datetime.now() - growLightLastChecked >= growLightCheckInterval):
         growLightLastChecked = datetime.now()
+
+        # loop to check grow lights
         for dayinterval in growLightDailyIntervals:
-            # if the time is between the on
-            
+            # If the time is between the on and off time and the grow lights are off, switch them on.
             if (datetimenow >= dayinterval["on_time"] \
                 and datetimenow < dayinterval["off_time"] \
-                # and not growlight.value \
                 and not growlightval \
             ):
                 thread = threading.Thread(target=growLightOn, args=(dayinterval["duration"], ), daemon=True)
-                # growlightval=1
                 thread.start()
         print("val={}".format(growlightval))
 
-    # loop to capture image 
-    # if (date)
+        # loop to capture image 
+        # for dayinterval in cameraDailyIntervals:
 
+
+    # time.sleep(10)

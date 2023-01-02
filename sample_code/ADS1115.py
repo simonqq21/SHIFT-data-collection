@@ -15,26 +15,31 @@ except:
     print("ads1115 library not present")
 
 gain = 2.0/3.0
-i2c = busio.I2C(board.SCL, board.SDA)
-adss = []
-adss.append(ADS.ADS1115(i2c, gain=gain))
-adss.append(ADS.ADS1115(i2c, gain=gain, address=73))
-# adss.append(ADS.ADS1115(i2c, gain=1, address=74))
-chans = []
-for ads in adss:
-    chans.append(AnalogIn(ads, ADS.P0))
-    chans.append(AnalogIn(ads, ADS.P1))
-    chans.append(AnalogIn(ads, ADS.P2))
-    chans.append(AnalogIn(ads, ADS.P3))
+try:
+    i2c = busio.I2C(board.SCL, board.SDA)
+    adss = []
+    adss.append(ADS.ADS1115(i2c, gain=gain)) # soil moisture sensors 0-3
+    adss.append(ADS.ADS1115(i2c, gain=gain, address=73)) # soil moisture sensors 4-7
+    # adss.append(ADS.ADS1115(i2c, gain=1, address=74)) # soil moisture sensor 8, pH sensor, and EC sensor
+    chans = []
+    for ads in adss:
+        chans.append(AnalogIn(ads, ADS.P0))
+        chans.append(AnalogIn(ads, ADS.P1))
+        chans.append(AnalogIn(ads, ADS.P2))
+        chans.append(AnalogIn(ads, ADS.P3))
 
-values = [0]*len(chans)
-voltages = [0]*len(chans)
-while True:
-    for i in range(len(chans)):
-        values[i] = chans[i].value
-        voltages[i] = chans[i].voltage
+    values = [0]*len(chans)
+    voltages = [0]*len(chans)
+    while True:
+        for i in range(len(chans)):
+            values[i] = chans[i].value
+            voltages[i] = chans[i].voltage
 
-    for i in range(len(chans)):
-        print("value[{}]={}, voltage[{}]={}".format(i, values[i], i, voltages[i]))
-    print()
-    time.sleep(3)
+        for i in range(len(chans)):
+            print("value[{}]={}, voltage[{}]={}".format(i, values[i], i, voltages[i]))
+        print()
+        time.sleep(3)
+except:
+    print("ADS1115 not connected or not running on RPi")
+
+

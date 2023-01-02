@@ -9,22 +9,6 @@ try:
 except:
     print("DHT library not present")
 
-# dht = adafruit_dht.DHT22(board.D4)
-# temperature = 0
-# humidity = 0
-#
-# while True:
-#     try:
-#         temperature = dht.temperature
-#         humidity = dht.humidity
-#
-#     except Exception as e:
-#         print('read error ')
-#         print(e)
-#
-#     print("temp={}, humd={}".format(temperature, humidity))
-#     time.sleep(3)
-
 dhts = []
 print(board)
 dhts.append(adafruit_dht.DHT22(board.D4))
