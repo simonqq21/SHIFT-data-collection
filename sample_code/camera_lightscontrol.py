@@ -27,7 +27,7 @@ try:
     growlight = DigitalOutputDevice(18)
     cameralight = DigitalOutputDevice(27)
     cameraButton = Button(25)
-    cameraButton.when_pressed = captureImageButton
+    
 except Exception as err:
     print("not running on pi, using dummy output values")
 
@@ -51,7 +51,6 @@ except:
 
 # load intervals of image capture 
 cameraIntervals = None
-j = open("camera_interval.json")
 try:
     j = open("camera_interval.json")
     cameraIntervals = json.load(j)["intervals"]
@@ -163,6 +162,11 @@ def captureImage(filepath, filename):
 def captureImageButton():
     # change the filepath and filename
     captureImage("./", "image_button.jpg")
+
+try: 
+    cameraButton.when_pressed = captureImageButton 
+except:
+    pass 
 
 lastTimePhotoTaken = datetime(year=1970, month=1, day=1)
 
