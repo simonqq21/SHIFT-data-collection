@@ -1,17 +1,16 @@
 {
     "pumps": [
-        {"pin": 22,
-        "index": 1,
+        {"index": 1,
         "start_time": "06:00",
-        "on_seconds": 30
-        },
-        {"pin": 23,
-        "index": 2,
+        "on_seconds": 30,
+        "period_days": 1},
+        {"index": 2,
         "start_time": "06:00",
-        "on_seconds": 45},
-        {"pin": 24,
-        "index": 3,
+        "on_seconds": 45,
+        "period_days": 1},
+        {"index": 3,
         "start_time": "06:00",
-        "on_seconds": 60}
+        "on_seconds": 60,
+        "period_days": 1}
     ]
 }

@@ -68,6 +68,7 @@ def getGrowLightIntervalsPerDay(intervals):
         growLightIntervals.append(newGrowLightInterval)
     return growLightIntervals
 
+# compute for the image capturing intervals for each new day
 def getCameraIntervalsPerDay(intervals):
     cameraIntervals = []
     for interval in intervals: 
@@ -188,7 +189,6 @@ while True:
     # loop to check the camera and growlights
     if (datetime.now() - intervalLastChecked >= checkingInterval):
         intervalLastChecked = datetime.now()
-
         # loop to check switch grow lights
         for dayinterval in growLightDailyIntervals:
             # If the time is between the on and off time and the grow lights are off, switch them on.
@@ -201,7 +201,6 @@ while True:
         '''
         while the camera is capturing an image, the growlight code must be overriden.
         '''
-
         # loop to capture image 
         for dayinterval in cameraDailyIntervals: 
             if (datetimenow >= dayinterval["start_time"] \
