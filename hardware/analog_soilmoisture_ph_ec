@@ -35,30 +35,80 @@ try:
 except:
     print("ADS1115 not connected or not running on RPi")
 
-    # values = [0]*len(chans)
-    # voltages = [0]*len(chans)
-    # while True:
-    #     for i in range(len(chans)):
-    #         values[i] = chans[i].value
-    #         voltages[i] = chans[i].voltage
-
-    #     for i in range(len(chans)):
-    #         print("value[{}]={}, voltage[{}]={}".format(i, values[i], i, voltages[i]))
-    #     print()
-    #     time.sleep(3)
-
+'''
+get the soil moisture values of the nine soil moisture sensors in %
+'''
 def getSoilMoistureValues():
+    saturation_voltages = [2.2, 2.2, 2.2, 2.2, 2.2, 2.2, 2.2, 2.2, 2.2] # set to actual saturation values
     soilMoistureReadings = [] 
-    for i in range(9):
-        newSoilMoistureReading = {} 
-        
+    try:
+        for i in range(9):
+            newSoilMoistureReading = {} 
+            newSoilMoistureReading["index"] = i 
+            newSoilMoistureReading["voltage"] = chans[i].voltage
+            newSoilMoistureReading["soilmoisture_value"] = newSoilMoistureReading["voltage"] / saturation_voltages[i]
+            soilMoistureReadings.append(newSoilMoistureReading)
+    except Exception as e: 
+        print("Soil moisture sensor read error or not running on RPi")
+        print(e) 
+        soilMoistureReadings = [] 
+        for i in range(9):
+            newSoilMoistureReading = {} 
+            newSoilMoistureReading["index"] = i 
+            newSoilMoistureReading["voltage"] = -1
+            newSoilMoistureReading["soilmoisture"] = -1
+            soilMoistureReadings.append(newSoilMoistureReading)
+    return soilMoistureReadings
 
+'''
 
-
+'''
 def getpHValue():
-    pass 
+    # linear function values for the PH-4502C 
+    m = 0 
+    b = 0
+    pHReadings = [] 
+    try:
+        for i in range(9,10):
+            newpHReading = {} 
+            newpHReading["index"] = i 
+            newpHReading["value"] = chans[i].value 
+            newpHReading["voltage"] = chans[i].voltage
 
-def getECValue():
-    pass 
+            pHReadings.append(newpHReading)
+    except Exception as e: 
+        print("pH sensor read error or not running on RPi")
+        print(e) 
+        pHReadings = [] 
+        for i in range(9):
+            newpHReading = {} 
+            newpHReading["index"] = i 
+            newpHReading["value"] = -1
+            newpHReading["voltage"] = -1
+            pHReadings.append(newpHReading)
+    return pHReadings
+
+def getECValue(temperature): 
+    compensationCoefficient = 1.0 + 0.02 *(temperature-25.0)
+    ECReadings = [] 
+    try:
+        for i in range(10,11):
+            newECReading = {} 
+            newECReading["index"] = i 
+            newECReading["voltage"] = chans[i].voltage 
+            compensationVoltage = newECReading["voltage"]/compensationCoefficient
+            newECReading["EC_value"] = (133.42*compensationVoltage**3 - 255.86*compensationVoltage**2 + 857.39*compensationVoltage)*0.5
+            ECReadings.append(newECReading)
+    except Exception as e: 
+        print("EC sensor read error or not running on RPi")
+        print(e) 
+        ECReadings = [] 
+        for i in range(9):
+            newECReading = {} 
+            newECReading["index"] = i 
+            newECReading["voltage"] = -1
+            newECReading["EC_value"] = -1
+            ECReadings.append(newECReading)
+    return ECReadings 
 
 
