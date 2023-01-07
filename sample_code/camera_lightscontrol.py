@@ -26,7 +26,7 @@ pictureTaking = 0
 try:
     growlight = DigitalOutputDevice(18)
     cameralight = DigitalOutputDevice(27)
-    cameraButton = Button(25)
+    cameraButton = Button(9)
     
 except Exception as err:
     print("not running on pi, using dummy output values")
