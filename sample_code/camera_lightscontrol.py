@@ -162,7 +162,8 @@ def captureImage(filepath, filename):
 #wrapper function to capture an image every time the capture button is pressed 
 def captureImageButton():
     # change the filepath and filename
-    captureImage("./", "image_button.jpg")
+    thread = threading.Thread(target=captureImage, args=("./", "image_button.jpg"), daemon=True)
+    thread.start()
 
 try: 
     cameraButton.when_pressed = captureImageButton 
