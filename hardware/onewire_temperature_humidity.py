@@ -11,7 +11,7 @@ dhts.append(adafruit_dht.DHT22(board.D4))
 dhts.append(adafruit_dht.DHT22(board.D17))
 
 '''
-get the temperature values of the two DHT22 sensors in °C
+get the temperature values from the two DHT22 sensors in °C
 '''
 def getTemperatureValues(): 
     temperatureReadings = []
@@ -33,7 +33,7 @@ def getTemperatureValues():
     return temperatureReadings
 
 '''
-get the humidity values of the two DHT22 sensors in %
+get the humidity values from the two DHT22 sensors in %
 '''
 def getHumidityValues():
     humidityReadings = []

@@ -20,7 +20,7 @@ try:
     adss = []
     adss.append(ADS.ADS1115(i2c, gain=gain)) # soil moisture sensors 0-3
     adss.append(ADS.ADS1115(i2c, gain=gain, address=73)) # soil moisture sensors 4-7
-    # adss.append(ADS.ADS1115(i2c, gain=1, address=74)) # soil moisture sensor 8, pH sensor, and EC sensor
+    adss.append(ADS.ADS1115(i2c, gain=gain, address=74)) # soil moisture sensor 8, pH sensor, and EC sensor
     chans = []
     for ads in adss:
         chans.append(AnalogIn(ads, ADS.P0))

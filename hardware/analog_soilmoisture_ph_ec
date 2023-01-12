@@ -36,7 +36,7 @@ except:
     print("ADS1115 not connected or not running on RPi")
 
 '''
-get the soil moisture values of the nine soil moisture sensors in %
+get the soil moisture values from the nine soil moisture sensors in %
 '''
 def getSoilMoistureValues():
     saturation_voltages = [2.2, 2.2, 2.2, 2.2, 2.2, 2.2, 2.2, 2.2, 2.2] # set to actual saturation values
@@ -61,10 +61,10 @@ def getSoilMoistureValues():
     return soilMoistureReadings
 
 '''
-
+get the pH value from the PH-4502C in pH 
 '''
 def getpHValue():
-    # linear function values for the PH-4502C 
+    # linear function values for the PH-4502C sensor
     m = 0 
     b = 0
     pHReadings = [] 
@@ -72,19 +72,18 @@ def getpHValue():
         for i in range(9,10):
             newpHReading = {} 
             newpHReading["index"] = i 
-            newpHReading["value"] = chans[i].value 
             newpHReading["voltage"] = chans[i].voltage
-
+            newpHReading["pH_value"] = m * newpHReading["voltage"] + b
             pHReadings.append(newpHReading)
     except Exception as e: 
         print("pH sensor read error or not running on RPi")
         print(e) 
         pHReadings = [] 
-        for i in range(9):
+        for i in range(9,10):
             newpHReading = {} 
             newpHReading["index"] = i 
-            newpHReading["value"] = -1
-            newpHReading["voltage"] = -1
+            newpHReading["voltage"] = -1 
+            newpHReading["pH_value"] = -1
             pHReadings.append(newpHReading)
     return pHReadings
 
@@ -97,16 +96,18 @@ def getECValue(temperature):
             newECReading["index"] = i 
             newECReading["voltage"] = chans[i].voltage 
             compensationVoltage = newECReading["voltage"]/compensationCoefficient
-            newECReading["EC_value"] = (133.42*compensationVoltage**3 - 255.86*compensationVoltage**2 + 857.39*compensationVoltage)*0.5
+            newECReading["TDS_value"] = (133.42*compensationVoltage**3 - 255.86*compensationVoltage**2 + 857.39*compensationVoltage)*0.5
+            newECReading["EC_value"] = newECReading["TDS_value"] / 500 
             ECReadings.append(newECReading)
     except Exception as e: 
         print("EC sensor read error or not running on RPi")
         print(e) 
         ECReadings = [] 
-        for i in range(9):
+        for i in range(10,11):
             newECReading = {} 
             newECReading["index"] = i 
             newECReading["voltage"] = -1
+            newECReading["TDS_value"] = -1
             newECReading["EC_value"] = -1
             ECReadings.append(newECReading)
     return ECReadings 
