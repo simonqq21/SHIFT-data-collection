@@ -26,6 +26,7 @@ for si in range(bhcount):
             bhs.append(adafruit_bh1750.BH1750(tca[si%8]))
     except:
         print("not running on Pi or device not connected properly")
+        pass
 
 luxs = [0]*bhcount
 print(len(bhs))
