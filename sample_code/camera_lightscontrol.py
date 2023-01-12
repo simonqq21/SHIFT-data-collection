@@ -150,7 +150,7 @@ def captureImage(filepath, filename):
         print("no camera object, using dummy camera")
     sleep(2)
     try:
-        camera.capture(filepath, filename)
+        camera.capture(filepath + filename)
     except:
         pass
     print("image captured")
