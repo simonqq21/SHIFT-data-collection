@@ -38,4 +38,6 @@ while True:
 
     for i in range((len(bhs))):
         print("lux[{}]={}".format(i, luxs[i]))
+    
+    print()
     time.sleep(3)
