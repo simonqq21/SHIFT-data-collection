@@ -162,7 +162,7 @@ def captureImage(filepath, filename):
 #wrapper function to capture an image every time the capture button is pressed 
 def captureImageButton():
     # change the filepath and filename
-    thread = threading.Thread(target=captureImage, args=("./", "image_button.jpg"), daemon=True)
+    thread = threading.Thread(target=captureImage, args=("/home/pi/", "image_button.jpg"), daemon=True)
     thread.start()
 
 try: 
@@ -209,7 +209,7 @@ while True:
                 and datetime.now() - lastTimePhotoTaken >= dayinterval["interval"]):
                 lastTimePhotoTaken = datetime.now()
                 # change the filepath and filename
-                thread = threading.Thread(target=captureImage, args=("./", "image.jpg"), daemon=True)
+                thread = threading.Thread(target=captureImage, args=("/home/pi/", "image.jpg"), daemon=True)
                 thread.start()
         
     sleep(1)
