@@ -16,17 +16,20 @@ i2c = board.I2C()
 tca = adafruit_tca9548a.TCA9548A(i2c, address=112)
 bhs = []
 for si in range(bhcount):
-    if (si > 7):
-        bhs.append(adafruit_bh1750.BH1750(tca[si%8], address=92))
-    else:
-        bhs.append(adafruit_bh1750.BH1750(tca[si%8]))
+    try:
+        if (si > 7):
+            bhs.append(adafruit_bh1750.BH1750(tca[si%8], address=92))
+        else:
+            bhs.append(adafruit_bh1750.BH1750(tca[si%8]))
+        except:
+            print("not running on Pi or device not connected properly")
 
 luxs = [0]*bhcount
 while True:
 
-    for i in range(bhcount):
+    for i in range((len(bhs))):
         luxs[i] = bhs[i].lux
 
-    for i in range(bhcount):
+    for i in range((len(bhs))):
         print("lux[{}]={}".format(i, luxs[i]))
     time.sleep(3)
