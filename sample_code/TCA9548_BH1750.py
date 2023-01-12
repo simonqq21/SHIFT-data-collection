@@ -24,7 +24,8 @@ for si in range(bhcount):
             bhs.append(adafruit_bh1750.BH1750(tca[si%8], address=92))
         else:
             bhs.append(adafruit_bh1750.BH1750(tca[si%8]))
-    except:
+    except Exception as e:
+        print(e)
         print("not running on Pi or device not connected properly")
         pass
 
