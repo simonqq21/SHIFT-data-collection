@@ -192,38 +192,46 @@ intervalLastChecked = datetime(year=1970, month=1, day=1)
 # checkingInterval = timedelta(minutes=15)
 checkingInterval = timedelta(seconds=10)
 
-while True:
-    # datetimenow = datetime.now()
-    # update the growLightIntervals with the times of the day 
-    if (date.today() > lastUpdatedDate):
-        lastUpdatedDate = date.today() 
-        growLightDailyIntervals = getGrowLightIntervalsPerDay(growLightIntervals)
-        cameraDailyIntervals = getCameraIntervalsPerDay(cameraIntervals)
+def growLightCameraLoop():
+        while True:
+            # datetimenow = datetime.now()
+            # update the growLightIntervals with the times of the day 
+            if (date.today() > lastUpdatedDate):
+                lastUpdatedDate = date.today() 
+                growLightDailyIntervals = getGrowLightIntervalsPerDay(growLightIntervals)
+                cameraDailyIntervals = getCameraIntervalsPerDay(cameraIntervals)
 
-    # loop to check the camera and growlights
-    if (datetime.now() - intervalLastChecked >= checkingInterval):
-        intervalLastChecked = datetime.now()
-        # loop to check switch grow lights
-        for dayinterval in growLightDailyIntervals:
-            # If the time is between the on and off time and the grow lights are off, switch them on.
-            if (datetimenow >= dayinterval["on_time"] \
-                and datetimenow < dayinterval["off_time"] \
-                and not growlightval and not pictureTaking):
-                thread = threading.Thread(target=growLightOn, args=(dayinterval["duration"], ), daemon=True)
-                thread.start()
-        print("val={}".format(growlightval))
-        '''
-        while the camera is capturing an image, the growlight code must be overriden.
-        '''
-        # loop to capture image 
-        for dayinterval in cameraDailyIntervals: 
-            if (datetimenow >= dayinterval["start_time"] \
-                and datetimenow <= dayinterval["end_time"] \
-                and datetime.now() - lastTimePhotoTaken >= dayinterval["interval"]):
-                lastTimePhotoTaken = datetime.now()
-                # change the filepath and filename
-                image_filename = images_filename_format.format(datetime.now().strftime("%Y%m%d_%H%M"))
-                thread = threading.Thread(target=captureImage, args=(images_filepath, image_filename), daemon=True)
-                thread.start()
-        
-    sleep(1)
+            # loop to check the camera and growlights
+            if (datetime.now() - intervalLastChecked >= checkingInterval):
+                intervalLastChecked = datetime.now()
+                # loop to check switch grow lights
+                for dayinterval in growLightDailyIntervals:
+                    # If the time is between the on and off time and the grow lights are off, switch them on.
+                    if (datetimenow >= dayinterval["on_time"] \
+                        and datetimenow < dayinterval["off_time"] \
+                        and not growlightval and not pictureTaking):
+                        thread = threading.Thread(target=growLightOn, args=(dayinterval["duration"], ), daemon=True)
+                        thread.start()
+                print("val={}".format(growlightval))
+                '''
+                while the camera is capturing an image, the growlight code must be overriden.
+                '''
+                # loop to capture image 
+                for dayinterval in cameraDailyIntervals: 
+                    if (datetimenow >= dayinterval["start_time"] \
+                        and datetimenow <= dayinterval["end_time"] \
+                        and datetime.now() - lastTimePhotoTaken >= dayinterval["interval"]):
+                        lastTimePhotoTaken = datetime.now()
+                        # change the filepath and filename
+                        image_filename = images_filename_format.format(datetime.now().strftime("%Y%m%d_%H%M"))
+                        thread = threading.Thread(target=captureImage, args=(images_filepath, image_filename), daemon=True)
+                        thread.start()
+                
+            sleep(1)
+
+def startGrowLightCameraThread():
+    x = threading.Thread(target=growLightCameraLoop, daemon=False)
+    x.start() 
+
+if __name__ == "__main__":
+    startGrowLightCameraThread()
