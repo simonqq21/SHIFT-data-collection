@@ -35,6 +35,10 @@ The value key in values such as in line 14 can be one of the ff.:
 ]
 
 '''
-import hardware.growlights_camera 
-import hardware.irrigation_pumps
+import hardware.growlights_camera as growlights_camera
+import hardware.irrigation_pumps as irrigation_pumps
+print("Starting grow lights and camera loop")
+growlights_camera.startGrowLightCameraThread()
+print("Starting irrigation pumps loop")
+irrigation_pumps.startIrrigationPumpsThread()
 print("main")
