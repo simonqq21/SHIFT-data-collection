@@ -37,6 +37,11 @@ The value key in values such as in line 14 can be one of the ff.:
 '''
 import hardware.growlights_camera as growlights_camera
 import hardware.irrigation_pumps as irrigation_pumps
+import hardware.onewire_temperature_humidity as temperature_humidity 
+import hardware.analog_soilmoisture_ph_ec as analog_soilmoisture_ph_ec 
+import hardware.i2c_lightintensity as i2c_lightintensity 
+
+
 print("Starting grow lights and camera loop")
 growlights_camera.startGrowLightCameraThread()
 print("Starting irrigation pumps loop")
