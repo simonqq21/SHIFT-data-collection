@@ -164,6 +164,7 @@ def captureImage(filepath, filename):
     sleep(0.5)
     switchCameraLights(0)
     switchGrowLights(1)
+    camera.stop_preview()
     pictureTaking = 0
 
 #wrapper function to capture an image every time the capture button is pressed 
