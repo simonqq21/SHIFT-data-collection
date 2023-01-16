@@ -15,6 +15,8 @@ try:
     from gpiozero import DigitalOutputDevice, Button
 except:
     print("picamera or gpiozero library not present")
+    print("Exception = ")
+    print(e)
 import os 
 
 # image filepath and filename 
