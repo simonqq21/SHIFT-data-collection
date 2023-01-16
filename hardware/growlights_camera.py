@@ -149,6 +149,9 @@ def growLightOn(ondelta):
 # thread function to toggle the grow lights and camera lights and capture an image using the Pi Camera
 def captureImage(filepath, filename):
     pictureTaking = 1
+    growLightsWereOn = False 
+    if (growlightval):
+        growLightsWereOn = True
     switchGrowLights(0)
     switchCameraLights(1)
     try:
@@ -163,7 +166,8 @@ def captureImage(filepath, filename):
     print("image captured")
     sleep(0.5)
     switchCameraLights(0)
-    switchGrowLights(1)
+    if (growLightsWereOn):
+        switchGrowLights(1)
     camera.stop_preview()
     pictureTaking = 0
 
