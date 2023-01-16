@@ -193,7 +193,7 @@ def growLightCameraLoop():
     intervalLastChecked = datetime(year=1970, month=1, day=1)
 
     while True: 
-        # datetimenow = datetime.now()
+        datetimenow = datetime.now()
         # update the growLightIntervals with the times of the day 
         if (date.today() > lastUpdatedDate):
             lastUpdatedDate = date.today() 
