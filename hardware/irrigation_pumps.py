@@ -48,6 +48,7 @@ print(pumpObjects)
 # thread function to turn on the pumps for a specified on-time
 '''
 def pumpOn(pumpObject): 
+    print("Manually started irrigation")
     try:
         pumpObject["pump"].on()
     except:  
