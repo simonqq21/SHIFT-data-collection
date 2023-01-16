@@ -35,5 +35,5 @@ The value key in values such as in line 14 can be one of the ff.:
 ]
 
 '''
-import hardware/growlights_camera 
-import hardware/irrigation_pumps
+import hardware.growlights_camera 
+import hardware.irrigation_pumps
