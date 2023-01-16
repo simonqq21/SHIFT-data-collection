@@ -128,8 +128,8 @@ def captureImage(filepath, filename):
     print("image captured")
     sleep(0.5)
     switchCameraLights(0)
-    if (growLightsWereOn):
-        switchGrowLights(1)
+    # if (growLightsWereOn):
+    #     switchGrowLights(1)
     camera.stop_preview()
     pictureTaking = 0
 
@@ -209,6 +209,7 @@ def growLightCameraLoop():
                 if (datetimenow >= dayinterval["on_time"] \
                     and datetimenow < dayinterval["off_time"] \
                     and not growlightval and not pictureTaking):
+                    print("aggggggggggggggggggggggggg")
                     thread = threading.Thread(target=growLightOn, args=(dayinterval["duration"], ), daemon=True)
                     thread.start()
             print("val={}".format(growlightval))
