@@ -187,7 +187,7 @@ def growLightCameraLoop():
     lastTimePhotoTaken = datetime(year=1970, month=1, day=1)
     # debugging
     # datetimenow = datetime.now()
-    datetimenow = datetime.combine(date.today(), time(hour=10, minute=0, second=0))
+    datetimenow = datetime.combine(date.today(), time(hour=21, minute=0, second=0))
     checkingInterval = timedelta(seconds=10)
     lastUpdatedDate = date.today() 
     intervalLastChecked = datetime(year=1970, month=1, day=1)
