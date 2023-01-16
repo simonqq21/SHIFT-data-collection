@@ -15,6 +15,13 @@ try:
     from gpiozero import DigitalOutputDevice, Button
 except:
     print("picamera or gpiozero library not present")
+import os 
+
+# image filepath and filename 
+images_filepath = "/home/pi/images/"
+images_filename_format = "IMG_{}.jpg"
+# create image filepath if it doesn't exist 
+os.makedirs(images_filepath, exist_ok=True)
 
 # dummy values
 growlightval = 0
@@ -162,7 +169,8 @@ def captureImage(filepath, filename):
 #wrapper function to capture an image every time the capture button is pressed 
 def captureImageButton():
     # change the filepath and filename
-    thread = threading.Thread(target=captureImage, args=("/home/pi/", "image_button.jpg"), daemon=True)
+    image_filename = images_filename_format.format(datetime.now().strftime("%Y%m%d_%H%M"))
+    thread = threading.Thread(target=captureImage, args=(images_filepath, image_filename), daemon=True)
     thread.start()
 
 try: 
@@ -209,7 +217,8 @@ while True:
                 and datetime.now() - lastTimePhotoTaken >= dayinterval["interval"]):
                 lastTimePhotoTaken = datetime.now()
                 # change the filepath and filename
-                thread = threading.Thread(target=captureImage, args=("/home/pi/", "image.jpg"), daemon=True)
+                image_filename = images_filename_format.format(datetime.now().strftime("%Y%m%d_%H%M"))
+                thread = threading.Thread(target=captureImage, args=(images_filepath, image_filename), daemon=True)
                 thread.start()
         
     sleep(1)
