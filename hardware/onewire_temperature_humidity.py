@@ -1,14 +1,13 @@
 import time
-import board
-try:
-    import adafruit_dht
-except:
-    print("DHT library not present")
 
 dhts = []
-print(board)
-dhts.append(adafruit_dht.DHT22(board.D4))
-dhts.append(adafruit_dht.DHT22(board.D17))
+try:
+    import adafruit_dht
+    import board
+    dhts.append(adafruit_dht.DHT22(board.D4))
+    dhts.append(adafruit_dht.DHT22(board.D17))
+except:
+    print("DHT library not present")
 
 '''
 get the temperature values from the two DHT22 sensors in °C
@@ -19,7 +18,7 @@ def getTemperatureValues():
         for i in range(len(dhts)):
             newTemperatureReading = {}
             newTemperatureReading["index"] = i
-            newTemperatureReading["temperature_value"] = dhts[i].temperature
+            newTemperatureReading["value"] = dhts[i].temperature
             temperatureReadings.append(newTemperatureReading)
     except Exception as e:
         print('DHT22 temperature read error or not running on RPi')
@@ -28,7 +27,7 @@ def getTemperatureValues():
         for i in range(len(dhts)):
             newTemperatureReading = {}
             newTemperatureReading["index"] = i
-            newTemperatureReading["temperature_value"] = -100
+            newTemperatureReading["value"] = -100
             temperatureReadings.append(newTemperatureReading)
     return temperatureReadings
 
@@ -41,7 +40,7 @@ def getHumidityValues():
         for i in range(len(dhts)):
             newHumidityReading = {}
             newHumidityReading["index"] = i
-            newHumidityReading["humidity_value"] = dhts[i].humidity
+            newHumidityReading["value"] = dhts[i].humidity
             humidityReadings.append(newHumidityReading)
     except Exception as e:
         print('DHT22 humidity read error or not running on RPi')
@@ -50,7 +49,7 @@ def getHumidityValues():
         for i in range(len(dhts)):
             newHumidityReading = {}
             newHumidityReading["index"] = i
-            newHumidityReading["humidity_value"] = -1
+            newHumidityReading["value"] = -1
             humidityReadings.append(newHumidityReading)
     return humidityReadings
 

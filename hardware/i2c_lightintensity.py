@@ -35,7 +35,7 @@ def getLightIntensityValues():
         for i in range((len(bhs))):
             newLightIntensityReading = {} 
             newLightIntensityReading["index"] = i 
-            newLightIntensityReading["lightintensity_value"] = bhs[i].lux 
+            newLightIntensityReading["value"] = bhs[i].lux 
             lightIntensityReadings.append(newLightIntensityReading)
     except Exception as e:
         print('BH1750 temperature read error or not running on RPi')
@@ -44,7 +44,7 @@ def getLightIntensityValues():
         for i in range((len(bhs))):
             newLightIntensityReading = {} 
             newLightIntensityReading["index"] = i 
-            newLightIntensityReading["lightintensity_value"] = -999
+            newLightIntensityReading["value"] = -999
             lightIntensityReadings.append(newLightIntensityReading)
     return lightIntensityReadings
 

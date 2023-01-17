@@ -46,7 +46,7 @@ def getSoilMoistureValues():
             newSoilMoistureReading = {} 
             newSoilMoistureReading["index"] = i 
             newSoilMoistureReading["voltage"] = chans[i].voltage
-            newSoilMoistureReading["soilmoisture_value"] = newSoilMoistureReading["voltage"] / saturation_voltages[i]
+            newSoilMoistureReading["value"] = newSoilMoistureReading["voltage"] / saturation_voltages[i]
             soilMoistureReadings.append(newSoilMoistureReading)
     except Exception as e: 
         print("Soil moisture sensor read error or not running on RPi")
@@ -56,14 +56,14 @@ def getSoilMoistureValues():
             newSoilMoistureReading = {} 
             newSoilMoistureReading["index"] = i 
             newSoilMoistureReading["voltage"] = -1
-            newSoilMoistureReading["soilmoisture"] = -1
+            newSoilMoistureReading["value"] = -1
             soilMoistureReadings.append(newSoilMoistureReading)
     return soilMoistureReadings
 
 '''
 get the pH value from the PH-4502C in pH 
 '''
-def getpHValue():
+def getpHValues():
     # linear function values for the PH-4502C sensor
     m = 0 
     b = 0
@@ -73,7 +73,7 @@ def getpHValue():
             newpHReading = {} 
             newpHReading["index"] = i 
             newpHReading["voltage"] = chans[i].voltage
-            newpHReading["pH_value"] = m * newpHReading["voltage"] + b
+            newpHReading["value"] = m * newpHReading["voltage"] + b
             pHReadings.append(newpHReading)
     except Exception as e: 
         print("pH sensor read error or not running on RPi")
@@ -83,11 +83,11 @@ def getpHValue():
             newpHReading = {} 
             newpHReading["index"] = i 
             newpHReading["voltage"] = -1 
-            newpHReading["pH_value"] = -1
+            newpHReading["value"] = -1
             pHReadings.append(newpHReading)
     return pHReadings
 
-def getECValue(temperature): 
+def getECValues(temperature): 
     compensationCoefficient = 1.0 + 0.02 *(temperature-25.0)
     ECReadings = [] 
     try:
@@ -96,8 +96,8 @@ def getECValue(temperature):
             newECReading["index"] = i 
             newECReading["voltage"] = chans[i].voltage 
             compensationVoltage = newECReading["voltage"]/compensationCoefficient
-            newECReading["TDS_value"] = (133.42*compensationVoltage**3 - 255.86*compensationVoltage**2 + 857.39*compensationVoltage)*0.5
-            newECReading["EC_value"] = newECReading["TDS_value"] / 500 
+            TDS = (133.42*compensationVoltage**3 - 255.86*compensationVoltage**2 + 857.39*compensationVoltage)*0.5
+            newECReading["value"] = TDS / 500 
             ECReadings.append(newECReading)
     except Exception as e: 
         print("EC sensor read error or not running on RPi")
@@ -107,8 +107,7 @@ def getECValue(temperature):
             newECReading = {} 
             newECReading["index"] = i 
             newECReading["voltage"] = -1
-            newECReading["TDS_value"] = -1
-            newECReading["EC_value"] = -1
+            newECReading["value"] = -1
             ECReadings.append(newECReading)
     return ECReadings 
 
