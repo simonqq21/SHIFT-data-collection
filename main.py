@@ -22,7 +22,9 @@ if __name__ == "__main__":
     print(os.getcwd())
     growLightIntervals = loadGrowLightIntervals(os.getcwd()+"/growlight_interval.json")
     cameraIntervals = loadCameraIntervals(os.getcwd()+"/camera_interval.json")
+    pumpIntervals = loadPumpsIntervals(os.getcwd()+"/pumps_interval.json")
     # datetimenow = datetime.combine(date.today(), time(hour=21, minute=0, second=0))
+    # datetimenow = datetime.combine(date.today(), time(hour=6, minute=0, second=0))
     datetimenow = datetime.now()
     checkingInterval = timedelta(seconds=10)
     lastUpdatedDate = date(year=1970, month=1, day=1)
@@ -30,22 +32,25 @@ if __name__ == "__main__":
 
     # get sensor data from all sensors, package it into 
     while True:
-        datetimenow = datetime.now()
+        # datetimenow = datetime.now()
         # update the growLightIntervals with the times of the day 
         if (date.today() > lastUpdatedDate):
             lastUpdatedDate = date.today() 
             growLightDailyIntervals = getGrowLightIntervalsPerDay(growLightIntervals)
             cameraDailyIntervals = getCameraIntervalsPerDay(cameraIntervals)
-
-        # loop to check the camera and growlights
+            
+        # loop to check the camera, growlights, and pump
         if (datetime.now() - intervalLastChecked >= checkingInterval):
             intervalLastChecked = datetime.now()
             # loop to check switch grow lights
-            pollGrowLights(growLightDailyIntervals);
+            pollGrowLights(growLightDailyIntervals)
             print("val={}".format(growlightval))
             '''
             while the camera is capturing an image, the growlight code must be overriden.
             '''
             # loop to capture image 
-            pollCamera(cameraDailyIntervals);
+            pollCamera(cameraDailyIntervals)
+
+            # loop to check and run irrigation pumps
+            pollPumps(pumpIntervals)
         sleep(1)

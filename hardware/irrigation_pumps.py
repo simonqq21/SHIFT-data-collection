@@ -13,8 +13,9 @@ pollingMinutes = 0.1
 # pollingMinutes = 1
 timeElapsedIncrement = timedelta(seconds=(pollingMinutes * 60)) 
 
-datetimenow = date.now()
-
+datetimenow = datetime.now()
+# datetimenow = datetime.combine(date.today(), time(hour=6, minute=0, second=0))
+pumpIntervals = []
 # create GPIOZero output objects for the pumps
 pumpObjects = []
 try:
@@ -24,6 +25,7 @@ try:
     pumpObjects.append(DigitalOutputDevice(24))
     manualWateringButton = Button(10)
 except:
+    pumpObjects = [0]*3
     print("gpiozero library not present, pumps not added")
     
 '''
@@ -46,13 +48,14 @@ def pumpOn(pumpInterval, pumpObject):
     pumpInterval["state"] = False
 
 def forceWateringButton(): 
-    for pumpObject in pumpIntervals: 
-        x = threading.Thread(target=pumpOn, args=(pumpObject, ), daemon=True)
+    global pumpIntervals
+    for i, (pumpInterval, pumpObject) in enumerate(zip(pumpIntervals, pumpObjects)): 
+        x = threading.Thread(target=pumpOn, args=(pumpInterval, pumpObject), daemon=True)
         x.start()
 
 def loadPumpsIntervals(filename): # "pumps_interval.json"
     # read pump configuration json file
-    pumpIntervals = None 
+    global pumpIntervals
     try:
         j = open(filename)
         pumpIntervals = json.load(j)["pumps"]
@@ -60,32 +63,36 @@ def loadPumpsIntervals(filename): # "pumps_interval.json"
         print(e)
         print("error opening file, or file doesn't exist")  
     # convert the data into Times and TimeDeltas and add a time_elapsed_since_last_watering element
-    for pumpObject in pumpIntervals: 
-        pumpObject["start_time"] = datetime.strptime(pumpObject["start_time"], "%H:%M").time()
-        pumpObject["on_seconds"] = timedelta(seconds=pumpObject["on_seconds"])
-        pumpObject["period_days"] = timedelta(days=pumpObject["period_days"]) 
-        # pumpObject["time_elapsed_since_last_watering"] = timedelta(seconds=99999999)
-        pumpObject["time_elapsed_since_last_watering"] = timedelta(seconds=0)
-        pumpObject["state"] = False
+    for i in range(len(pumpIntervals)):
+        pumpIntervals[i]["index"] = i
+    for pumpInterval in pumpIntervals: 
+        pumpInterval["start_time"] = datetime.strptime(pumpInterval["start_time"], "%H:%M").time()
+        pumpInterval["on_seconds"] = timedelta(seconds=pumpInterval["on_seconds"])
+        pumpInterval["period_days"] = timedelta(days=pumpInterval["period_days"]) 
+        # pumpInterval["time_elapsed_since_last_watering"] = timedelta(seconds=99999999)
+        pumpInterval["time_elapsed_since_last_watering"] = timedelta(seconds=0)
+        pumpInterval["state"] = False
     print(pumpIntervals) 
     return pumpIntervals 
 
-def pollPumps():
-    for pumpObject in pumpIntervals: 
+def pollPumps(pumpIntervals):
+    global pumpObjects
+    print("0")
+    for i, (pumpInterval, pumpObject) in enumerate(zip(pumpIntervals, pumpObjects)): 
         '''
         water the plants per pump every specified period of time
         the plants will be watered with the specified intervals if either the manual watering button has been pressed,
         or if the time elapsed since watering exceeds the period time and the starting time 
         '''
-        if pumpObject["time_elapsed_since_last_watering"] >= pumpObject["period_days"] - timedelta(hours=12) \
-            and datetimenow.time().hour == pumpObject["start_time"].hour \
-            and datetimenow.time().minute >= pumpObject["start_time"].minute \
-            and datetimenow.time().minute <= pumpObject["start_time"].minute + 1:
-            x = threading.Thread(target=pumpOn, args=(pumpObject, ), daemon=True)
+        if pumpInterval["time_elapsed_since_last_watering"] >= pumpInterval["period_days"] - timedelta(hours=12) \
+            and datetimenow.time().hour == pumpInterval["start_time"].hour \
+            and datetimenow.time().minute >= pumpInterval["start_time"].minute \
+            and datetimenow.time().minute <= pumpInterval["start_time"].minute + 1:
+            x = threading.Thread(target=pumpOn, args=(pumpInterval, pumpObject), daemon=True)
             x.start()
-        elif (not pumpObject["state"]):
-            pumpObject["time_elapsed_since_last_watering"] += timeElapsedIncrement 
-            print("pump {} timer: {}".format(pumpObject["index"], pumpObject["time_elapsed_since_last_watering"]))
+        elif (not pumpInterval["state"]):
+            pumpInterval["time_elapsed_since_last_watering"] += timeElapsedIncrement 
+            print("pump {} timer: {}".format(pumpInterval["index"], pumpInterval["time_elapsed_since_last_watering"]))
 
 
 

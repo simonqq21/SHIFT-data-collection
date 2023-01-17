@@ -32,6 +32,7 @@ cameralightval = 0
 pictureTaking = 0
 
 lastTimePhotoTaken = datetime(year=1970, month=1, day=1)
+# datetimenow = datetime.combine(date.today(), time(hour=6, minute=0, second=0))
 datetimenow = datetime.now()
 
 # initialize GPIOzero outputs
@@ -143,8 +144,12 @@ def switchCameraLights(state):
 
 # thread function to switch on the grow lights for a certain duration
 def growLightOn(ondelta):
+    sleeptime = ondelta.seconds
     switchGrowLights(1)
-    sleep(ondelta.seconds)
+    while (sleeptime > 0):
+        sleep(1)
+        print("{}s of light left".format(sleeptime))
+        sleeptime -= 1
     switchGrowLights(0)
 
 # thread function to toggle the grow lights and camera lights and capture an image using the Pi Camera
