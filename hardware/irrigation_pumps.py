@@ -53,6 +53,11 @@ def forceWateringButton():
         x = threading.Thread(target=pumpOn, args=(pumpInterval, pumpObject), daemon=True)
         x.start()
 
+try:
+    manualWateringButton.when_pressed = forceWateringButton 
+except:
+    pass
+
 def loadPumpsIntervals(filename): # "pumps_interval.json"
     # read pump configuration json file
     global pumpIntervals

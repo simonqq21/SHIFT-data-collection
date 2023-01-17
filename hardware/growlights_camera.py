@@ -188,6 +188,11 @@ def captureImageButton():
     thread = threading.Thread(target=captureImage, args=(images_filepath, image_filename), daemon=True)
     thread.start()
 
+try:
+    cameraButton.when_pressed = captureImageButton 
+except:
+    pass
+
 def pollGrowLights(growLightDailyIntervals):
     global datetimenow
     # loop to check switch grow lights
