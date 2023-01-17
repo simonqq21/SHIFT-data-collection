@@ -41,8 +41,9 @@ try:
     cameralight = DigitalOutputDevice(27)
     cameraButton = Button(9)
     cameraButton.when_pressed = captureImageButton 
-except Exception as err:
+except Exception as e:
     print("not running on pi, using dummy output values")
+    print(e)
 
 # initialize camera object
 try:
