@@ -40,7 +40,6 @@ try:
     growlight = DigitalOutputDevice(18)
     cameralight = DigitalOutputDevice(27)
     cameraButton = Button(9)
-    cameraButton.when_pressed = captureImageButton 
 except Exception as e:
     print("not running on pi, using dummy output values")
     print(e)
