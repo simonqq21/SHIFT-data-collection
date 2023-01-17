@@ -13,7 +13,7 @@ MQTT data packet format
 '''
 import os
 from hardware.growlights_camera import *
-import hardware.irrigation_pumps as irrigation_pumps
+from hardware.irrigation_pumps import *
 from hardware.onewire_temperature_humidity import getTemperatureValues, getHumidityValues
 from hardware.i2c_lightintensity import getLightIntensityValues
 from hardware.analog_soilmoisture_ph_ec import getSoilMoistureValues, getpHValues, getECValues
