@@ -12,7 +12,7 @@ MQTT data packet format
 }
 '''
 import os
-from hardware.growlights_camera import *
+from hardware.growlights_camera import LightsCamera
 from hardware.irrigation_pumps import *
 from hardware.onewire_temperature_humidity import getTemperatureValues, getHumidityValues
 from hardware.i2c_lightintensity import getLightIntensityValues
@@ -20,8 +20,7 @@ from hardware.analog_soilmoisture_ph_ec import getSoilMoistureValues, getpHValue
 
 if __name__ == "__main__":
     print(os.getcwd())
-    growLightIntervals = loadGrowLightIntervals(os.getcwd()+"/growlight_interval.json")
-    cameraIntervals = loadCameraIntervals(os.getcwd()+"/camera_interval.json")
+    lightscamera = LightsCamera(18, 27, 9, os.getcwd()+"/growlight_interval.json", os.getcwd()+"/camera_interval.json")
     pumpIntervals = loadPumpsIntervals(os.getcwd()+"/pumps_interval.json")
     # datetimenow = datetime.combine(date.today(), time(hour=21, minute=0, second=0))
     # datetimenow = datetime.combine(date.today(), time(hour=5, minute=59, second=50))
@@ -38,20 +37,23 @@ if __name__ == "__main__":
         if (date.today() > lastUpdatedDate):
             datetimenow = datetime.now()
             lastUpdatedDate = date.today() 
-            growLightDailyIntervals = getGrowLightIntervalsPerDay(growLightIntervals)
-            cameraDailyIntervals = getCameraIntervalsPerDay(cameraIntervals)
+            lightscamera.getGrowLightIntervalsPerDay()
+            lightscamera.getCameraIntervalsPerDay()
             
         # loop to check the camera, growlights, and pump
         if (datetime.now() - intervalLastChecked >= checkingInterval):
             intervalLastChecked = datetime.now()
             # loop to check switch grow lights
-            pollGrowLights(datetimenow, growLightDailyIntervals)
-            print("val={}".format(growlightval))
+            lightscamera.pollGrowLights(datetimenow)
+            print("val={}".format(lightscamera.growlightval))
             '''
             while the camera is capturing an image, the growlight code must be overriden.
             '''
             # loop to capture image 
-            pollCamera(datetimenow, cameraDailyIntervals)
+            lightscamera.pollCamera(datetimenow)
+            if (lightscamera.newImage):
+                print("binary image = {}".format(lightscamera.binaryImage))
+                lightscamera.newImage = 0
 
             # loop to check and run irrigation pumps
             pollPumps(datetimenow, pumpIntervals)
