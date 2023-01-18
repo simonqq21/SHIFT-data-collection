@@ -9,12 +9,10 @@ import json
 from datetime import datetime, date, time, timedelta
 import threading 
 
-pollingMinutes = 0.1
+pollingMinutes = 1/6
 # pollingMinutes = 1
 timeElapsedIncrement = timedelta(seconds=(pollingMinutes * 60)) 
 
-datetimenow = datetime.now()
-# datetimenow = datetime.combine(date.today(), time(hour=6, minute=0, second=0))
 pumpIntervals = []
 # create GPIOZero output objects for the pumps
 pumpObjects = []
@@ -80,7 +78,7 @@ def loadPumpsIntervals(filename): # "pumps_interval.json"
     print(pumpIntervals) 
     return pumpIntervals 
 
-def pollPumps(pumpIntervals):
+def pollPumps(datetimenow, pumpIntervals):
     global pumpObjects
     print("0")
     for i, (pumpInterval, pumpObject) in enumerate(zip(pumpIntervals, pumpObjects)): 

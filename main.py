@@ -24,17 +24,19 @@ if __name__ == "__main__":
     cameraIntervals = loadCameraIntervals(os.getcwd()+"/camera_interval.json")
     pumpIntervals = loadPumpsIntervals(os.getcwd()+"/pumps_interval.json")
     # datetimenow = datetime.combine(date.today(), time(hour=21, minute=0, second=0))
-    # datetimenow = datetime.combine(date.today(), time(hour=6, minute=0, second=0))
+    # datetimenow = datetime.combine(date.today(), time(hour=5, minute=59, second=50))
     datetimenow = datetime.now()
     checkingInterval = timedelta(seconds=10)
     lastUpdatedDate = date(year=1970, month=1, day=1)
     intervalLastChecked = datetime(year=1970, month=1, day=1)
-
-    # get sensor data from all sensors, package it into 
+    # sensorsLastPolled = 
+    
     while True:
+        datetimenow += timedelta(seconds=1) 
         # datetimenow = datetime.now()
         # update the growLightIntervals with the times of the day 
         if (date.today() > lastUpdatedDate):
+            datetimenow = datetime.now()
             lastUpdatedDate = date.today() 
             growLightDailyIntervals = getGrowLightIntervalsPerDay(growLightIntervals)
             cameraDailyIntervals = getCameraIntervalsPerDay(cameraIntervals)
@@ -43,14 +45,17 @@ if __name__ == "__main__":
         if (datetime.now() - intervalLastChecked >= checkingInterval):
             intervalLastChecked = datetime.now()
             # loop to check switch grow lights
-            pollGrowLights(growLightDailyIntervals)
+            pollGrowLights(datetimenow, growLightDailyIntervals)
             print("val={}".format(growlightval))
             '''
             while the camera is capturing an image, the growlight code must be overriden.
             '''
             # loop to capture image 
-            pollCamera(cameraDailyIntervals)
+            pollCamera(datetimenow, cameraDailyIntervals)
 
             # loop to check and run irrigation pumps
-            pollPumps(pumpIntervals)
+            pollPumps(datetimenow, pumpIntervals)
+
+        # loop to gather sensor data from all sensors, package it into json, and send it via MQTT 
+        
         sleep(1)

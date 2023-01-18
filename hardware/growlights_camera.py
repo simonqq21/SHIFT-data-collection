@@ -32,8 +32,6 @@ cameralightval = 0
 pictureTaking = 0
 
 lastTimePhotoTaken = datetime(year=1970, month=1, day=1)
-# datetimenow = datetime.combine(date.today(), time(hour=6, minute=0, second=0))
-datetimenow = datetime.now()
 
 # initialize GPIOzero outputs
 try:
@@ -192,19 +190,24 @@ try:
 except:
     pass
 
-def pollGrowLights(growLightDailyIntervals):
-    global datetimenow
+def pollGrowLights(datetimenow, growLightDailyIntervals):
     # loop to check switch grow lights
     for dayinterval in growLightDailyIntervals:
         # If the time is between the on and off time and the grow lights are off, switch them on.
+        print("{},{},{},{},".format(datetimenow >= dayinterval["on_time"], \
+            datetimenow < dayinterval["off_time"], \
+            growlightval, \
+            pictureTaking))
+        print()
         if (datetimenow >= dayinterval["on_time"] \
             and datetimenow < dayinterval["off_time"] \
-            and not growlightval and not pictureTaking):
+            and not growlightval \
+            and not pictureTaking):
             thread = threading.Thread(target=growLightOn, args=(dayinterval["duration"], ), daemon=True)
             thread.start()
 
-def pollCamera(cameraDailyIntervals):
-    global datetimenow, lastTimePhotoTaken
+def pollCamera(datetimenow, cameraDailyIntervals):
+    global lastTimePhotoTaken
     # loop to capture image 
     for dayinterval in cameraDailyIntervals: 
         if (datetimenow >= dayinterval["start_time"] \
