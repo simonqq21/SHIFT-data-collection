@@ -217,7 +217,8 @@ class LightsCamera:
                 and datetimenow < dayinterval["off_time"] \
                 and not self.growlightval \
                 and not self.pictureTaking):
-                thread = threading.Thread(target=self.growLightOn, args=(dayinterval["duration"], ), daemon=True)
+                actualOnInterval = dayinterval["duration"] - (datetimenow - dayinterval["on_time"])
+                thread = threading.Thread(target=self.growLightOn, args=(actualOnInterval, ), daemon=True)
                 thread.start()
 
     def pollCamera(self, datetimenow):
