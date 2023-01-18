@@ -12,8 +12,10 @@ MQTT data packet format
 }
 '''
 import os
+from time import sleep 
+from datetime import datetime, date, time, timedelta
 from hardware.growlights_camera import LightsCamera
-from hardware.irrigation_pumps import *
+from hardware.irrigation_pumps import SyncedPumps
 from hardware.onewire_temperature_humidity import getTemperatureValues, getHumidityValues
 from hardware.i2c_lightintensity import getLightIntensityValues
 from hardware.analog_soilmoisture_ph_ec import getSoilMoistureValues, getpHValues, getECValues
@@ -21,7 +23,7 @@ from hardware.analog_soilmoisture_ph_ec import getSoilMoistureValues, getpHValue
 if __name__ == "__main__":
     print(os.getcwd())
     lightscamera = LightsCamera(18, 27, 9, os.getcwd()+"/growlight_interval.json", os.getcwd()+"/camera_interval.json")
-    pumpIntervals = loadPumpsIntervals(os.getcwd()+"/pumps_interval.json")
+    pumps = SyncedPumps((22, 23, 24), 10, os.getcwd()+"/pumps_interval.json")
     # datetimenow = datetime.combine(date.today(), time(hour=21, minute=0, second=0))
     # datetimenow = datetime.combine(date.today(), time(hour=5, minute=59, second=50))
     datetimenow = datetime.now()
@@ -33,7 +35,7 @@ if __name__ == "__main__":
     while True:
         datetimenow += timedelta(seconds=1) 
         # datetimenow = datetime.now()
-        # update the growLightIntervals with the times of the day 
+        # update the growLightIntervals and cameraIntervals with the times of the day 
         if (date.today() > lastUpdatedDate):
             datetimenow = datetime.now()
             lastUpdatedDate = date.today() 
@@ -52,11 +54,12 @@ if __name__ == "__main__":
             # loop to capture image 
             lightscamera.pollCamera(datetimenow)
             if (lightscamera.newImage):
-                print("binary image = {}".format(lightscamera.binaryImage))
+                print("binary image received")
+                # print("binary image = {}".format(lightscamera.binaryImage))
                 lightscamera.newImage = 0
 
             # loop to check and run irrigation pumps
-            pollPumps(datetimenow, pumpIntervals)
+            pumps.pollPumps(datetimenow)
 
         # loop to gather sensor data from all sensors, package it into json, and send it via MQTT 
         
