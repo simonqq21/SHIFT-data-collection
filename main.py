@@ -62,5 +62,11 @@ if __name__ == "__main__":
             pumps.pollPumps(datetimenow)
 
         # loop to gather sensor data from all sensors, package it into json, and send it via MQTT 
+        # temperature and humidity from DHT22 
+
+        # light intensity from BH1750 
+
+        # soil moisture, pH, and EC from soil moisture sensors. PH-4502C, and TDS Meter 1.0 
+
         
         sleep(1)
