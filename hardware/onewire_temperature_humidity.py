@@ -45,7 +45,6 @@ if __name__ == "__main__":
             print(dht.getTemperature())
             print(dht.getHumidity())
             print()
-        sleep(3)
 '''
 get the temperature values from the two DHT22 sensors in °C
 '''
