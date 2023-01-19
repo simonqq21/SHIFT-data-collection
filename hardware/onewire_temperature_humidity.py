@@ -34,6 +34,7 @@ class DHT22():
         return self.humidity
 
 if __name__ == "__main__":
+    sleep(3)
     dhts = []
     dhts.append(DHT22(board.D4))
     dhts.append(DHT22(board.D17))
