@@ -10,7 +10,7 @@ class DHT22():
         try:
             self.sensor = adafruit_dht.DHT22(GPIO)
         except:
-            print("error adding DHT sensor on pin {}".format(GPIO))
+            print("error adding DHT22 on pin {}".format(GPIO))
         self.temperature = None
         self.humidity = None 
 
