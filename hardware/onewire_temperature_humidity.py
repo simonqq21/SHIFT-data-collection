@@ -18,16 +18,13 @@ class DHT22():
         self.temperature = None
         self.humidity = None
         sleep(3)
-        while (self.temperature is None or self.humidity is None):
+        for i in range(5):
             try:
                 self.temperature = self.sensor.temperature
                 self.humidity = self.sensor.humidity
-                if (self.temperature is None or self.humidity is None):
-                    print("DHT22 read error")
-            except Exception as e:
+            except RuntimeError:
                 print(e)
-                print(type(e))
-                print("DHT22 not connected")
+            if (self.temperature is not None and self.humidity is not None):
                 break
 
     def getTemperature(self):
