@@ -18,14 +18,13 @@ class DHT22():
         self.temperature = None
         self.humidity = None
         for i in range(5):
+            if (self.temperature is not None and self.humidity is not None):
+                break
             try:
                 self.temperature = self.sensor.temperature
                 self.humidity = self.sensor.humidity
             except RuntimeError as err:
                 print(err)
-            if (self.temperature is not None and self.humidity is not None):
-                print("f")
-                break
 
     def getTemperature(self):
         return self.temperature
