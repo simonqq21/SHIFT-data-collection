@@ -24,6 +24,7 @@ class DHT22():
             except RuntimeError as err:
                 print(err)
             if (self.temperature is not None and self.humidity is not None):
+                print("f")
                 break
 
     def getTemperature(self):
