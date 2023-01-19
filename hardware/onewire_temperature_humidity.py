@@ -17,13 +17,13 @@ class DHT22():
     def update(self):
         self.temperature = None
         self.humidity = None
+        sleep(3)
         while (self.temperature is None or self.humidity is None):
             try:
                 self.temperature = self.sensor.temperature
                 self.humidity = self.sensor.humidity
                 if (self.temperature is None or self.humidity is None):
                     print("DHT22 read error")
-                    sleep(3)
             except Exception as e:
                 print(e)
                 print("DHT22 not connected")
