@@ -39,11 +39,13 @@ if __name__ == "__main__":
     dhts = []
     dhts.append(DHT22(board.D4))
     dhts.append(DHT22(board.D17))
-    for dht in dhts:
-        dht.update()
-        print(dht.getTemperature())
-        print(dht.getHumidity())
-        print()
+    for i in range(5):
+        for dht in dhts:
+            dht.update()
+            print(dht.getTemperature())
+            print(dht.getHumidity())
+            print()
+            sleep(3)
 '''
 get the temperature values from the two DHT22 sensors in °C
 '''
