@@ -11,6 +11,15 @@ try:
 except:
     print("BH1750 or TCA9548A library not present")
 
+class BH1750:
+    def __init__():
+        pass 
+
+class TCA9548:
+    def __init__():
+        pass 
+
+    
 bhcount = 9
 try:
     i2c = board.I2C()
