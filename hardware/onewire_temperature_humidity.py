@@ -26,6 +26,7 @@ class DHT22():
                     print("DHT22 read error")
             except Exception as e:
                 print(e)
+                print(type(e))
                 print("DHT22 not connected")
                 break
 
