@@ -17,7 +17,6 @@ class DHT22():
     def update(self):
         self.temperature = None
         self.humidity = None
-        sleep(3)
         for i in range(5):
             try:
                 self.temperature = self.sensor.temperature
@@ -43,6 +42,7 @@ if __name__ == "__main__":
             print(dht.getTemperature())
             print(dht.getHumidity())
             print()
+            sleep(3)
 '''
 get the temperature values from the two DHT22 sensors in °C
 '''
