@@ -53,10 +53,11 @@ class TCA9548A:
         
     def getLightIntensities(self):
         self.lightIntensities = []
+        print(len(self.bhs))
         for bh in self.bhs:
             bh.update()
             self.lightIntensities.append(bh.getLightIntensity())
-            return self.lightIntensities
+        return self.lightIntensities
 
 if __name__ == "__main__":
     bhcount = 9 
@@ -72,7 +73,6 @@ if __name__ == "__main__":
         except Exception as e:
             print(e)
             print("not running on Pi or device not connected properly")
-            pass
 
     for i in range(5):
         print(tca.getLightIntensities())
