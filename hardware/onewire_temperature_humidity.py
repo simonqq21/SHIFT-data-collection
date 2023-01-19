@@ -15,6 +15,7 @@ class DHT22():
         self.humidity = None 
 
     def update(self):
+        sleep(3)
         self.temperature = None
         self.humidity = None
         for i in range(5):
@@ -25,6 +26,7 @@ class DHT22():
                 self.humidity = self.sensor.humidity
             except RuntimeError as err:
                 print(err)
+            sleep(3)
 
     def getTemperature(self):
         return self.temperature
@@ -33,7 +35,6 @@ class DHT22():
         return self.humidity
 
 if __name__ == "__main__":
-    sleep(3)
     dhts = []
     dhts.append(DHT22(board.D4))
     dhts.append(DHT22(board.D17))
@@ -43,7 +44,7 @@ if __name__ == "__main__":
             print(dht.getTemperature())
             print(dht.getHumidity())
             print()
-            sleep(3)
+            
 '''
 get the temperature values from the two DHT22 sensors in °C
 '''
