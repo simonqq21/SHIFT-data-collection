@@ -1,5 +1,4 @@
-import time
-
+from time import sleep
 try:
     import adafruit_dht
     import board
