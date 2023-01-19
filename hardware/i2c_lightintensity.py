@@ -47,7 +47,7 @@ class TCA9548A:
         
     def addBH1750(self, i2cIndex):
         if (i2cIndex > 7):
-            self.bhs.append(BH1750(self.tca[i2cIndex%8]), altAddr=True)
+            self.bhs.append(BH1750(self.tca[i2cIndex%8], altAddr=True))
         else:
             self.bhs.append(BH1750(self.tca[i2cIndex%8]))
         
