@@ -17,15 +17,14 @@ from datetime import datetime, date, time, timedelta
 from hardware.growlights_camera import LightsCamera
 from hardware.irrigation_pumps import SyncedPumps
 from hardware.onewire_temperature_humidity import DHT22
-from hardware.i2c_lightintensity import getLightIntensityValues
-from hardware.analog_soilmoisture_ph_ec import getSoilMoistureValues, getpHValues, getECValues
+from hardware.i2c_lightintensity import BH1750, TCA9548A
+# from hardware.analog_soilmoisture_ph_ec import getSoilMoistureValues, getpHValues, getECValues
 
 if __name__ == "__main__":
     print(os.getcwd())
     lightscamera = LightsCamera(18, 27, 9, os.getcwd()+"/growlight_interval.json", os.getcwd()+"/camera_interval.json")
     pumps = SyncedPumps((22, 23, 24), 10, os.getcwd()+"/pumps_interval.json")
     # datetimenow = datetime.combine(date.today(), time(hour=21, minute=0, second=0))
-    # datetimenow = datetime.combine(date.today(), time(hour=5, minute=59, second=50))
     datetimenow = datetime.now()
     checkingInterval = timedelta(seconds=10)
     lastUpdatedDate = date(year=1970, month=1, day=1)

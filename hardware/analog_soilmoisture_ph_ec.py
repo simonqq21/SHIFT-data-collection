@@ -14,6 +14,71 @@ try:
 except:
     print("ads1115 library not present")
 
+class SoilMoistureSensor:
+    def __init__(self, ADSchan):
+        self.chan = ADSchan
+        self.voltage = None
+        self.soilMoisture = None 
+
+    def update(self):
+        try:
+            self.voltage = self.chan.voltage
+            self.soilMoisture = self.voltage # TODO    
+        except:
+            print("ADS1115 not connected properly")
+
+    def getSoilMoisture(self):
+        return self.soilMoisture
+    
+
+class PH4502C:
+    def __init__(self, ADSchan):
+        self.chan = ADSchan
+        self.voltage = None
+        self.soilMoisture = None 
+
+    def update(self):
+        try:
+            self.voltage = self.chan.voltage
+            self.soilMoisture = self.voltage # TODO    
+        except:
+            print("ADS1115 not connected properly")
+
+    def getSoilMoisture(self):
+        return self.soilMoisture
+
+
+class TDSMeter:
+
+    def __init__(self, ADSchan):
+        self.chan = ADSchan
+        self.voltage = None
+        self.compensationCoefficient = 0
+        self.compensationVoltage = 0 
+        self.TDS = 0
+        self.EC = 0 
+
+    def update(self, temperature, ):
+        self.compensationCoefficient = 1.0 + 0.02 *(temperature-25.0)
+        try:
+            self.voltage = self.chan.voltage
+            self.compensationVoltage = self.voltage / self.compensationCoefficient
+            self.TDS = (133.42*self.compensationVoltage**3 - 255.86*self.compensationVoltage**2 + 857.39*self.compensationVoltage)*0.5
+            self.EC = self.TDS / 500  
+        except:
+            print("ADS1115 not connected properly")
+
+    def getEC(self):
+        return self.EC
+
+
+class ADS1115:
+    def __init__(self, address):
+        self.chan = ADSsensor
+
+class ADS1115Array:
+
+
 gain = 2.0/3.0
 try:
     i2c = busio.I2C(board.SCL, board.SDA)

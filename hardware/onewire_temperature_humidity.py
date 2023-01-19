@@ -34,6 +34,7 @@ class DHT22():
     def getHumidity(self):
         return self.humidity
 
+# driver code
 if __name__ == "__main__":
     dhts = []
     dhts.append(DHT22(board.D4))
