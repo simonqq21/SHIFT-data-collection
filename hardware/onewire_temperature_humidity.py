@@ -22,8 +22,8 @@ class DHT22():
             try:
                 self.temperature = self.sensor.temperature
                 self.humidity = self.sensor.humidity
-            except RuntimeError:
-                print(e)
+            except RuntimeError as err:
+                print(err)
             if (self.temperature is not None and self.humidity is not None):
                 break
 
