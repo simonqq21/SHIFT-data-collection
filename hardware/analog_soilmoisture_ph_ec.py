@@ -167,7 +167,7 @@ if __name__ == "__main__":
 
         # add 9 soil moisture sensors throughout three ADS1115 consecutively from channel 0 of ADS1115 index 0
         for i in range(9):
-            adss[i//4].addSoilMoistureSensor(m=-0.5, b=0)
+            # adss[i//4].addSoilMoistureSensor(m=-0.5, b=0)
 
         # add 1 pH sensor to channel 1 of ADS1115 index 2
             adss[2].addPH4502C(m=-0.5, b=1)
