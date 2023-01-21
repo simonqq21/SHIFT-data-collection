@@ -6,7 +6,6 @@ MQTT data packet format
     'sitename': (string),
     'type': (string eg. "temperature", "humidity", "light_intensity", "soil_moisture",  
             solution_pH", "solution_EC"),
-    'count': (integer referring to the total number of sensors),
     'index': (integer),
     'value': (float),
 }
@@ -18,7 +17,13 @@ from hardware.growlights_camera import LightsCamera
 from hardware.irrigation_pumps import SyncedPumps
 from hardware.onewire_temperature_humidity import DHT22
 from hardware.i2c_lightintensity import BH1750, TCA9548A
-# from hardware.analog_soilmoisture_ph_ec import getSoilMoistureValues, getpHValues, getECValues
+from hardware.analog_soilmoisture_ph_ec import ADS1115, SoilMoistureSensor, PH4502C, TDSMeter
+import pandas as pd 
+import paho.mqtt.client as mqtt
+
+# some MQTT data constants
+expt_num = 0 
+sitename = "DLSU-BLAST"
 
 if __name__ == "__main__":
     print(os.getcwd())
