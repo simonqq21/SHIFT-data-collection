@@ -174,9 +174,9 @@ if __name__ == "__main__":
 
     for i in range(5):
         for ads in adss:
-            print(ads.getSoilMoistures)
-            print(ads.getSolutionpHs) 
-            print(ads.getSolutionECs)
+            print(ads.getSoilMoistures())
+            print(ads.getSolutionpHs()) 
+            print(ads.getSolutionECs())
         sleep(2)
 # '''
 # get the soil moisture values from the nine soil moisture sensors in %
