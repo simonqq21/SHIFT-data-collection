@@ -5,7 +5,7 @@ convert analog soil moisture sensor values into %, convert pH sensor values into
 pH, and EC sensor values into EC (μS/cm).
 '''
 
-import time
+from time import sleep 
 try:
     import board
     import busio
@@ -13,6 +13,8 @@ try:
     from adafruit_ads1x15.analog_in import AnalogIn
 except:
     print("ads1115 library not present")
+
+debug = 1 
 
 class SoilMoistureSensor:
     def __init__(self, ADSchan, m, b):
@@ -52,14 +54,13 @@ class PH4502C:
         except:
             print("ADS1115 not connected properly")
 
-    def getpH(self):
+    def getSolutionpH(self):
         return self.pH
 
 
 class TDSMeter:
-
     def __init__(self, ADSchan):
-        self.type = "solution_ec"
+        self.type = "solution_EC"
         self.chan = ADSchan
         self.voltage = None
         self.compensationCoefficient = 0
@@ -67,8 +68,8 @@ class TDSMeter:
         self.TDS = 0
         self.EC = 0 
 
-    def update(self, temperature):
-        self.compensationCoefficient = 1.0 + 0.02 *(temperature-25.0)
+    def update(self, water_temperature):
+        self.compensationCoefficient = 1.0 + 0.02 *(water_temperature-25.0)
         try:
             self.voltage = self.chan.voltage
             self.compensationVoltage = self.voltage / self.compensationCoefficient
@@ -77,12 +78,11 @@ class TDSMeter:
         except:
             print("ADS1115 not connected properly")
 
-    def getEC(self):
+    def getSolutionEC(self):
         return self.EC
 
-
 class ADS1115:
-    def __init__(self, gain, addressIndex):
+    def __init__(self, i2c, gain, addressIndex=0):
         self.gain = gain
         self.address = 72 + addressIndex
         self.ads = ADS.ADS1115(i2c, gain=self.gain, address=self.address)  
@@ -100,46 +100,84 @@ class ADS1115:
             chanIndex = len(self.sensors) - 1 if len(self.sensors) > 0 else 0
             self.sensors.append(SoilMoistureSensor(self.chans[chanIndex], m, b))
 
-    def addpHSensor(self, m, b):
+    def addPH4502C(self, m, b):
         if (len(self.sensors) >= 4):
             print("ADS1115 is full, error adding pH sensor")
         else:
             chanIndex = len(self.sensors) - 1 if len(self.sensors) > 0 else 0
             self.sensors.append(PH4502C(self.chans[chanIndex], m, b))
 
-    def addTDSMeter(self, temperature):
+    def addTDSMeter(self):
         if (len(self.sensors) >= 4):
             print("ADS1115 is full, error adding EC sensor")
         else:
             chanIndex = len(self.sensors) - 1 if len(self.sensors) > 0 else 0
-            self.sensors.append(TDSMeter(self.chans[chanIndex], temperature))
+            self.sensors.append(TDSMeter(self.chans[chanIndex]))
 
-    
+    def getSoilMoistures(self):
+        soilmoisture_values = []
+        for sensor in self.sensors:
+            if sensor.type == "soil_moisture":
+                sensor.update()
+                if debug:
+                    print(sensor.voltage)
+                soilmoisture_values.append(sensor.getSoilMoisture())
+        if debug:
+            print()
+        return soilmoisture_values
 
-class ADS1115Array:
+    def getSolutionpHs(self):
+        solutionpH_values = []
+        for sensor in self.sensors:
+            if sensor.type == "solution_pH":
+                sensor.update()
+                if debug:
+                    print(sensor.voltage)
+                solutionpH_values.append(sensor.getSolutionpH())
+        if debug:
+            print()
+        return solutionpH_values 
 
+    def getSolutionECs(self, water_temperature):
+        solutionEC_values = []
+        for sensor in self.sensors:
+            if sensor.type == "solution_EC":
+                sensor.update(water_temperature)
+                if debug:
+                    print(sensor.voltage)
+                solutionEC_values.append(sensor.getSolutionEC())
+        if debug:
+            print()
+        return solutionEC_values 
 
-# gain = 2.0/3.0
-# try:
-#     i2c = busio.I2C(board.SCL, board.SDA)
-#     adss = []
-#     adss.append(ADS.ADS1115(i2c, gain=gain)) # soil moisture sensors 0-3
-#     adss.append(ADS.ADS1115(i2c, gain=gain, address=73)) # soil moisture sensors 4-7
-#     adss.append(ADS.ADS1115(i2c, gain=1, address=74)) # soil moisture sensor 8, pH sensor, and EC sensor
-#     chans = []
-#     '''
-#     chans[0:9] - soil moisture sensors 1-9 
-#     chans[9] - pH sensor 
-#     chans[10] - EC sensor
-#     '''
-#     for ads in adss:
-#         chans.append(AnalogIn(ads, ADS.P0))
-#         chans.append(AnalogIn(ads, ADS.P1))
-#         chans.append(AnalogIn(ads, ADS.P2))
-#         chans.append(AnalogIn(ads, ADS.P3))
-# except:
-#     print("ADS1115 not connected or not running on RPi")
+if __name__ == "__main__":
+    gain = 2.0/3.0
+    try:
+        i2c = busio.I2C(board.SCL, board.SDA) 
+        adss = []
+        adss.append(ADS1115(i2c, gain=gain, addressIndex=0)) # soil moisture sensors 0-3
+        adss.append(ADS1115(i2c, gain=gain, addressIndex=1)) # soil moisture sensors 4-7
+        adss.append(ADS1115(i2c, gain=gain, addressIndex=2)) # soil moisture sensor 8, pH sensor, and EC sensor
 
+        # add 9 soil moisture sensors throughout three ADS1115 consecutively from channel 0 of ADS1115 index 0
+        for i in range(9):
+            adss[i//4].addSoilMoistureSensor(m=-0.5, b=0)
+
+        # add 1 pH sensor to channel 1 of ADS1115 index 2
+            ads[2].addPH4502C(m=-0.5, b=1)
+
+        # add 1 EC sensor 
+            ads[2].addTDSMeter()
+
+    except:
+        print("ADS1115 not connected or not running on RPi")
+
+    for i in range(5):
+        for ads in adss:
+            print(ads.getSoilMoistures)
+            print(ads.getSolutionpHs) 
+            print(ads.getSolutionECs)
+        sleep(2)
 # '''
 # get the soil moisture values from the nine soil moisture sensors in %
 # '''
@@ -192,8 +230,8 @@ class ADS1115Array:
 #             pHReadings.append(newpHReading)
 #     return pHReadings
 
-# def getECValues(temperature): 
-#     compensationCoefficient = 1.0 + 0.02 *(temperature-25.0)
+# def getECValues(water_temperature): 
+#     compensationCoefficient = 1.0 + 0.02 *(water_temperature-25.0)
 #     ECReadings = [] 
 #     try:
 #         for i in range(10,11):
