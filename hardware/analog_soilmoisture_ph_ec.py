@@ -164,10 +164,10 @@ if __name__ == "__main__":
             adss[i//4].addSoilMoistureSensor(m=-0.5, b=0)
 
         # add 1 pH sensor to channel 1 of ADS1115 index 2
-            ads[2].addPH4502C(m=-0.5, b=1)
+            adss[2].addPH4502C(m=-0.5, b=1)
 
         # add 1 EC sensor 
-            ads[2].addTDSMeter()
+            adss[2].addTDSMeter()
 
     except Exception as e:
         print("ADS1115 not connected or not running on RPi")
