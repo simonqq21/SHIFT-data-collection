@@ -169,8 +169,9 @@ if __name__ == "__main__":
         # add 1 EC sensor 
             ads[2].addTDSMeter()
 
-    except:
+    except Exception as e:
         print("ADS1115 not connected or not running on RPi")
+        print(e)
 
     for i in range(5):
         for ads in adss:
