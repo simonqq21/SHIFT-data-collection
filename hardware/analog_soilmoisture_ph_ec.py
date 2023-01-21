@@ -138,7 +138,7 @@ class ADS1115:
             print()
         return solutionpH_values 
 
-    def getSolutionECs(self, water_temperature):
+    def getSolutionECs(self, water_temperature=25):
         solutionEC_values = []
         for sensor in self.sensors:
             if sensor.type == "solution_EC":
