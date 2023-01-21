@@ -115,6 +115,8 @@ class ADS1115:
             self.sensors.append(TDSMeter(self.chans[chanIndex]))
 
     def getSoilMoistures(self):
+        if debug:
+            print("sm")
         soilmoisture_values = []
         for sensor in self.sensors:
             if sensor.type == "soil_moisture":
@@ -127,6 +129,8 @@ class ADS1115:
         return soilmoisture_values
 
     def getSolutionpHs(self):
+        if debug:
+            print("ph")
         solutionpH_values = []
         for sensor in self.sensors:
             if sensor.type == "solution_pH":
@@ -139,6 +143,8 @@ class ADS1115:
         return solutionpH_values 
 
     def getSolutionECs(self, water_temperature=25):
+        if debug:
+            print("ec")
         solutionEC_values = []
         for sensor in self.sensors:
             if sensor.type == "solution_EC":
