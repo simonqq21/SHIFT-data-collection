@@ -173,12 +173,12 @@ if __name__ == "__main__":
         print("ADS1115 not connected or not running on RPi")
         print(e)
 
-    for i in range(5):
-        for ads in adss:
-            print(ads.getSoilMoistures())
-            print(ads.getSolutionpHs()) 
-            print(ads.getSolutionECs())
-        sleep(2)
+    # for i in range(5):
+    for ads in adss:
+        print(ads.getSoilMoistures())
+        print(ads.getSolutionpHs()) 
+        print(ads.getSolutionECs())
+    sleep(2)
 # '''
 # get the soil moisture values from the nine soil moisture sensors in %
 # '''
