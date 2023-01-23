@@ -79,11 +79,32 @@ except Exception as e:
 if __name__ == "__main__":
     print(os.getcwd())
     # initialize onewire DHT22 temperature and humidity sensors 
-
+    dhts = []
+    for wire in onewires:
+        dhts.append(DHT22(wire))
 
     # initialize TCA9548A i2c multiplexer and i2c BH1750 light intensity sensors 
+    bhcount = 9 
+    tca = TCA9548A(i2c)
+    for si in range(bhcount):
+        try:
+            tca.addBH1750(si)
+        except Exception as e:
+            print(e)
+            print("not running on Pi or device not connected properly") 
 
     # initialize ADS1115 i2c ADCs and analog channels for soil moisture sensors, PH4502C pH sensor, and TDS meter EC sensor 
+    adss = []
+    adss.append(ADS1115(i2c, addressIndex=0)) # soil moisture sensors 0-3
+    adss.append(ADS1115(i2c, addressIndex=1)) # soil moisture sensors 4-7
+    adss.append(ADS1115(i2c, addressIndex=2)) # soil moisture sensor 8, pH sensor, and EC sensor
+    # add 9 soil moisture sensors throughout three ADS1115 consecutively from channel 0 of ADS1115 index 0
+    for i in range(9):
+    adss[i//4].addSoilMoistureSensor(m=-0.5, b=0)
+    # add 1 pH sensor to channel 1 of ADS1115 index 2
+    adss[2].addPH4502C(m=-0.5, b=1)
+    # add 1 EC sensor 
+    adss[2].addTDSMeter() 
 
     # initialize grow lights and camera with camera light
     lightscamera = LightsCamera(18, 27, 9, os.getcwd()+"/growlight_interval.json", os.getcwd()+"/camera_interval.json")

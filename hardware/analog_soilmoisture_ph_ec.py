@@ -85,7 +85,7 @@ class TDSMeter:
         return self.EC
 
 class ADS1115:
-    def __init__(self, i2c, gain, addressIndex=0):
+    def __init__(self, i2c, gain=1, addressIndex=0): # gain=1 to fit the 3v3 range 
         self.gain = gain
         self.address = 72 + addressIndex
         self.ads = ADS.ADS1115(i2c, gain=self.gain, address=self.address)  
