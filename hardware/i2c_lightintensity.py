@@ -7,10 +7,13 @@ from time import sleep
 try:
     import adafruit_tca9548a
     import adafruit_bh1750
-    from pi_interfaces import i2c
 except Exception as e:
     print("BH1750 or TCA9548A library not present")
     print(e)
+try:
+    from hardware.pi_interfaces import i2c 
+except:
+    pass 
 
 class BH1750:
     def __init__(self, i2c, altAddr=False):
@@ -64,6 +67,8 @@ class TCA9548A:
 if __name__ == "__main__":
     bhcount = 9 
     try:
+        from pi_interfaces import i2c 
+        print("i2c not initialized, not running on RPi") 
         tca = TCA9548A(i2c)
     except:
         print("Error adding TCA9548")

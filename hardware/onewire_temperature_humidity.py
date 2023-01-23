@@ -1,11 +1,16 @@
 from time import sleep
+import os 
+print(os.getcwd())
 try:
     import adafruit_dht
-    from pi_interfaces import onewires
 except Exception as e:
     print("DHT library not present or not running on RPi")
     print(e)
-    
+try:
+    from hardware.pi_interfaces import onewires
+except:
+    pass
+
 class DHT22():
     def __init__(self, GPIO): # board.D4 or board.D17
         try:
@@ -37,6 +42,7 @@ class DHT22():
 
 # driver code
 if __name__ == "__main__":
+    from pi_interfaces import onewires
     dhts = []
     for wire in onewires:
         dhts.append(DHT22(wire))

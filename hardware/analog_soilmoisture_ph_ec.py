@@ -7,12 +7,15 @@ pH, and EC sensor values into EC (μS/cm).
 
 from time import sleep 
 try:
-    import board
-    import busio
     import adafruit_ads1x15.ads1115 as ADS
     from adafruit_ads1x15.analog_in import AnalogIn
 except:
     print("ads1115 library not present")
+
+try:
+    from hardware.pi_interfaces import i2c 
+except:
+    pass 
 
 debug = 1 
 
@@ -35,7 +38,7 @@ class SoilMoistureSensor:
 
     def getSoilMoisture(self):
         return self.soilMoisture
-    
+
 
 class PH4502C:
     def __init__(self, ADSchan, m, b):
@@ -155,16 +158,12 @@ class ADS1115:
         if debug:
             print()
         return solutionEC_values 
-
-try:
-    i2c = board.I2C()
-except:
-    print("i2c not initialized, not running on RPi") 
     
 if __name__ == "__main__":
     gain = 2.0/3.0
     try:
-        i2c = busio.I2C(board.SCL, board.SDA) 
+        # i2c = busio.I2C(board.SCL, board.SDA) 
+        from pi_interfaces import i2c 
         adss = []
         adss.append(ADS1115(i2c, gain=gain, addressIndex=0)) # soil moisture sensors 0-3
         adss.append(ADS1115(i2c, gain=gain, addressIndex=1)) # soil moisture sensors 4-7
