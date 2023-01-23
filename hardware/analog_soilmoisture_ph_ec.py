@@ -156,6 +156,11 @@ class ADS1115:
             print()
         return solutionEC_values 
 
+try:
+    i2c = board.I2C()
+except:
+    print("i2c not initialized, not running on RPi") 
+    
 if __name__ == "__main__":
     gain = 2.0/3.0
     try:

@@ -1,7 +1,7 @@
 from time import sleep
 try:
     import adafruit_dht
-    import board
+    from pi_interfaces import onewires
 except:
     print("DHT library not present or not running on RPi")
 
@@ -37,8 +37,8 @@ class DHT22():
 # driver code
 if __name__ == "__main__":
     dhts = []
-    dhts.append(DHT22(board.D4))
-    dhts.append(DHT22(board.D17))
+    for wire in onewires:
+        dhts.append(DHT22(wire))
     for i in range(5):
         for dht in dhts:
             dht.update()

@@ -5,9 +5,9 @@ TCA9548A i2c multiplexer module
 
 from time import sleep
 try:
-    import board
     import adafruit_tca9548a
     import adafruit_bh1750
+    from pi_interfaces import i2c
 except:
     print("BH1750 or TCA9548A library not present")
 
@@ -63,7 +63,6 @@ class TCA9548A:
 if __name__ == "__main__":
     bhcount = 9 
     try:
-        i2c = board.I2C()
         tca = TCA9548A(i2c)
     except:
         print("Error adding TCA9548")
