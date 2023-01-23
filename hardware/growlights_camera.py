@@ -168,6 +168,8 @@ class LightsCamera:
 
     # thread function to toggle the grow lights and camera lights and capture an image using the Pi Camera
     def captureImage(self, filepath, filename):
+        self.imageStream = BytesIO()
+        self.binaryImage = None
         self.pictureTaking = 1
         growLightsWereOn = False 
         if (self.growlightval):
