@@ -72,8 +72,9 @@ try:
     client.connect(mqttIP, mqttPort)
     print(client)
     client.loop_start()
-except:
+except Exception as e:
     print("Failed to connect to broker!")
+    print(e)
 
 if __name__ == "__main__":
     print(os.getcwd())
