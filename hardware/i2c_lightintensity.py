@@ -8,8 +8,9 @@ try:
     import adafruit_tca9548a
     import adafruit_bh1750
     from pi_interfaces import i2c
-except:
+except Exception as e:
     print("BH1750 or TCA9548A library not present")
+    print(e)
 
 class BH1750:
     def __init__(self, i2c, altAddr=False):
