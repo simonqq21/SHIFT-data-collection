@@ -15,13 +15,13 @@ from time import sleep
 from datetime import datetime, date, time, timedelta
 from hardware.growlights_camera import LightsCamera
 from hardware.irrigation_pumps import SyncedPumps
-from hardware.onewire_temperature_humidity import DHTpins, DHT22
+from hardware.onewire_temperature_humidity import DHT22
 from hardware.i2c_lightintensity import BH1750, TCA9548A
 from hardware.analog_soilmoisture_ph_ec import ADS1115, SoilMoistureSensor, PH4502C, TDSMeter
 import pandas as pd 
 import paho.mqtt.client as mqtt
 try:
-    import board
+    from hardware.pi_interfaces import onewires, i2c
 except:
     print("main.py not running on RPi")
 
