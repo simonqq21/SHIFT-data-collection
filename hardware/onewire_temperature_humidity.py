@@ -21,7 +21,6 @@ class DHT22():
         self.humidity = None 
 
     def getTemperature(self):
-        sleep(3)
         self.temperature = None
         for i in range(5):
             if (self.temperature):
@@ -30,7 +29,6 @@ class DHT22():
                 self.temperature = self.sensor.temperature
             except RuntimeError as err:
                 print(err)
-            sleep(3)
         return self.temperature
 
     def getHumidity(self):

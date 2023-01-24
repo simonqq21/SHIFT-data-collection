@@ -71,11 +71,18 @@ def processDataForPublish(datetime, type, index, rawsensordata):
         print(df)
     return df 
 
-def saveAndPublishData(df):
-    df_temperature = processDataForPublish(datetime.now(), suffix_temperature, index, curr_temperature)
-    df_temperature.to_csv(csv_filepath + csv_filename, mode='a', index=False, header=False)
-                
+def saveAndPublishData(df, sensorPublishTopic):
+    df.to_csv(csv_filepath + csv_filename, mode='a', index=False, header=False)
+    try:
+        client.publish(sensorPublishTopic, df.to_json())
+    except:
+        print("Publish failed, check broker")
 
+def publishImage(df, sensorPublishTopic):
+    try:
+        client.publish(sensorPublishTopic, df.to_json())
+    except:
+        print("Publish failed, check broker")
 
 # mqtt client init
 client = mqtt.Client(clientname)
@@ -157,15 +164,18 @@ if __name__ == "__main__":
             if (lightscamera.newImage):
                 # publish the image on MQTT
                 print("binary image received")
-                # print("binary image = {}".format(lightscamera.binaryImage)) 
-
+                index=0
+                df_image = processDataForPublish(datetime.now(), suffix_camera, index, lightscamera.binaryImage)
+                publishImage(df_image, main_topic+suffix_camera)
                 lightscamera.newImage = 0
 
             # loop to check and run irrigation pumps
             pumps.pollPumps(datetimenow)
 
         # loop to gather sensor data from all sensors, package it into json, and send it via MQTT 
-        if (datetime.now() - sensorsLastPolled >= sensorPollingInterval):
+        if (datetime.now() - sensorsLastPolled >= sensorPollingInterval and \
+            datetime.now() >= datetime.combine(date.today(), sensor_logging_start) and \
+            datetime.now() <= datetime.combine(date.today(), sensor_logging_end)):
             sensorsLastPolled = datetime.now()
             # temperature and humidity from DHT22 
             index = 0
@@ -176,17 +186,16 @@ if __name__ == "__main__":
                 curr_temperature = dht.getTemperature()
                 curr_humidity = dht.getHumidity()
                 df_temperature = processDataForPublish(datetime.now(), suffix_temperature, index, curr_temperature)
-                df_temperature.to_csv(csv_filepath + csv_filename, mode='a', index=False, header=False)
-                
+                saveAndPublishData(df_temperature, main_topic+suffix_temperature)
                 df_humidity = processDataForPublish(datetime.now(), suffix_humidity, index, curr_humidity)
-                df_humidity.df.to_csv(csv_filepath + csv_filename, mode='a', index=False, header=False)
-                
+                saveAndPublishData(df_humidity, main_topic+suffix_humidity)
                 index += 1
             # light intensity from BH1750 
             curr_lightIntensities = tca.getLightIntensities()
             index = 0
             for li in curr_lightIntensities:
-                processDataForPublish(datetime.now(), suffix_lightintensity, index, li)
+                df_lightintensity = processDataForPublish(datetime.now(), suffix_lightintensity, index, li)
+                saveAndPublishData(df_lightintensity, main_topic+suffix_lightintensity)
                 index += 1
             # soil moisture, pH, and EC from soil moisture sensors. PH-4502C, and TDS Meter 1.0 
             curr_soilmoistures = []
@@ -201,15 +210,18 @@ if __name__ == "__main__":
                     curr_solutionECs.append(ec)
             index = 0 
             for sm in curr_soilmoistures:
-                processDataForPublish(datetime.now(), suffix_soilmoisture, index, sm)
+                df_soilmoisture = processDataForPublish(datetime.now(), suffix_soilmoisture, index, sm)
+                saveAndPublishData(df_soilmoisture, main_topic+suffix_soilmoisture)
                 index += 1
             index = 0 
             for pH in curr_solutionpHs:
-                processDataForPublish(datetime.now(), suffix_pH, index, pH)
+                df_solutionpH = processDataForPublish(datetime.now(), suffix_pH, index, pH)
+                saveAndPublishData(df_solutionpH, main_topic+suffix_pH)
                 index += 1
             index = 0 
             for ec in curr_solutionECs:
-                processDataForPublish(datetime.now(), suffix_EC, index, ec)
+                df_solutionEC = processDataForPublish(datetime.now(), suffix_EC, index, ec)
+                saveAndPublishData(df_solutionEC, main_topic+suffix_EC)
                 index += 1
         
         sleep(1)

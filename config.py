@@ -1,3 +1,4 @@
+from datetime import datetime, date, time 
 # MQTT broker 
 mqttIP = "ccscloud2.dlsu.edu.ph"
 mqttPort = 20010
@@ -32,3 +33,6 @@ csv_data = {
     'index': [],
     'value': [],
 }
+
+sensor_logging_start = time(hour=6, minute=0)
+sensor_logging_end = time(hour=22, minute=0)
