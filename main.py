@@ -173,9 +173,9 @@ if __name__ == "__main__":
             pumps.pollPumps(datetimenow)
 
         # loop to gather sensor data from all sensors, package it into json, and send it via MQTT 
-        if (datetime.now() - sensorsLastPolled >= sensorPollingInterval and \
-            datetime.now() >= datetime.combine(date.today(), sensor_logging_start) and \
-            datetime.now() <= datetime.combine(date.today(), sensor_logging_end)):
+        if (datetimenow - sensorsLastPolled >= sensorPollingInterval and \
+            datetimenow >= datetime.combine(datetimenow.date, sensor_logging_start) and \
+            datetimenow <= datetime.combine(datetimenow.date, sensor_logging_end)):
             sensorsLastPolled = datetime.now()
             # temperature and humidity from DHT22 
             index = 0
