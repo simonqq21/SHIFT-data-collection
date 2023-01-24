@@ -7,11 +7,13 @@ except:
 # create i2c interface
 try:
     i2c = board.I2C()
-except:
+except Exception as e:
     print("i2c not initialized, not running on RPi") 
+    print(e)
 
 # create onewire interfaces
 try:
     onewires = [board.D4, board.D17] 
-except:
+except Exception as e:
     print("board not initialized, not running on RPi") 
+    print(e)
