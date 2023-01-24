@@ -19,4 +19,3 @@ suffix_camera = "camera"
 images_filepath = "/home/pi/images/"
 images_filename_format = "IMG_{}.jpg"
 # create image filepath if it doesn't exist 
-os.makedirs(images_filepath, exist_ok=True)

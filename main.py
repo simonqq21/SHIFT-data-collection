@@ -25,7 +25,7 @@ try:
 except:
     print("main.py not running on RPi")
 from config import *
-
+os.makedirs(images_filepath, exist_ok=True)
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code " + str(rc))
