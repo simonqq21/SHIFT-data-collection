@@ -132,17 +132,17 @@ if __name__ == "__main__":
     # initialize irrigation pumps
     pumps = SyncedPumps((22, 23, 24), 10, os.getcwd()+"/pumps_interval.json")
     
-    datetimenow = datetime.combine(date.today(), time(hour=7, minute=0, second=0))
-    # datetimenow = datetime.now()
+    # datetimenow = datetime.combine(date.today(), time(hour=7, minute=0, second=0))
+    datetimenow = datetime.now()
     checkingInterval = timedelta(seconds=10)
-    sensorPollingInterval = timedelta(minutes=1) # 30 minutes
+    sensorPollingInterval = timedelta(minutes=30) # 30 minutes
     lastUpdatedDate = date(year=1970, month=1, day=1)
     intervalLastChecked = datetime(year=1970, month=1, day=1)
     sensorsLastPolled = datetime(year=1970, month=1, day=1)
     
     while True:
         datetimenow += timedelta(seconds=1) 
-        # datetimenow = datetime.now()
+        datetimenow = datetime.now()
         # update the growLightIntervals and cameraIntervals with the times of the day 
         if (date.today() > lastUpdatedDate):
             # datetimenow = datetime.now()
