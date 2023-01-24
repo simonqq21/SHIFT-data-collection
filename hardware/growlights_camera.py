@@ -21,15 +21,10 @@ except Exception as e:
 import os 
 import binascii
 
-# image filepath and filename 
-images_filepath = "/home/pi/images/"
-images_filename_format = "IMG_{}.jpg"
-# create image filepath if it doesn't exist 
-os.makedirs(images_filepath, exist_ok=True)
-
 class LightsCamera:
     # 18, 27, 9, "growlight_interval.json", "camera_interval.json"
-    def __init__(self, growLightGPIO, cameraLightGPIO, cameraButtonGPIO, growLightsIntervalsFilename, cameraIntervalsFilename): 
+    def __init__(self, growLightGPIO, cameraLightGPIO, cameraButtonGPIO, growLightsIntervalsFilename, cameraIntervalsFilename \
+        , images_filepath, image_filename_format): 
         self.growlightval = 0
         self.cameralightval = 0 
         self.pictureTaking = 0 
@@ -38,7 +33,10 @@ class LightsCamera:
         self.newImage = 0
         # flag to indicate if an image is currently being captured
         self.lastTimePhotoTaken = datetime(year=1970, month=1, day=1)
-
+        self.images_filepath = images_filepath
+        self.image_filename_format = image_filename_format
+        os.makedirs(images_filepath, exist_ok=True) 
+        
         # initialize GPIOzero outputs
         try:
             self.growlight = DigitalOutputDevice(growLightGPIO)
@@ -59,7 +57,7 @@ class LightsCamera:
         try:
             self.camera = PiCamera()
             try:
-                self.amera.resolution = (3280, 2464)
+                self.camera.resolution = (3280, 2464)
             except Exception as err:
                 self.camera.resolution = (2592, 1944)
         except:
@@ -167,7 +165,7 @@ class LightsCamera:
         self.switchGrowLights(0)
 
     # thread function to toggle the grow lights and camera lights and capture an image using the Pi Camera
-    def captureImage(self, filepath, filename):
+    def captureImage(self, filepath=None, filename=None):
         self.imageStream = BytesIO()
         self.binaryImage = None
         self.pictureTaking = 1
@@ -176,6 +174,10 @@ class LightsCamera:
             growLightsWereOn = True
         self.switchGrowLights(0)
         self.switchCameraLights(1)
+        if filepath is None:
+            filepath=self.images_filepath 
+        if filename is None:
+            filename=self.images_filename_format.format(datetime.now().strftime("%Y%m%d_%H%M"))
         try:
             self.camera.start_preview() 
             sleep(2)
@@ -202,8 +204,7 @@ class LightsCamera:
     #wrapper function to capture an image every time the capture button is pressed 
     def captureImageButton(self):
         # change the filepath and filename
-        image_filename = images_filename_format.format(datetime.now().strftime("%Y%m%d_%H%M"))
-        thread = threading.Thread(target=self.captureImage, args=(images_filepath, image_filename), daemon=True)
+        thread = threading.Thread(target=self.captureImage, daemon=True)
         thread.start()
 
     def pollGrowLights(self, datetimenow):
@@ -232,6 +233,6 @@ class LightsCamera:
                 self.lastTimePhotoTaken = datetime.now()
                 # change the filepath and filename
                 image_filename = images_filename_format.format(datetime.now().strftime("%Y%m%d_%H%M"))
-                thread = threading.Thread(target=self.captureImage, args=(images_filepath, image_filename), daemon=True)
+                thread = threading.Thread(target=self.captureImage, daemon=True)
                 thread.start()
 

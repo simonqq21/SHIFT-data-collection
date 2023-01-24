@@ -24,23 +24,8 @@ try:
     from hardware.pi_interfaces import onewires, i2c
 except:
     print("main.py not running on RPi")
+from config import *
 
-# MQTT broker 
-mqttIP = "ccscloud2.dlsu.edu.ph"
-mqttPort = 20010
-clientname = "DLSU_SHIFT"
-# MQTT data constants
-expt_num = 0 
-sitename = "DLSU-BLAST"
-# MQTT topics 
-main_topic = "sensor/dlsu/node-1/"
-suffix_temperature = "temperature"
-suffix_humidity = "humidity"
-suffix_lightintensity = "light_intensity"
-suffix_soilmoisture = "soil_moisture"
-suffix_pH = "solution_pH"
-suffix_EC = "solution_EC"
-suffix_camera = "camera"
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code " + str(rc))
@@ -107,7 +92,7 @@ if __name__ == "__main__":
     adss[2].addTDSMeter() 
 
     # initialize grow lights and camera with camera light
-    lightscamera = LightsCamera(18, 27, 9, os.getcwd()+"/growlight_interval.json", os.getcwd()+"/camera_interval.json")
+    lightscamera = LightsCamera(18, 27, 9, os.getcwd()+"/growlight_interval.json", os.getcwd()+"/camera_interval.json", images_filepath, images_filename_format)
     # initialize irrigation pumps
     pumps = SyncedPumps((22, 23, 24), 10, os.getcwd()+"/pumps_interval.json")
     
@@ -153,7 +138,12 @@ if __name__ == "__main__":
         # loop to gather sensor data from all sensors, package it into json, and send it via MQTT 
         if (datetime.now() - sensorsLastPolled >= sensorPollingInterval):
             # temperature and humidity from DHT22 
-            pass
+            for dht in dhts:
+                dht.update()
+                print(dht.getTemperature())
+                print(dht.getHumidity())
+                print()
+
             # light intensity from BH1750 
 
             # soil moisture, pH, and EC from soil moisture sensors. PH-4502C, and TDS Meter 1.0 

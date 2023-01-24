@@ -68,7 +68,6 @@ if __name__ == "__main__":
     bhcount = 9 
     try:
         from pi_interfaces import i2c 
-        print("i2c not initialized, not running on RPi") 
         tca = TCA9548A(i2c)
     except:
         print("Error adding TCA9548")
