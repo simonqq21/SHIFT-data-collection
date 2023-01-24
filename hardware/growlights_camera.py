@@ -232,7 +232,6 @@ class LightsCamera:
                 and datetime.now() - self.lastTimePhotoTaken >= dayinterval["interval"]):
                 self.lastTimePhotoTaken = datetime.now()
                 # change the filepath and filename
-                image_filename = images_filename_format.format(datetime.now().strftime("%Y%m%d_%H%M"))
                 thread = threading.Thread(target=self.captureImage, daemon=True)
                 thread.start()
 
