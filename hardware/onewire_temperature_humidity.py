@@ -19,6 +19,8 @@ class DHT22():
             print("error adding DHT22 on pin {}".format(GPIO))
         self.temperature = None
         self.humidity = None 
+        self.prevTemperature = None 
+        self.prevHumidity = None
 
     def getTemperature(self):
         self.temperature = None
@@ -29,10 +31,14 @@ class DHT22():
                 self.temperature = self.sensor.temperature
             except RuntimeError as err:
                 print(err)
+            sleep(2)
+        if (self.temperature is None):
+            self.temperature = self.prevTemperature
+        else:
+            self.prevTemperature = self.temperature
         return self.temperature
 
     def getHumidity(self):
-        sleep(3)
         self.humidity = None
         for i in range(5):
             if (self.humidity is not None):
@@ -41,7 +47,11 @@ class DHT22():
                 self.humidity = self.sensor.humidity
             except RuntimeError as err:
                 print(err)
-            sleep(3)
+            sleep(2)
+        if (self.humidity is None):
+            self.humidity = self.prevHumidity
+        else:
+            self.prevHumidity = self.humidity
         return self.humidity
 
 # driver code
