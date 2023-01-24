@@ -13,6 +13,7 @@ MQTT data packet format
 try:
     import os
     from time import sleep 
+    import json 
     from datetime import datetime, date, time, timedelta
     from hardware.growlights_camera import LightsCamera
     from hardware.irrigation_pumps import SyncedPumps
@@ -43,6 +44,8 @@ if os.path.exists(csv_filepath + csv_filename):
     header=False
     print('exists!')
 df.to_csv(csv_filepath + csv_filename, mode=mode, index=index, header=header)
+columns = df.columns.values
+print(columns)
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code " + str(rc))
@@ -57,15 +60,22 @@ def processDataForPublish(datetime, type, index, rawsensordata):
     global debug
     global expt_num, sitename
     data = csv_data
-    data["datetime"] = datetime
-    data["expt_num"] = expt_num
-    data["sitename"]= sitename
-    data["type"]= type
-    data["index"]= index
-    data["value"]= rawsensordata
+    data["datetime"] = [datetime]
+    data["expt_num"] = [expt_num]
+    data["sitename"]= [sitename]
+    data["type"]= [type]
+    data["index"]= [index]
+    data["value"]= [rawsensordata]
+    df = pd.DataFrame(data, columns=columns)
     if debug:
-        print(data)
-    return data
+        print(df)
+    return df 
+
+def saveAndPublishData(df):
+    df_temperature = processDataForPublish(datetime.now(), suffix_temperature, index, curr_temperature)
+    df_temperature.to_csv(csv_filepath + csv_filename, mode='a', index=False, header=False)
+                
+
 
 # mqtt client init
 client = mqtt.Client(clientname)
@@ -165,8 +175,12 @@ if __name__ == "__main__":
                 # print()
                 curr_temperature = dht.getTemperature()
                 curr_humidity = dht.getHumidity()
-                processDataForPublish(datetime.now(), suffix_temperature, index, curr_temperature)
-                processDataForPublish(datetime.now(), suffix_humidity, index, curr_humidity)
+                df_temperature = processDataForPublish(datetime.now(), suffix_temperature, index, curr_temperature)
+                df_temperature.to_csv(csv_filepath + csv_filename, mode='a', index=False, header=False)
+                
+                df_humidity = processDataForPublish(datetime.now(), suffix_humidity, index, curr_humidity)
+                df_humidity.df.to_csv(csv_filepath + csv_filename, mode='a', index=False, header=False)
+                
                 index += 1
             # light intensity from BH1750 
             curr_lightIntensities = tca.getLightIntensities()
