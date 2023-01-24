@@ -15,7 +15,20 @@ suffix_pH = "solution_pH"
 suffix_EC = "solution_EC"
 suffix_camera = "camera"
 
+# csv filepath and filename 
+csv_filepath = "/home/pi/blast/csv/"
+csv_filename = "BLAST_sensors.csv"
 # image filepath and filename 
-images_filepath = "/home/pi/images/"
+images_filepath = "/home/pi/blast/images/"
 images_filename_format = "IMG_{}.jpg"
 # create image filepath if it doesn't exist 
+debug = 1
+
+csv_data = {
+    'datetime': [],
+    'expt_num': [],
+    'sitename': [],
+    'type': [],
+    'index': [],
+    'value': [],
+}

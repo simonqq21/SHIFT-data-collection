@@ -29,14 +29,12 @@ class SoilMoistureSensor:
         self.m = m
         self.b = b
 
-    def update(self):
+    def getSoilMoisture(self):
         try:
             self.voltage = self.chan.voltage
             self.soilMoisture = self.voltage * self.m + self.b    
         except:
             print("ADS1115 not connected properly")
-
-    def getSoilMoisture(self):
         return self.soilMoisture
 
 
@@ -50,14 +48,12 @@ class PH4502C:
         self.m = m
         self.b = b
 
-    def update(self):
+    def getSolutionpH(self):
         try:
             self.voltage = self.chan.voltage
             self.pH = self.voltage * self.m + self.b # TODO    
         except:
             print("ADS1115 not connected properly")
-
-    def getSolutionpH(self):
         return self.pH
 
 
@@ -71,7 +67,7 @@ class TDSMeter:
         self.TDS = 0
         self.EC = 0 
 
-    def update(self, water_temperature):
+    def getSolutionEC(self, water_temperature):
         self.compensationCoefficient = 1.0 + 0.02 *(water_temperature-25.0)
         try:
             self.voltage = self.chan.voltage
@@ -80,8 +76,6 @@ class TDSMeter:
             self.EC = self.TDS / 500  
         except:
             print("ADS1115 not connected properly")
-
-    def getSolutionEC(self):
         return self.EC
 
 class ADS1115:
@@ -123,7 +117,6 @@ class ADS1115:
         soilmoisture_values = []
         for sensor in self.sensors:
             if sensor.type == "soil_moisture":
-                sensor.update()
                 if debug:
                     print(sensor.voltage)
                 soilmoisture_values.append(sensor.getSoilMoisture())
@@ -137,7 +130,6 @@ class ADS1115:
         solutionpH_values = []
         for sensor in self.sensors:
             if sensor.type == "solution_pH":
-                sensor.update()
                 if debug:
                     print(sensor.voltage)
                 solutionpH_values.append(sensor.getSolutionpH())
@@ -151,10 +143,9 @@ class ADS1115:
         solutionEC_values = []
         for sensor in self.sensors:
             if sensor.type == "solution_EC":
-                sensor.update(water_temperature)
                 if debug:
                     print(sensor.voltage)
-                solutionEC_values.append(sensor.getSolutionEC())
+                solutionEC_values.append(sensor.getSolutionEC(water_temperature))
         if debug:
             print()
         return solutionEC_values 
@@ -183,12 +174,12 @@ if __name__ == "__main__":
         print("ADS1115 not connected or not running on RPi")
         print(e)
 
-    # for i in range(5):
-    for ads in adss:
-        print(ads.getSoilMoistures())
-        print(ads.getSolutionpHs()) 
-        print(ads.getSolutionECs())
-    sleep(2)
+    for i in range(3):
+        for ads in adss:
+            print(ads.getSoilMoistures())
+            print(ads.getSolutionpHs()) 
+            print(ads.getSolutionECs())
+        sleep(2)
 # '''
 # get the soil moisture values from the nine soil moisture sensors in %
 # '''

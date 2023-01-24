@@ -26,7 +26,7 @@ class BH1750:
             print("error adding BH1750 on channel {}".format(i2c))
         self.lightintensity = None
 
-    def update(self):
+    def getLightIntensity(self):
         sleep(0.5)
         self.lightintensity = None
         for i in range(5):
@@ -37,8 +37,6 @@ class BH1750:
             except RuntimeError as err:
                 print(err)
             sleep(0.5) 
-    
-    def getLightIntensity(self):
         return self.lightintensity
 
 class TCA9548A:
@@ -59,7 +57,6 @@ class TCA9548A:
         self.lightIntensities = []
         print(len(self.bhs))
         for bh in self.bhs:
-            bh.update()
             self.lightIntensities.append(bh.getLightIntensity())
         return self.lightIntensities
 
