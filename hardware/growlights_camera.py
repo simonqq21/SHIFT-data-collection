@@ -177,7 +177,7 @@ class LightsCamera:
         if filepath is None:
             filepath=self.images_filepath 
         if filename is None:
-            filename=self.images_filename_format.format(datetime.now().strftime("%Y%m%d_%H%M"))
+            filename=self.image_filename_format.format(datetime.now().strftime("%Y%m%d_%H%M"))
         try:
             self.camera.start_preview() 
             sleep(2)
