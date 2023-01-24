@@ -137,6 +137,7 @@ if __name__ == "__main__":
 
         # loop to gather sensor data from all sensors, package it into json, and send it via MQTT 
         if (datetime.now() - sensorsLastPolled >= sensorPollingInterval):
+            sensorsLastPolled = datetime.now()
             # temperature and humidity from DHT22 
             for dht in dhts:
                 dht.update()
