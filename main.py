@@ -145,7 +145,7 @@ if __name__ == "__main__":
         # datetimenow = datetime.now()
         # update the growLightIntervals and cameraIntervals with the times of the day 
         if (date.today() > lastUpdatedDate):
-            datetimenow = datetime.now()
+            # datetimenow = datetime.now()
             lastUpdatedDate = date.today() 
             lightscamera.getGrowLightIntervalsPerDay()
             lightscamera.getCameraIntervalsPerDay()
