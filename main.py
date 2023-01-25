@@ -56,7 +56,7 @@ def on_message(client, userdata, msg):
 def on_publish(client, username, mid):
     print("Message published")
 
-def processDataForPublish(datetime, type, index, rawsensordata):
+def processDataForPublish(datetime, type, index, rawsensordata, filename=None):
     global debug
     global expt_num, sitename
     data = csv_data
@@ -66,6 +66,8 @@ def processDataForPublish(datetime, type, index, rawsensordata):
     data["type"]= [type]
     data["index"]= [index]
     data["value"]= [rawsensordata]
+    if (type == "camera"):
+        data["filename"]= [filename]
     df = pd.DataFrame(data, columns=columns)
     if debug:
         print(df)
@@ -167,7 +169,7 @@ if __name__ == "__main__":
                 print("binary image received")
                 index=0
                 cameraTimeStamp = datetime.now().strftime("%m/%d/%Y %H:%M")
-                df_image = processDataForPublish(cameraTimeStamp, suffix_camera, index, lightscamera.binaryImage)
+                df_image = processDataForPublish(cameraTimeStamp, suffix_camera, index, lightscamera.binaryImage, lightscamera.filename)
                 publishImage(df_image, main_topic+suffix_camera)
                 lightscamera.newImage = 0
 

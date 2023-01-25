@@ -35,6 +35,7 @@ class LightsCamera:
         self.lastTimePhotoTaken = datetime(year=1970, month=1, day=1)
         self.images_filepath = images_filepath
         self.image_filename_format = image_filename_format
+        self.filename = "" 
         os.makedirs(images_filepath, exist_ok=True) 
         
         # initialize GPIOzero outputs
@@ -177,12 +178,14 @@ class LightsCamera:
         if filepath is None:
             filepath=self.images_filepath 
         if filename is None:
-            filename=self.image_filename_format.format(datetime.now().strftime("%Y%m%d_%H%M"))
+            self.filename=self.image_filename_format.format(datetime.now().strftime("%Y%m%d_%H%M"))
+        else:
+            self.filename = filename
         try:
             self.camera.start_preview() 
             sleep(2)
             self.camera.capture(self.imageStream, 'jpeg')
-            with open(filepath + filename, "wb") as f:
+            with open(filepath + self.filename, "wb") as f:
                 f.write(self.imageStream.getbuffer())
             f.close()
             self.binaryImage = binascii.b2a_base64(self.imageStream.getvalue()).decode()
