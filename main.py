@@ -166,7 +166,8 @@ if __name__ == "__main__":
                 # publish the image on MQTT
                 print("binary image received")
                 index=0
-                df_image = processDataForPublish(datetime.now(), suffix_camera, index, lightscamera.binaryImage)
+                cameraTimeStamp = datetime.now().strftime("%m/%d/%Y %H:%M")
+                df_image = processDataForPublish(cameraTimeStamp, suffix_camera, index, lightscamera.binaryImage)
                 publishImage(df_image, main_topic+suffix_camera)
                 lightscamera.newImage = 0
 
@@ -178,6 +179,7 @@ if __name__ == "__main__":
             datetimenow >= datetime.combine(datetimenow.date(), sensor_logging_start) and \
             datetimenow <= datetime.combine(datetimenow.date(), sensor_logging_end)):
             sensorsLastPolled = datetime.now()
+            sensorTimeStamp = datetime.now().strftime("%m/%d/%Y %H:%M")
             # temperature and humidity from DHT22 
             index = 0
             for dht in dhts:
@@ -186,16 +188,16 @@ if __name__ == "__main__":
                 # print()
                 curr_temperature = dht.getTemperature()
                 curr_humidity = dht.getHumidity()
-                df_temperature = processDataForPublish(datetime.now(), suffix_temperature, index, curr_temperature)
+                df_temperature = processDataForPublish(sensorTimeStamp, suffix_temperature, index, curr_temperature)
                 saveAndPublishData(df_temperature, main_topic+suffix_temperature)
-                df_humidity = processDataForPublish(datetime.now(), suffix_humidity, index, curr_humidity)
+                df_humidity = processDataForPublish(sensorTimeStamp, suffix_humidity, index, curr_humidity)
                 saveAndPublishData(df_humidity, main_topic+suffix_humidity)
                 index += 1
             # light intensity from BH1750 
             curr_lightIntensities = tca.getLightIntensities()
             index = 0
             for li in curr_lightIntensities:
-                df_lightintensity = processDataForPublish(datetime.now(), suffix_lightintensity, index, li)
+                df_lightintensity = processDataForPublish(sensorTimeStamp, suffix_lightintensity, index, li)
                 saveAndPublishData(df_lightintensity, main_topic+suffix_lightintensity)
                 index += 1
             # soil moisture, pH, and EC from soil moisture sensors. PH-4502C, and TDS Meter 1.0 
@@ -211,17 +213,17 @@ if __name__ == "__main__":
                     curr_solutionECs.append(ec)
             index = 0 
             for sm in curr_soilmoistures:
-                df_soilmoisture = processDataForPublish(datetime.now(), suffix_soilmoisture, index, sm)
+                df_soilmoisture = processDataForPublish(sensorTimeStamp, suffix_soilmoisture, index, sm)
                 saveAndPublishData(df_soilmoisture, main_topic+suffix_soilmoisture)
                 index += 1
             index = 0 
             for pH in curr_solutionpHs:
-                df_solutionpH = processDataForPublish(datetime.now(), suffix_pH, index, pH)
+                df_solutionpH = processDataForPublish(sensorTimeStamp, suffix_pH, index, pH)
                 saveAndPublishData(df_solutionpH, main_topic+suffix_pH)
                 index += 1
             index = 0 
             for ec in curr_solutionECs:
-                df_solutionEC = processDataForPublish(datetime.now(), suffix_EC, index, ec)
+                df_solutionEC = processDataForPublish(sensorTimeStamp, suffix_EC, index, ec)
                 saveAndPublishData(df_solutionEC, main_topic+suffix_EC)
                 index += 1
         
