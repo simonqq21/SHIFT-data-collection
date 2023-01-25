@@ -72,6 +72,7 @@ def processDataForPublish(datetime, type, index, rawsensordata):
     return df 
 
 def saveAndPublishData(df, sensorPublishTopic):
+    print(df)
     df.to_csv(csv_filepath + csv_filename, mode='a', index=False, header=False)
     try:
         client.publish(sensorPublishTopic, df.to_json())

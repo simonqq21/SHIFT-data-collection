@@ -26,8 +26,10 @@ def processDataForPublish(datetime, type, index, rawsensordata):
         print(df)
     return df 
 
+def saveAndPublishData(df):
+    print(df)
+    print(df.to_json())
     df.to_csv(csv_filepath + csv_filename, mode='a', index=False, header=False)
-    jsondata = df.to_json()
 
 # create csv file if it doesnt exist 
 df = pd.DataFrame.from_dict(csv_data, orient='columns')
@@ -42,7 +44,8 @@ df.to_csv(csv_filepath + csv_filename, mode=mode, index=index, header=header)
 columns = df.columns.values
 print(columns)
 
-processDataForPublish(datetime.now(), suffix_temperature, 0, 25.5)
+df = processDataForPublish(datetime.now(), suffix_temperature, 0, 25.5)
+saveAndPublishData(df)
 # try:
 #     client.publish(sensorPublishTopic, jsonData)
 # except:
