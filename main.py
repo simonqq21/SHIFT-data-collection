@@ -45,7 +45,10 @@ if os.path.exists(csv_filepath + csv_filename):
     print('exists!')
 df.to_csv(csv_filepath + csv_filename, mode=mode, index=index, header=header)
 columns = df.columns.values
+camera_columns = columns 
+camera_columns.append("filename")
 print(columns)
+print(camera_columns)
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code " + str(rc))
@@ -67,7 +70,9 @@ def processDataForPublish(datetime, type, index, rawsensordata, filename=None):
     data["index"]= [index]
     data["value"]= [rawsensordata]
     if (type == "camera"):
+        print("camera")
         data["filename"]= [filename]
+        columns
     df = pd.DataFrame(data, columns=columns)
     if debug:
         print(df)
