@@ -63,6 +63,7 @@ def processDataForPublish(datetime, type, index, rawsensordata, filename=None):
     global debug
     global expt_num, sitename
     data = csv_data
+    columns_ = columns
     data["datetime"] = [datetime]
     data["expt_num"] = [expt_num]
     data["sitename"]= [sitename]
@@ -72,8 +73,8 @@ def processDataForPublish(datetime, type, index, rawsensordata, filename=None):
     if (type == "camera"):
         print("camera")
         data["filename"]= [filename]
-        columns
-    df = pd.DataFrame(data, columns=columns)
+        columns_ = camera_columns
+    df = pd.DataFrame(data, columns=columns_)
     if debug:
         print(df)
     return df 
