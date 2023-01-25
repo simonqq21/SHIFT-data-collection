@@ -21,6 +21,7 @@ try:
     from hardware.i2c_lightintensity import BH1750, TCA9548A
     from hardware.analog_soilmoisture_ph_ec import ADS1115, SoilMoistureSensor, PH4502C, TDSMeter
     import pandas as pd 
+    import numpy as np
     import paho.mqtt.client as mqtt
 except Exception as e:
     print(e)
@@ -35,7 +36,7 @@ os.makedirs(csv_filepath, exist_ok=True)
 os.makedirs(images_filepath, exist_ok=True)
 
 # create csv file if it doesnt exist 
-df = pd.DataFrame.from_dict(csv_data, orient='columns')
+df = pd.DataFrame.from_dict(sensor_data, orient='columns')
 mode = 'w'
 index=False
 header=True
@@ -45,9 +46,9 @@ if os.path.exists(csv_filepath + csv_filename):
     print('exists!')
 df.to_csv(csv_filepath + csv_filename, mode=mode, index=index, header=header)
 columns = df.columns.values
-camera_columns = columns 
-camera_columns.append("filename")
 print(columns)
+# columns for image dataframe
+camera_columns = np.array(list(image_data.keys()))
 print(camera_columns)
 
 def on_connect(client, userdata, flags, rc):
@@ -59,22 +60,17 @@ def on_message(client, userdata, msg):
 def on_publish(client, username, mid):
     print("Message published")
 
-def processDataForPublish(datetime, type, index, rawsensordata, filename=None):
+def processSensorDataForPublishing(datetime, type, index, rawsensordata):
     global debug
     global expt_num, sitename
-    data = csv_data
-    columns_ = columns
+    data = sensor_data
     data["datetime"] = [datetime]
     data["expt_num"] = [expt_num]
     data["sitename"]= [sitename]
     data["type"]= [type]
     data["index"]= [index]
     data["value"]= [rawsensordata]
-    if (type == "camera"):
-        print("camera")
-        data["filename"]= [filename]
-        columns_ = camera_columns
-    df = pd.DataFrame(data, columns=columns_)
+    df = pd.DataFrame(data, columns=columns)
     if debug:
         print(df)
     return df 
@@ -86,6 +82,21 @@ def saveAndPublishData(df, sensorPublishTopic):
         client.publish(sensorPublishTopic, df.to_json())
     except:
         print("Publish failed, check broker")
+
+def processImageDataForPublishing(type, index, filename, binaryImage):
+    global debug
+    global expt_num, sitename
+    data = image_data
+    data["expt_num"] = [expt_num]
+    data["sitename"]= [sitename]
+    data["type"]= [type]
+    data["index"]= [index]
+    data["filename"]= [filename]
+    data["imagedata"]= [binaryImage]
+    df = pd.DataFrame(data, columns=camera_columns)
+    if debug:
+        print(df)
+    return df 
 
 def publishImage(df, sensorPublishTopic):
     try:
@@ -175,7 +186,7 @@ if __name__ == "__main__":
                 print("binary image received")
                 index=0
                 cameraTimeStamp = datetime.now().strftime("%m/%d/%Y %H:%M")
-                df_image = processDataForPublish(cameraTimeStamp, suffix_camera, index, lightscamera.binaryImage, lightscamera.filename)
+                df_image = processImageDataForPublishing(suffix_camera, index, lightscamera.filename, lightscamera.binaryImage)
                 publishImage(df_image, main_topic+suffix_camera)
                 lightscamera.newImage = 0
 
@@ -196,16 +207,16 @@ if __name__ == "__main__":
                 # print()
                 curr_temperature = dht.getTemperature()
                 curr_humidity = dht.getHumidity()
-                df_temperature = processDataForPublish(sensorTimeStamp, suffix_temperature, index, curr_temperature)
+                df_temperature = processSensorDataForPublishing(sensorTimeStamp, suffix_temperature, index, curr_temperature)
                 saveAndPublishData(df_temperature, main_topic+suffix_temperature)
-                df_humidity = processDataForPublish(sensorTimeStamp, suffix_humidity, index, curr_humidity)
+                df_humidity = processSensorDataForPublishing(sensorTimeStamp, suffix_humidity, index, curr_humidity)
                 saveAndPublishData(df_humidity, main_topic+suffix_humidity)
                 index += 1
             # light intensity from BH1750 
             curr_lightIntensities = tca.getLightIntensities()
             index = 0
             for li in curr_lightIntensities:
-                df_lightintensity = processDataForPublish(sensorTimeStamp, suffix_lightintensity, index, li)
+                df_lightintensity = processSensorDataForPublishing(sensorTimeStamp, suffix_lightintensity, index, li)
                 saveAndPublishData(df_lightintensity, main_topic+suffix_lightintensity)
                 index += 1
             # soil moisture, pH, and EC from soil moisture sensors. PH-4502C, and TDS Meter 1.0 
@@ -221,17 +232,17 @@ if __name__ == "__main__":
                     curr_solutionECs.append(ec)
             index = 0 
             for sm in curr_soilmoistures:
-                df_soilmoisture = processDataForPublish(sensorTimeStamp, suffix_soilmoisture, index, sm)
+                df_soilmoisture = processSensorDataForPublishing(sensorTimeStamp, suffix_soilmoisture, index, sm)
                 saveAndPublishData(df_soilmoisture, main_topic+suffix_soilmoisture)
                 index += 1
             index = 0 
             for pH in curr_solutionpHs:
-                df_solutionpH = processDataForPublish(sensorTimeStamp, suffix_pH, index, pH)
+                df_solutionpH = processSensorDataForPublishing(sensorTimeStamp, suffix_pH, index, pH)
                 saveAndPublishData(df_solutionpH, main_topic+suffix_pH)
                 index += 1
             index = 0 
             for ec in curr_solutionECs:
-                df_solutionEC = processDataForPublish(sensorTimeStamp, suffix_EC, index, ec)
+                df_solutionEC = processSensorDataForPublishing(sensorTimeStamp, suffix_EC, index, ec)
                 saveAndPublishData(df_solutionEC, main_topic+suffix_EC)
                 index += 1
         

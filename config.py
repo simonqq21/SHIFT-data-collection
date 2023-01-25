@@ -25,7 +25,7 @@ images_filename_format = "IMG_{}.jpg"
 # create image filepath if it doesn't exist 
 debug = 1
 
-csv_data = {
+sensor_data = {
     'datetime': [],
     'expt_num': [],
     'sitename': [],
@@ -34,5 +34,15 @@ csv_data = {
     'value': [],
 }
 
+image_data = {
+    'expt_num': [],
+    'sitename': [],
+    'type': [],
+    'index': [],
+    'filename': [],
+    'imagedata': [],
+}
+
+camera_columns = ["type", "index", "filename", "binary_image"]
 sensor_logging_start = time(hour=6, minute=0)
 sensor_logging_end = time(hour=22, minute=0)
