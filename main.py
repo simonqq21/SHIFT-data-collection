@@ -143,7 +143,7 @@ if __name__ == "__main__":
     for i in range(9):
         adss[i//4].addSoilMoistureSensor(m=-0.5, b=0)
     # add 1 pH sensor to channel 1 of ADS1115 index 2
-    adss[2].addPH4502C(m=-0.5, b=1)
+    adss[2].addPH4502C(m=-0.1723776224, b=3.77251049)
     # add 1 EC sensor 
     adss[2].addTDSMeter() 
 
