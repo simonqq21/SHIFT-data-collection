@@ -118,7 +118,7 @@ except Exception as e:
     print(e)
 
 if __name__ == "__main__":
-    print(os.getcwd())
+    print(program_root)
     # initialize onewire DHT22 temperature and humidity sensors 
     dhts = []
     for wire in onewires:
@@ -148,9 +148,9 @@ if __name__ == "__main__":
     adss[2].addTDSMeter() 
 
     # initialize grow lights and camera with camera light
-    lightscamera = LightsCamera(18, 27, 9, os.getcwd()+"/growlight_interval.json", os.getcwd()+"/camera_interval.json", images_filepath, images_filename_format)
+    lightscamera = LightsCamera(18, 27, 9, program_root+"/growlight_interval.json", program_root+"/camera_interval.json", images_filepath, images_filename_format)
     # initialize irrigation pumps
-    pumps = SyncedPumps((22, 23, 24), 10, os.getcwd()+"/pumps_interval.json")
+    pumps = SyncedPumps((22, 23, 24), 10, program_root+"/pumps_interval.json")
     
     # datetimenow = datetime.combine(date.today(), time(hour=7, minute=0, second=0))
     datetimenow = datetime.now()
