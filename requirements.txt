@@ -9,11 +9,17 @@ adafruit-circuitpython-tca9548a==0.6.4
 adafruit-circuitpython-typing==1.8.2
 Adafruit-PlatformDetect==3.33.0
 Adafruit-PureIO==1.1.9
+numpy==1.24.1
+paho-mqtt==1.6.1
+pandas==1.5.3
 picamera==1.13
 pyftdi==0.54.0
 pyserial==3.5
+python-dateutil==2.8.2
+pytz==2022.7.1
 pyusb==1.2.1
 rpi-ws281x==4.3.4
 RPi.GPIO==0.7.1
+six==1.16.0
 sysv-ipc==1.1.0
 typing-extensions==4.4.0
