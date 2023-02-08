@@ -29,7 +29,8 @@ class DHT22():
                 break
             try:
                 self.temperature = self.sensor.temperature
-            except RuntimeError as err:
+            except Exception as err:
+                print(type(err))
                 print(err)
             sleep(2)
         if (self.temperature is None):
