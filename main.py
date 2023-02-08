@@ -141,7 +141,7 @@ if __name__ == "__main__":
     adss.append(ADS1115(i2c, addressIndex=2)) # soil moisture sensor 8, pH sensor, and EC sensor
     # add 9 soil moisture sensors throughout three ADS1115 consecutively from channel 0 of ADS1115 index 0
     for i in range(9):
-        adss[i//4].addSoilMoistureSensor(m=-0.5, b=0)
+        adss[i//4].addSoilMoistureSensor(m=-1.24, b=4.57)
     # add 1 pH sensor to channel 1 of ADS1115 index 2
     adss[2].addPH4502C(m=-0.1723776224, b=3.77251049)
     # add 1 EC sensor 
