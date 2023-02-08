@@ -33,6 +33,7 @@ class SoilMoistureSensor:
         try:
             self.voltage = self.chan.voltage
             self.soilMoisture = self.voltage * self.m + self.b    
+            print("sm_voltage = {self.voltage}")
         except:
             print("ADS1115 not connected properly")
         return self.soilMoisture
@@ -51,7 +52,8 @@ class PH4502C:
     def getSolutionpH(self):
         try:
             self.voltage = self.chan.voltage
-            self.pH = self.voltage * self.m + self.b # TODO    
+            self.pH = self.voltage * self.m + self.b   
+            print("ph_voltage = {self.voltage}")
         except:
             print("ADS1115 not connected properly")
         return self.pH
