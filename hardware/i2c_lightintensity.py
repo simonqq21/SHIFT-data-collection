@@ -34,7 +34,7 @@ class BH1750:
                 break
             try:
                 self.lightintensity = self.sensor.lux
-            except RuntimeError as err:
+            except Exception as err:
                 print(err)
             sleep(0.5) 
         return self.lightintensity
