@@ -33,6 +33,10 @@ class SoilMoistureSensor:
         try:
             self.voltage = self.chan.voltage
             self.soilMoisture = self.voltage * self.m + self.b    
+            if self.soilMoisture < 0:
+                self.soilMoisture = 0 
+            elif self.soilMoisture > 1:
+                self.soilMoisture = 1
             print(f"sm_voltage = {self.voltage}")
         except:
             print("ADS1115 not connected properly")
