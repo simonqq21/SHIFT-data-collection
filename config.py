@@ -45,7 +45,7 @@ image_data = {
 }
 
 camera_columns = ["type", "index", "filename", "binary_image"]
-sensor_logging_start = time(hour=6, minute=0)
-sensor_logging_end = time(hour=22, minute=0)
+sensor_logging_start = time(hour=0, minute=0)
+sensor_logging_end = time(hour=23, minute=59)
 
 program_root = os.path.realpath(os.path.dirname(__file__))
