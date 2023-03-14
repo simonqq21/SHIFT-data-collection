@@ -156,7 +156,7 @@ if __name__ == "__main__":
     # datetimenow = datetime.combine(date.today(), time(hour=7, minute=0, second=0))
     datetimenow = datetime.now()
     checkingInterval = timedelta(seconds=10)
-    sensorPollingInterval = timedelta(minutes=30) # 30 minutes
+    sensorPollingInterval = timedelta(minutes=1) # 30 minutes
     lastUpdatedDate = date(year=1970, month=1, day=1)
     intervalLastChecked = datetime(year=1970, month=1, day=1)
     sensorsLastPolled = datetime(year=1970, month=1, day=1)
