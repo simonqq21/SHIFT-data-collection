@@ -36,6 +36,8 @@ class LightsCamera:
         self.images_filepath = images_filepath
         self.image_filename_format = image_filename_format
         self.filename = "" 
+        # amount of time in seconds left before the grow light is shut off
+        self.growLightTimeLeft = 0
         os.makedirs(images_filepath, exist_ok=True) 
         
         # initialize GPIOzero outputs
@@ -157,12 +159,13 @@ class LightsCamera:
 
     # thread function to switch on the grow lights for a certain duration
     def growLightOn(self, ondelta):
-        sleeptime = ondelta.seconds
+        global growLightTimeLeft
+        growLightTimeLeft = ondelta.seconds
         self.switchGrowLights(1)
-        while (sleeptime > 0):
+        while (growLightTimeLeft > 0):
             sleep(1)
-            print("{}s of light left".format(sleeptime))
-            sleeptime -= 1
+            print("{}s of light left".format(growLightTimeLeft))
+            growLightTimeLeft -= 1
         self.switchGrowLights(0)
 
     # thread function to toggle the grow lights and camera lights and capture an image using the Pi Camera
