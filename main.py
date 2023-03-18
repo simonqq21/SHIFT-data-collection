@@ -35,7 +35,7 @@ from config import *
 os.makedirs(csv_filepath, exist_ok=True)
 os.makedirs(images_filepath, exist_ok=True)
 
-# create csv file if it doesnt exist 
+# create csv file for sensor data if it doesnt exist 
 df = pd.DataFrame.from_dict(sensor_data, orient='columns')
 mode = 'w'
 index=False
@@ -51,6 +51,7 @@ print(columns)
 camera_columns = np.array(list(image_data.keys()))
 print(camera_columns)
 
+# callback functions for MQTT broker
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code " + str(rc))
 
@@ -60,6 +61,9 @@ def on_message(client, userdata, msg):
 def on_publish(client, username, mid):
     print("Message published")
 
+'''
+return a dataframe containing the indexed sensor data to be transmitted
+'''
 def processSensorDataForPublishing(datetime, type, index, rawsensordata):
     global debug
     global expt_num, sitename
@@ -75,6 +79,10 @@ def processSensorDataForPublishing(datetime, type, index, rawsensordata):
         print(df)
     return df 
 
+'''
+save the sensor data dataframe to the local CSV file and transmit the sensor data 
+dataframe to the MQTT main_topic
+'''
 def saveAndPublishData(df, sensorPublishTopic):
     print(df)
     df.to_csv(csv_filepath + csv_filename, mode='a', index=False, header=False)
@@ -83,6 +91,9 @@ def saveAndPublishData(df, sensorPublishTopic):
     except:
         print("Publish failed, check broker")
 
+'''
+return a dataframe containing the image data and metadata to be transmitted
+'''
 def processImageDataForPublishing(type, index, filename, binaryImage):
     global debug
     global expt_num, sitename
@@ -98,6 +109,9 @@ def processImageDataForPublishing(type, index, filename, binaryImage):
         print(df)
     return df 
 
+'''
+publish the captured image dataframe to the MQTT broker
+'''
 def publishImage(df, sensorPublishTopic):
     try:
         client.publish(sensorPublishTopic, df.to_json())
@@ -143,23 +157,21 @@ if __name__ == "__main__":
     adss[0].addSoilMoistureSensor(m=-0.505, b=3.92)
     adss[0].addSoilMoistureSensor(m=-1.33, b=3.88)
     adss[0].addSoilMoistureSensor(m=-0.993, b=3.89)
+    adss[0].addSoilMoistureSensor(m=-0.532, b=4.05)
+    adss[1].addSoilMoistureSensor(m=-0.47, b=4.12)
+    adss[1].addSoilMoistureSensor(m=-0.456, b=4.12)
+    adss[1].addSoilMoistureSensor(m=-0.402, b=4.11)
+    adss[1].addSoilMoistureSensor(m=-0.488, b=4.11)
+    adss[2].addSoilMoistureSensor(m=-0.993, b=3.89)
     # add 1 pH sensor to channel 1 of ADS1115 index 2
     adss[2].addPH4502C(m=-0.1723776224, b=3.77251049)
     # add 1 EC sensor 
     adss[2].addTDSMeter() 
 
     # initialize grow lights and camera with camera light
-    lightscamera = LightsCamera(18, 27, 9, program_root+"/growlight_interval.json", program_root+"/camera_interval.json", images_filepath, images_filename_format)
+    lightscamera = LightsCamera(growLightPin, cameraLightPin, cameraButtonPin, program_root+"/growlight_interval.json", program_root+"/camera_interval.json", images_filepath, images_filename_format)
     # initialize irrigation pumps
-    pumps = SyncedPumps((22, 23, 24), 10, program_root+"/pumps_interval.json")
-    
-    # datetimenow = datetime.combine(date.today(), time(hour=7, minute=0, second=0))
-    datetimenow = datetime.now()
-    checkingInterval = timedelta(seconds=10)
-    sensorPollingInterval = timedelta(minutes=60) # 30 minutes
-    lastUpdatedDate = date(year=1970, month=1, day=1)
-    intervalLastChecked = datetime(year=1970, month=1, day=1)
-    sensorsLastPolled = datetime(year=1970, month=1, day=1)
+    pumps = SyncedPumps(pumpPins, pumpButtonPin, program_root+"/pumps_interval.json")
     
     while True:
         datetimenow = datetime.now()
@@ -181,8 +193,8 @@ if __name__ == "__main__":
             '''
             # loop to capture image 
             lightscamera.pollCamera(datetimenow)
+            # if a new image was captured, publish the image on MQTT broker
             if (lightscamera.newImage):
-                # publish the image on MQTT
                 print("binary image received")
                 index=0
                 cameraTimeStamp = datetime.now().strftime("%m/%d/%Y %H:%M")
@@ -202,9 +214,6 @@ if __name__ == "__main__":
             # temperature and humidity from DHT22 
             index = 0
             for dht in dhts:
-                # print()
-                # print(dht.getHumidity())
-                # print()
                 curr_temperature = dht.getTemperature()
                 curr_humidity = dht.getHumidity()
                 df_temperature = processSensorDataForPublishing(sensorTimeStamp, suffix_temperature, index, curr_temperature)

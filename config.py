@@ -1,4 +1,4 @@
-from datetime import datetime, date, time 
+from datetime import datetime, date, time, timedelta
 import os 
 # MQTT broker 
 mqttIP = "ccscloud2.dlsu.edu.ph"
@@ -26,6 +26,7 @@ images_filename_format = "IMG_{}.jpg"
 # create image filepath if it doesn't exist 
 debug = 1
 
+# dataframe template for sensor data packet
 sensor_data = {
     'datetime': [],
     'expt_num': [],
@@ -35,6 +36,7 @@ sensor_data = {
     'value': [],
 }
 
+# dataframe template for image data packet
 image_data = {
     'expt_num': [],
     'sitename': [],
@@ -43,9 +45,31 @@ image_data = {
     'filename': [],
     'imagedata': [],
 }
+# camera_columns = ["type", "index", "filename", "binary_image"]
 
-camera_columns = ["type", "index", "filename", "binary_image"]
+# time of the day when sensor logging will start and end 
 sensor_logging_start = time(hour=0, minute=0)
 sensor_logging_end = time(hour=23, minute=59)
 
-program_root = os.path.realpath(os.path.dirname(__file__))
+# root dir of the program
+program_root = os.path.realpath(os.path.dirname(__file__)) 
+
+# for timekeeping
+# datetimenow = datetime.combine(date.today(), time(hour=7, minute=0, second=0))
+datetimenow = datetime.now()
+# interval to check all sensors and actuators 
+checkingInterval = timedelta(seconds=10)
+# interval to poll sensors and upload sensor data
+sensorPollingInterval = timedelta(minutes=60) # 30 minutes
+# last date when the datetimes for the camera and sensors were generated
+lastUpdatedDate = date(year=1970, month=1, day=1)
+# used for timing
+intervalLastChecked = datetime(year=1970, month=1, day=1)
+sensorsLastPolled = datetime(year=1970, month=1, day=1)
+
+# GPIO pins 
+growLightPin = 18
+cameraLightPin = 27
+cameraButtonPin = 9
+pumpPins = (22, 23, 24) 
+pumpButtonPin = 10
