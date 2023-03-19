@@ -269,35 +269,34 @@ class System():
         self.lightscamera.setGrowLightOperation(mode) 
 
     def loop(self):
-        while True:
-            self.datetimenow = datetime.now()
-            # update the growLightIntervals and cameraIntervals with the times of the day 
-            if (date.today() > self.lastUpdateDate):
-                # self.datetimenow = datetime.now()
-                self.lastUpdateDate = date.today() 
-                self.lightscamera.getGrowLightIntervalsPerDay()
-                self.lightscamera.getCameraIntervalsPerDay()
-                
-            # loop to check the camera, growlights, and pump
-            if (datetime.now() - self.intervalLastChecked >= checkingInterval):
-                self.intervalLastChecked = datetime.now()
-                # loop to check switch grow lights
-                self.lightscamera.pollGrowLights(self.datetimenow)
-                print("val={}".format(self.lightscamera.growlightval))
-                '''
-                while the camera is capturing an image, the growlight code must be overriden.
-                '''
-                # loop to capture image 
-                self.lightscamera.pollCamera(self.datetimenow)
-                self.publishNewImage()
+        self.datetimenow = datetime.now()
+        # update the growLightIntervals and cameraIntervals with the times of the day 
+        if (date.today() > self.lastUpdateDate):
+            # self.datetimenow = datetime.now()
+            self.lastUpdateDate = date.today() 
+            self.lightscamera.getGrowLightIntervalsPerDay()
+            self.lightscamera.getCameraIntervalsPerDay()
+            
+        # loop to check the camera, growlights, and pump
+        if (datetime.now() - self.intervalLastChecked >= checkingInterval):
+            self.intervalLastChecked = datetime.now()
+            # loop to check switch grow lights
+            self.lightscamera.pollGrowLights(self.datetimenow)
+            print("val={}".format(self.lightscamera.growlightval))
+            '''
+            while the camera is capturing an image, the growlight code must be overriden.
+            '''
+            # loop to capture image 
+            self.lightscamera.pollCamera(self.datetimenow)
+            self.publishNewImage()
 
-                # loop to check and run irrigation pumps
-                self.pumps.pollPumps(self.datetimenow)
-            # loop to gather sensor data from all sensors, package it into json, and send it via MQTT 
-            if (self.datetimenow - self.sensorsLastPolled >= sensorPollingInterval and \
-                self.datetimenow >= datetime.combine(self.datetimenow.date(), sensor_logging_start) and \
-                self.datetimenow <= datetime.combine(self.datetimenow.date(), sensor_logging_end)):
-                self.sensorsLastPolled = datetime.now()
-                self.captureSensors()
-                
-            sleep(1)
+            # loop to check and run irrigation pumps
+            self.pumps.pollPumps(self.datetimenow)
+        # loop to gather sensor data from all sensors, package it into json, and send it via MQTT 
+        if (self.datetimenow - self.sensorsLastPolled >= sensorPollingInterval and \
+            self.datetimenow >= datetime.combine(self.datetimenow.date(), sensor_logging_start) and \
+            self.datetimenow <= datetime.combine(self.datetimenow.date(), sensor_logging_end)):
+            self.sensorsLastPolled = datetime.now()
+            self.captureSensors()
+            
+        sleep(1)

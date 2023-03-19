@@ -1,4 +1,3 @@
-
 '''
 grow lights manual on, off, auto button
 image capture button
@@ -11,6 +10,7 @@ sensor capture button
 import tkinter.messagebox
 from tkinter import *
 from tkinter import font
+from system import * 
 
 class GUI(Tk):
     def __init__(self):
@@ -19,6 +19,10 @@ class GUI(Tk):
         for the rest of the buttons 0 is for inactive and 1 is for activated.
         '''
         super().__init__();
+
+        # system init 
+        self.system = System() 
+
         self.cameraButtonState = 0
         self.sensorButtonState = 0 
         self.growLightButtonState = 0 
@@ -55,6 +59,8 @@ class GUI(Tk):
         pump3Button = Button(self, text="Activate Pump 3 for {} seconds".format(5), command=self.activatePump) 
         pump3Button.grid(row=3, column=2, sticky='nsew')
 
+        self.systemLoop()
+
     def toggleGrowLights(self, func):
         pass
         # self.growLightButtonState += 1
@@ -78,6 +84,9 @@ class GUI(Tk):
 
     def activatePump():
         pass 
+
+    def systemLoop(self):
+        self.after(50, self.system.loop) 
 
 pump_duration = 5 
 
