@@ -54,9 +54,6 @@ sensor_logging_end = time(hour=23, minute=59)
 # root dir of the program
 program_root = os.path.realpath(os.path.dirname(__file__)) 
 
-# for timekeeping
-# datetimenow = datetime.combine(date.today(), time(hour=7, minute=0, second=0))
-datetimenow = datetime.now()
 # interval to check all sensors and actuators 
 checkingInterval = timedelta(seconds=10)
 # interval to poll sensors and upload sensor data

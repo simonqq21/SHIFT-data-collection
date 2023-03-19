@@ -42,6 +42,9 @@ class System():
         # used for timing
         self.intervalLastChecked = datetime(year=1970, month=1, day=1)
         self.sensorsLastPolled = datetime(year=1970, month=1, day=1)
+        # for timekeeping
+    # self.datetimenow = datetime.combine(date.today(), time(hour=7, minute=0, second=0))
+    self.datetimenow = datetime.now()
 
     def start(self):
         self.filesInit() 
@@ -268,10 +271,10 @@ class System():
 
     def loop(self):
         while True:
-            datetimenow = datetime.now()
+            self.datetimenow = datetime.now()
             # update the growLightIntervals and cameraIntervals with the times of the day 
             if (date.today() > self.lastUpdateDate):
-                # datetimenow = datetime.now()
+                # self.datetimenow = datetime.now()
                 self.lastUpdateDate = date.today() 
                 self.lightscamera.getGrowLightIntervalsPerDay()
                 self.lightscamera.getCameraIntervalsPerDay()
@@ -280,23 +283,24 @@ class System():
             if (datetime.now() - self.intervalLastChecked >= checkingInterval):
                 self.intervalLastChecked = datetime.now()
                 # loop to check switch grow lights
-                self.lightscamera.pollGrowLights(datetimenow)
+                self.lightscamera.pollGrowLights(self.datetimenow)
                 print("val={}".format(self.lightscamera.growlightval))
                 '''
                 while the camera is capturing an image, the growlight code must be overriden.
                 '''
                 # loop to capture image 
-                self.lightscamera.pollCamera(datetimenow)
+                self.lightscamera.pollCamera(self.datetimenow)
                 self.publishNewImage()
 
                 # loop to check and run irrigation pumps
-                self.pumps.pollPumps(datetimenow)
+                self.pumps.pollPumps(self.datetimenow)
                 print("88")
             # loop to gather sensor data from all sensors, package it into json, and send it via MQTT 
-            if (datetimenow - self.sensorsLastPolled >= sensorPollingInterval and \
-                datetimenow >= datetime.combine(datetimenow.date(), sensor_logging_start) and \
-                datetimenow <= datetime.combine(datetimenow.date(), sensor_logging_end)):
+            if (self.datetimenow - self.sensorsLastPolled >= sensorPollingInterval and \
+                self.datetimenow >= datetime.combine(self.datetimenow.date(), sensor_logging_start) and \
+                self.datetimenow <= datetime.combine(self.datetimenow.date(), sensor_logging_end)):
                 self.sensorsLastPolled = datetime.now()
+                print("88")
                 self.captureSensors()
-            
+                print("22")
             sleep(1)
