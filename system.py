@@ -163,17 +163,6 @@ class System():
         self.dhts = []
         for wire in onewires:
             self.dhts.append(DHT22(wire))
-        for dht in self.dhts:
-            print(dht.getTemperature())
-            print(dht.getHumidity())
-            curr_temperature = dht.getTemperature()
-            curr_humidity = dht.getHumidity()
-            print("22")
-            df_temperature = self.processSensorDataForPublishing(sensorTimeStamp, suffix_temperature, index, curr_temperature)
-            self.saveAndPublishData(df_temperature, main_topic+suffix_temperature)
-            df_humidity = self.processSensorDataForPublishing(sensorTimeStamp, suffix_humidity, index, curr_humidity)
-            self.saveAndPublishData(df_humidity, main_topic+suffix_humidity)
-            index += 1
         
         # initialize TCA9548A i2c multiplexer and i2c BH1750 light intensity sensors 
         bhcount = 9 
@@ -219,18 +208,18 @@ class System():
         
         # temperature and humidity from DHT22 
         index = 0
-        for dht in self.dhts:
-            print(dht.getTemperature())
-            print(dht.getHumidity())
-            curr_temperature = dht.getTemperature()
-            curr_humidity = dht.getHumidity()
-            print("22")
-            df_temperature = self.processSensorDataForPublishing(sensorTimeStamp, suffix_temperature, index, curr_temperature)
-            self.saveAndPublishData(df_temperature, main_topic+suffix_temperature)
-            df_humidity = self.processSensorDataForPublishing(sensorTimeStamp, suffix_humidity, index, curr_humidity)
-            self.saveAndPublishData(df_humidity, main_topic+suffix_humidity)
-            index += 1
-        print("22")
+        # for dht in self.dhts:
+        #     print(dht.getTemperature())
+        #     print(dht.getHumidity())
+        #     curr_temperature = dht.getTemperature()
+        #     curr_humidity = dht.getHumidity()
+        #     print("22")
+        #     df_temperature = self.processSensorDataForPublishing(sensorTimeStamp, suffix_temperature, index, curr_temperature)
+        #     self.saveAndPublishData(df_temperature, main_topic+suffix_temperature)
+        #     df_humidity = self.processSensorDataForPublishing(sensorTimeStamp, suffix_humidity, index, curr_humidity)
+        #     self.saveAndPublishData(df_humidity, main_topic+suffix_humidity)
+        #     index += 1
+        # print("22")
         # light intensity from BH1750 
         curr_lightIntensities = self.tca.getLightIntensities()
         index = 0
