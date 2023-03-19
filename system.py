@@ -158,7 +158,6 @@ class System():
         # initialize onewire DHT22 temperature and humidity sensors 
         self.dhts = []
         for wire in onewires:
-            print("00")
             self.dhts.append(DHT22(wire))
 
         # initialize TCA9548A i2c multiplexer and i2c BH1750 light intensity sensors 
@@ -206,6 +205,7 @@ class System():
         # temperature and humidity from DHT22 
         index = 0
         for dht in self.dhts:
+            print(dht)
             curr_temperature = dht.getTemperature()
             curr_humidity = dht.getHumidity()
             print("22")
