@@ -22,7 +22,8 @@ class GUI(Tk):
 
         # system init 
         self.system = System() 
-
+        self.system.start() 
+        
         self.cameraButtonState = 0
         self.sensorButtonState = 0 
         self.growLightButtonState = 0 
