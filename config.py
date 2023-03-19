@@ -61,8 +61,6 @@ datetimenow = datetime.now()
 checkingInterval = timedelta(seconds=10)
 # interval to poll sensors and upload sensor data
 sensorPollingInterval = timedelta(minutes=60) # 30 minutes
-# last date when the datetimes for the camera and sensors were generated
-lastUpdatedDate = date(year=1970, month=1, day=1)
 # used for timing
 intervalLastChecked = datetime(year=1970, month=1, day=1)
 sensorsLastPolled = datetime(year=1970, month=1, day=1)
