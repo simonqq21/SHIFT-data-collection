@@ -299,4 +299,4 @@ class System():
             self.sensorsLastPolled = datetime.now()
             self.captureSensors()
             
-        sleep(1)
+        sleep(0.01)
