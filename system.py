@@ -291,7 +291,7 @@ class System():
 
                 # loop to check and run irrigation pumps
                 self.pumps.pollPumps(datetimenow)
-
+                print("88")
             # loop to gather sensor data from all sensors, package it into json, and send it via MQTT 
             if (datetimenow - self.sensorsLastPolled >= sensorPollingInterval and \
                 datetimenow >= datetime.combine(datetimenow.date(), sensor_logging_start) and \
