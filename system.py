@@ -37,6 +37,8 @@ class System():
         self.client = None
         self.columns = None 
         self.camera_columns = None 
+        # last date when the datetimes for the camera and sensors were generated
+        self.lastUpdateDate = date(year=1970, month=1, day=1)
 
     def start(self):
         self.filesInit() 
@@ -265,9 +267,9 @@ class System():
         while True:
             datetimenow = datetime.now()
             # update the growLightIntervals and cameraIntervals with the times of the day 
-            if (date.today() > lastUpdatedDate):
+            if (date.today() > self.lastUpdateDate):
                 # datetimenow = datetime.now()
-                lastUpdatedDate = date.today() 
+                self.lastUpdateDate = date.today() 
                 self.lightscamera.getGrowLightIntervalsPerDay()
                 self.lightscamera.getCameraIntervalsPerDay()
                 
