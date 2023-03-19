@@ -46,6 +46,10 @@ class System():
         # self.datetimenow = datetime.combine(date.today(), time(hour=7, minute=0, second=0))
         self.datetimenow = datetime.now()
 
+        self.dhts = None
+        self.adss = None 
+        self.tca = None 
+
     def start(self):
         self.filesInit() 
         self.MQTTInit() 
