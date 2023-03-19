@@ -39,6 +39,9 @@ class System():
         self.camera_columns = None 
         # last date when the datetimes for the camera and sensors were generated
         self.lastUpdateDate = date(year=1970, month=1, day=1)
+        # used for timing
+        self.intervalLastChecked = datetime(year=1970, month=1, day=1)
+        self.sensorsLastPolled = datetime(year=1970, month=1, day=1)
 
     def start(self):
         self.filesInit() 
@@ -274,8 +277,8 @@ class System():
                 self.lightscamera.getCameraIntervalsPerDay()
                 
             # loop to check the camera, growlights, and pump
-            if (datetime.now() - intervalLastChecked >= checkingInterval):
-                intervalLastChecked = datetime.now()
+            if (datetime.now() - self.intervalLastChecked >= checkingInterval):
+                self.intervalLastChecked = datetime.now()
                 # loop to check switch grow lights
                 self.lightscamera.pollGrowLights(datetimenow)
                 print("val={}".format(self.lightscamera.growlightval))
@@ -290,10 +293,10 @@ class System():
                 self.pumps.pollPumps(datetimenow)
 
             # loop to gather sensor data from all sensors, package it into json, and send it via MQTT 
-            if (datetimenow - sensorsLastPolled >= sensorPollingInterval and \
+            if (datetimenow - self.sensorsLastPolled >= sensorPollingInterval and \
                 datetimenow >= datetime.combine(datetimenow.date(), sensor_logging_start) and \
                 datetimenow <= datetime.combine(datetimenow.date(), sensor_logging_end)):
-                sensorsLastPolled = datetime.now()
+                self.sensorsLastPolled = datetime.now()
                 self.captureSensors()
             
             sleep(1)
