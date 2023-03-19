@@ -46,15 +46,10 @@ class System():
         # self.datetimenow = datetime.combine(date.today(), time(hour=7, minute=0, second=0))
         self.datetimenow = datetime.now()
 
-        self.dhts = None
-        self.adss = None 
-        self.tca = None 
-
     def start(self):
         self.filesInit() 
         self.MQTTInit() 
         self.hwInit() 
-        self.loop()
 
     # callback functions for MQTT broker
     def on_connect(self, client, userdata, flags, rc):
@@ -274,10 +269,6 @@ class System():
 
     def setGrowLightOperation(self, mode):
         self.lightscamera.setGrowLightOperation(mode) 
-
-    def startLoopThread(self):
-        thread = threading.Thread(target=self.loop, daemon=True)
-        thread.start()
 
     def loop(self):
         while True:

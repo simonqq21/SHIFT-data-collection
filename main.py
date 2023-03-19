@@ -19,7 +19,9 @@ system = System()
 # gui init
 gui = GUI()
 print("aaaaaa")
+system.start() 
+gui.after(50, system.loop)
 if __name__ == "__main__":
-    # gui.mainloop()
-    system.start() 
+    gui.mainloop()
+    
     
