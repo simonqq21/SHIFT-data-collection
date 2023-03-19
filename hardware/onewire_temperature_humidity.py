@@ -28,7 +28,7 @@ class DHT22():
             if (self.temperature):
                 break
             try:
-                print("77")
+                print(self.sensor.temperature)
                 self.temperature = self.sensor.temperature
             except Exception as err:
                 print("44")
