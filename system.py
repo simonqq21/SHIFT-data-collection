@@ -298,5 +298,3 @@ class System():
             self.datetimenow <= datetime.combine(self.datetimenow.date(), sensor_logging_end)):
             self.sensorsLastPolled = datetime.now()
             self.captureSensors()
-            
-        sleep(0.01)
