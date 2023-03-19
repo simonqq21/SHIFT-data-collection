@@ -201,6 +201,7 @@ class System():
 
     def captureSensors(self):
         sensorTimeStamp = datetime.now().strftime("%m/%d/%Y %H:%M")
+        print("22")
         # temperature and humidity from DHT22 
         index = 0
         for dht in self.dhts:
@@ -211,6 +212,7 @@ class System():
             df_humidity = self.processSensorDataForPublishing(sensorTimeStamp, suffix_humidity, index, curr_humidity)
             self.saveAndPublishData(df_humidity, main_topic+suffix_humidity)
             index += 1
+        print("22")
         # light intensity from BH1750 
         curr_lightIntensities = self.tca.getLightIntensities()
         index = 0
@@ -218,6 +220,7 @@ class System():
             df_lightintensity = self.processSensorDataForPublishing(sensorTimeStamp, suffix_lightintensity, index, li)
             self.saveAndPublishData(df_lightintensity, main_topic+suffix_lightintensity)
             index += 1
+        print("22")
         # soil moisture, pH, and EC from soil moisture sensors. PH-4502C, and TDS Meter 1.0 
         curr_soilmoistures = []
         curr_solutionpHs = []
@@ -294,13 +297,11 @@ class System():
 
                 # loop to check and run irrigation pumps
                 self.pumps.pollPumps(self.datetimenow)
-                print("88")
             # loop to gather sensor data from all sensors, package it into json, and send it via MQTT 
             if (self.datetimenow - self.sensorsLastPolled >= sensorPollingInterval and \
                 self.datetimenow >= datetime.combine(self.datetimenow.date(), sensor_logging_start) and \
                 self.datetimenow <= datetime.combine(self.datetimenow.date(), sensor_logging_end)):
                 self.sensorsLastPolled = datetime.now()
-                print("88")
                 self.captureSensors()
-                print("22")
+                
             sleep(1)
