@@ -166,7 +166,7 @@ if __name__ == "__main__":
     # add 1 pH sensor to channel 1 of ADS1115 index 2
     adss[2].addPH4502C(m=-0.1723776224, b=3.77251049)
     # add 1 EC sensor 
-    adss[2].addTDSMeter() 
+    adss[2].addTDSMeter()
 
     # initialize grow lights and camera with camera light
     lightscamera = LightsCamera(growLightPin, cameraLightPin, cameraButtonPin, program_root+"/growlight_interval.json", program_root+"/camera_interval.json", images_filepath, images_filename_format)

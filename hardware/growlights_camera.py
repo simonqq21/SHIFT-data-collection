@@ -38,6 +38,9 @@ class LightsCamera:
         self.filename = "" 
         # amount of time in seconds left before the grow light is shut off
         self.growLightTimeLeft = 0
+        # 0 for MANUAL, 1 for AUTO
+        self.growLightMode = 1
+        self.cameraLightMode = 1
         os.makedirs(images_filepath, exist_ok=True) 
         
         # initialize GPIOzero outputs
@@ -126,7 +129,9 @@ class LightsCamera:
             self.cameraDailyIntervals.append(newCameraInterval)
         print(self.cameraDailyIntervals)
 
-    # switch the state of the grow lights
+    '''
+    switch the ON/OFF state of the grow lights
+    '''
     def switchGrowLights(self, state):
         self.growlightval = state
         try:
@@ -141,7 +146,9 @@ class LightsCamera:
         else:
             print("growlight off")
 
-    # switch the state of the camera lights 
+    '''
+    switch the ON/OFF state of the camera lights 
+    '''
     def switchCameraLights(self, state):
         self.cameralightval = state
         try:
@@ -157,16 +164,54 @@ class LightsCamera:
         else:
             print("cameralight off")
 
-    # thread function to switch on the grow lights for a certain duration
+    '''
+    thread function to switch on the grow lights for a certain duration, used for timing
+    '''
     def growLightOn(self, ondelta):
         global growLightTimeLeft
-        growLightTimeLeft = ondelta.seconds
-        self.switchGrowLights(1)
-        while (growLightTimeLeft > 0):
-            sleep(1)
-            print("{}s of light left".format(growLightTimeLeft))
-            growLightTimeLeft -= 1
-        self.switchGrowLights(0)
+        growLightTimeLeft = ondelta.seconds 
+        # only go to automatic mode if the grow light is set to auto
+        if (self.growLightMode):
+            self.switchGrowLights(1)
+            while (growLightTimeLeft > 0):
+                sleep(1)
+                print("{}s of light left".format(growLightTimeLeft))
+                growLightTimeLeft -= 1
+            self.switchGrowLights(0)
+
+    '''
+    method to set the camera light operation to manual ON, manual OFF, or AUTO.
+    '''
+    def setCameraLightOperation(self, mode):
+        if mode == "ON":
+            # set camera light to manual 
+            self.cameraLightMode = 0 
+            self.switchCameraLights(1)
+            
+        elif mode == "OFF":
+            self.cameraLightMode = 0 
+            self.switchCameraLights(0) 
+
+        elif mode == "AUTO": 
+            # set camera light to automatic 
+            self.cameraLightMode = 1
+
+    '''
+    method to set the grow light operation to manual ON, manual OFF, or AUTO.
+    '''
+    def setGrowLightOperation(self, mode):
+        if mode == "ON":
+            # set grow light to manual 
+            self.growLightMode = 0 
+            self.switchGrowLights(1) 
+
+        elif mode == "OFF":
+            self.growLightMode = 0 
+            self.switchGrowLights(0)  
+
+        elif mode == "AUTO":
+            # set grow light to automatic 
+            self.growLightMode = 1 
 
     # thread function to toggle the grow lights and camera lights and capture an image using the Pi Camera
     def captureImage(self, filepath=None, filename=None):
@@ -176,8 +221,10 @@ class LightsCamera:
         growLightsWereOn = False 
         if (self.growlightval):
             growLightsWereOn = True
-        self.switchGrowLights(0)
-        self.switchCameraLights(1)
+        self.switchGrowLights(0)  
+        # only automatically switch camera lights on if the camera light is set to auto
+        if (self.cameraLightMode):
+            self.switchCameraLights(1)
         if filepath is None:
             filepath=self.images_filepath 
         if filename is None:
@@ -196,7 +243,9 @@ class LightsCamera:
             print("no camera object, using dummy camera")
         print("image captured")
         sleep(0.5)
-        self.switchCameraLights(0)
+        # only automatically switch camera lights off if the camera light is set to auto
+        if (self.cameraLightMode):
+            self.switchCameraLights(0)
         if (growLightsWereOn):
             self.switchGrowLights(1)
         try:
