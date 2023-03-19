@@ -43,8 +43,8 @@ class System():
         self.intervalLastChecked = datetime(year=1970, month=1, day=1)
         self.sensorsLastPolled = datetime(year=1970, month=1, day=1)
         # for timekeeping
-    # self.datetimenow = datetime.combine(date.today(), time(hour=7, minute=0, second=0))
-    self.datetimenow = datetime.now()
+        # self.datetimenow = datetime.combine(date.today(), time(hour=7, minute=0, second=0))
+        self.datetimenow = datetime.now()
 
     def start(self):
         self.filesInit() 
