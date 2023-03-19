@@ -205,7 +205,8 @@ class System():
         # temperature and humidity from DHT22 
         index = 0
         for dht in self.dhts:
-            print(dht)
+            print(dht.getTemperature())
+            print(dht.getHumidity())
             curr_temperature = dht.getTemperature()
             curr_humidity = dht.getHumidity()
             print("22")
