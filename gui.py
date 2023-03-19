@@ -54,7 +54,6 @@ class GUI(Tk):
         pump2Button.grid(row=3, column=1, sticky='nsew')
         pump3Button = Button(self, text="Activate Pump 3 for {} seconds".format(5), command=self.activatePump) 
         pump3Button.grid(row=3, column=2, sticky='nsew')
-        self.mainloop()
 
     def toggleGrowLights(self, func):
         pass

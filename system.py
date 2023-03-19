@@ -42,7 +42,7 @@ class System():
         self.filesInit() 
         self.MQTTInit() 
         self.hwInit() 
-        self.loop()
+        self.startLoopThread()
 
     # callback functions for MQTT broker
     def on_connect(self, client, userdata, flags, rc):
@@ -256,6 +256,10 @@ class System():
 
     def setGrowLightOperation(self, mode):
         self.lightscamera.setGrowLightOperation(mode) 
+
+    def startLoopThread(self):
+        thread = threading.Thread(target=self.loop, daemon=True)
+        thread.start()
 
     def loop(self):
         while True:
