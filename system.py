@@ -201,12 +201,13 @@ class System():
 
     def captureSensors(self):
         sensorTimeStamp = datetime.now().strftime("%m/%d/%Y %H:%M")
-        print("22")
+        
         # temperature and humidity from DHT22 
         index = 0
         for dht in self.dhts:
             curr_temperature = dht.getTemperature()
             curr_humidity = dht.getHumidity()
+            print("22")
             df_temperature = self.processSensorDataForPublishing(sensorTimeStamp, suffix_temperature, index, curr_temperature)
             self.saveAndPublishData(df_temperature, main_topic+suffix_temperature)
             df_humidity = self.processSensorDataForPublishing(sensorTimeStamp, suffix_humidity, index, curr_humidity)
