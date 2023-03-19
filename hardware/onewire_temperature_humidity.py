@@ -17,23 +17,25 @@ class DHT22():
             self.sensor = adafruit_dht.DHT22(GPIO)
         except:
             print("error adding DHT22 on pin {}".format(GPIO))
-        self.temperature = None
-        self.humidity = None 
-        self.prevTemperature = None 
-        self.prevHumidity = None
+        self.temperature = 0
+        self.humidity = 0 
+        self.prevTemperature = 0 
+        self.prevHumidity = 0
 
     def getTemperature(self):
         self.temperature = None
         for i in range(5):
             if (self.temperature):
                 break
-            print("77")
             try:
+                print("77")
                 self.temperature = self.sensor.temperature
             except Exception as err:
+                print("44")
                 print(type(err))
                 print(err)
             sleep(2)
+            print("22")
         if (self.temperature is None):
             self.temperature = self.prevTemperature
         else:
@@ -68,48 +70,3 @@ if __name__ == "__main__":
             print(dht.getHumidity())
             print()
             
-'''
-get the temperature values from the two DHT22 sensors in °C
-'''
-# def getTemperatureValues(): 
-#     temperatureReadings = []
-#     try:
-#         for i in range(len(dhts)):
-#             newTemperatureReading = {}
-#             newTemperatureReading["index"] = i
-#             newTemperatureReading["value"] = dhts[i].temperature
-#             temperatureReadings.append(newTemperatureReading)
-#     except Exception as e:
-#         print('DHT22 temperature read error or not running on RPi')
-#         print(e)
-#         temperatureReadings = []
-#         for i in range(len(dhts)):
-#             newTemperatureReading = {}
-#             newTemperatureReading["index"] = i
-#             newTemperatureReading["value"] = -100
-#             temperatureReadings.append(newTemperatureReading)
-#     return temperatureReadings
-
-# '''
-# get the humidity values from the two DHT22 sensors in %
-# '''
-# def getHumidityValues():
-#     humidityReadings = []
-#     try:
-#         for i in range(len(dhts)):
-#             newHumidityReading = {}
-#             newHumidityReading["index"] = i
-#             newHumidityReading["value"] = dhts[i].humidity
-#             humidityReadings.append(newHumidityReading)
-#     except Exception as e:
-#         print('DHT22 humidity read error or not running on RPi')
-#         print(e)
-#         humidityReadings = []
-#         for i in range(len(dhts)):
-#             newHumidityReading = {}
-#             newHumidityReading["index"] = i
-#             newHumidityReading["value"] = -1
-#             humidityReadings.append(newHumidityReading)
-#     return humidityReadings
-
-
