@@ -183,16 +183,16 @@ class LightsCamera:
     method to set the camera light operation to manual ON, manual OFF, or AUTO.
     '''
     def setCameraLightOperation(self, mode):
-        if mode == "ON":
+        if mode == 1:
             # set camera light to manual 
             self.cameraLightMode = 0 
             self.switchCameraLights(1)
             
-        elif mode == "OFF":
+        elif mode == 0:
             self.cameraLightMode = 0 
             self.switchCameraLights(0) 
 
-        elif mode == "AUTO": 
+        elif mode == 2: 
             # set camera light to automatic 
             self.cameraLightMode = 1
 
@@ -200,16 +200,16 @@ class LightsCamera:
     method to set the grow light operation to manual ON, manual OFF, or AUTO.
     '''
     def setGrowLightOperation(self, mode):
-        if mode == "ON":
+        if mode == 1:
             # set grow light to manual 
             self.growLightMode = 0 
             self.switchGrowLights(1) 
 
-        elif mode == "OFF":
+        elif mode == 0:
             self.growLightMode = 0 
             self.switchGrowLights(0)  
 
-        elif mode == "AUTO":
+        elif mode == 2:
             # set grow light to automatic 
             self.growLightMode = 1 
 
