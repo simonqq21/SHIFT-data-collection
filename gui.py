@@ -88,7 +88,7 @@ class GUI(Tk):
         self.system.loop()
         self.update_idletasks() 
         self.update()
-        self.after(70, self.systemLoop) 
+        self.after(1000, self.systemLoop) 
 
 pump_duration = 5 
 
