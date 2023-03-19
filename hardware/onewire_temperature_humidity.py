@@ -28,14 +28,11 @@ class DHT22():
             if (self.temperature):
                 break
             try:
-                print(self.sensor.temperature)
                 self.temperature = self.sensor.temperature
             except Exception as err:
-                print("44")
                 print(type(err))
                 print(err)
             sleep(2)
-            print("22")
         if (self.temperature is None):
             self.temperature = self.prevTemperature
         else:
