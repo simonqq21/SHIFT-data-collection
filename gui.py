@@ -23,7 +23,7 @@ class GUI(Tk):
         # system init 
         self.system = System() 
         self.system.start() 
-        
+
         self.cameraButtonState = 0
         self.sensorButtonState = 0 
         self.growLightButtonState = 0 
@@ -60,7 +60,7 @@ class GUI(Tk):
         pump3Button = Button(self, text="Activate Pump 3 for {} seconds".format(5), command=self.activatePump) 
         pump3Button.grid(row=3, column=2, sticky='nsew')
 
-        self.systemLoop()
+        self.after(300, self.systemLoop)
 
     def toggleGrowLights(self, func):
         pass
@@ -87,7 +87,10 @@ class GUI(Tk):
         pass 
 
     def systemLoop(self):
-        self.after(50, self.system.loop) 
+        self.system.loop()
+        self.update_idletasks() 
+        self.update()
+        self.after(50, self.systemLoop) 
 
 pump_duration = 5 
 
