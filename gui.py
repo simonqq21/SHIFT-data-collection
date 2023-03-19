@@ -60,6 +60,8 @@ class GUI(Tk):
         pump3Button = Button(self, text="Activate Pump 3 for {} seconds".format(5), command=self.activatePump) 
         pump3Button.grid(row=3, column=2, sticky='nsew')
 
+        self.after(500, self.systemLoop) 
+
     def toggleGrowLights(self, func):
         pass
         # self.growLightButtonState += 1
@@ -85,18 +87,13 @@ class GUI(Tk):
         pass 
 
     def systemLoop(self):
+        print("System loop")
         self.system.loop()
         self.update_idletasks() 
         self.update()
-        self.after(1000, self.systemLoop) 
+        self.after(100, self.systemLoop) 
 
 pump_duration = 5 
-
-
-
-
-
-
 
 if __name__ == "__main__":
     pass 
