@@ -87,11 +87,10 @@ class GUI(Tk):
         pass 
 
     def systemLoop(self):
-        print("System loop")
         self.system.loop()
         self.update_idletasks() 
         self.update()
-        self.after(100, self.systemLoop) 
+        self.after(50, self.systemLoop) 
 
 pump_duration = 5 
 
