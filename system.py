@@ -54,7 +54,7 @@ class System():
         self.filesInit() 
         self.MQTTInit() 
         self.hwInit() 
-        self.startLoopThread()
+        self.loop()
 
     # callback functions for MQTT broker
     def on_connect(self, client, userdata, flags, rc):
@@ -208,18 +208,18 @@ class System():
         
         # temperature and humidity from DHT22 
         index = 0
-        # for dht in self.dhts:
-        #     print(dht.getTemperature())
-        #     print(dht.getHumidity())
-        #     curr_temperature = dht.getTemperature()
-        #     curr_humidity = dht.getHumidity()
-        #     print("22")
-        #     df_temperature = self.processSensorDataForPublishing(sensorTimeStamp, suffix_temperature, index, curr_temperature)
-        #     self.saveAndPublishData(df_temperature, main_topic+suffix_temperature)
-        #     df_humidity = self.processSensorDataForPublishing(sensorTimeStamp, suffix_humidity, index, curr_humidity)
-        #     self.saveAndPublishData(df_humidity, main_topic+suffix_humidity)
-        #     index += 1
-        # print("22")
+        for dht in self.dhts:
+            print(dht.getTemperature())
+            print(dht.getHumidity())
+            curr_temperature = dht.getTemperature()
+            curr_humidity = dht.getHumidity()
+            print("22")
+            df_temperature = self.processSensorDataForPublishing(sensorTimeStamp, suffix_temperature, index, curr_temperature)
+            self.saveAndPublishData(df_temperature, main_topic+suffix_temperature)
+            df_humidity = self.processSensorDataForPublishing(sensorTimeStamp, suffix_humidity, index, curr_humidity)
+            self.saveAndPublishData(df_humidity, main_topic+suffix_humidity)
+            index += 1
+        print("22")
         # light intensity from BH1750 
         curr_lightIntensities = self.tca.getLightIntensities()
         index = 0
