@@ -63,28 +63,19 @@ class GUI(Tk):
         self.after(500, self.systemLoop) 
 
     def toggleGrowLights(self, func):
-        pass
-        # self.growLightButtonState += 1
-        # if self.growLightButtonState == 3:
-        #     self.growLightButtonState = 0
+        self.system.setGrowLightOperation(self, mode)
 
-        # if (self.growLightButtonState == 0):
-            
-        # elif (self.growLightButtonState == 1):
+    def toggleCameraLights(self):
+        self.system.setCameraLightOperation(self, mode)
 
-        # elif (self.growLightButtonState == 2):
+    def captureImage(self):
+        self.system.captureImage()
 
-    def toggleCameraLights():
-        pass 
+    def captureSensors(self):
+        self.system.captureSensors()
 
-    def captureImage():
-        pass 
-
-    def captureSensors():
-        pass 
-
-    def activatePump():
-        pass 
+    def activatePump(self, index):
+        self.system.activatePump(index) 
 
     def systemLoop(self):
         self.system.loop()
