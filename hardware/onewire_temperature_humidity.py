@@ -29,8 +29,9 @@ class DHT22():
                 break
             try:
                 self.temperature = self.sensor.temperature
-            except Exception as err:
-                print(type(err))
+            except RuntimeError as err:
+                print(err)
+            except OverflowError as err:
                 print(err)
             sleep(2)
         if (self.temperature is None):
@@ -47,6 +48,8 @@ class DHT22():
             try:
                 self.humidity = self.sensor.humidity
             except RuntimeError as err:
+                print(err)
+            except OverflowError as err:
                 print(err)
             sleep(2)
         if (self.humidity is None):
