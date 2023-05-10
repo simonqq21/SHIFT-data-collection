@@ -72,11 +72,10 @@ class System():
     '''
     def processSensorDataForPublishing(self, datetime, type, index, rawsensordata):
         global debug
-        global expt_num, sitename
         data = Config.sensor_data
         data["datetime"] = [datetime]
-        data["expt_num"] = [expt_num]
-        data["sitename"]= [sitename]
+        data["expt_num"] = [Config.expt_num]
+        data["sitename"]= [Config.sitename]
         data["type"]= [type]
         data["index"]= [index]
         data["value"]= [rawsensordata]
@@ -102,10 +101,9 @@ class System():
     '''
     def processImageDataForPublishing(self, type, index, filename, binaryImage):
         global debug
-        global expt_num, sitename
         data = Config.image_data
-        data["expt_num"] = [expt_num]
-        data["sitename"]= [sitename]
+        data["expt_num"] = [Config.expt_num]
+        data["sitename"]= [Config.sitename]
         data["type"]= [type]
         data["index"]= [index]
         data["filename"]= [filename]
