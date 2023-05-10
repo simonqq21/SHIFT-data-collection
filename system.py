@@ -49,6 +49,7 @@ class System():
     def start(self):
         self.filesInit() 
         self.MQTTInit() 
+        print("MQTT init")
         self.hwInit() 
 
     # callback functions for MQTT broker
