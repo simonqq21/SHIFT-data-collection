@@ -23,7 +23,7 @@ class BH1750:
             else:
                 self.sensor = adafruit_bh1750.BH1750(i2c)
         except:
-            print("error adding BH1750 on channel {}".format(i2c))
+            # print("error adding BH1750 on channel {}".format(i2c))
             exit
         self.lightintensity = None
 
