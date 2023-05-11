@@ -172,6 +172,7 @@ class System():
             except Exception as e:
                 print(e)
                 print("not running on Pi or device not connected properly") 
+        print("=0")
 
         # initialize ADS1115 i2c ADCs and analog channels for soil moisture sensors, PH4502C pH sensor, and TDS meter EC sensor 
         self.adss = []
