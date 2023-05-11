@@ -167,12 +167,12 @@ class System():
         bhcount = Config.bhcount
         self.tca = TCA9548A(i2c)
         print(self.tca)
-        for si in range(bhcount):
-            try:
-                self.tca.addBH1750(si)
-            except Exception as e:
-                print(e)
-                print("not running on Pi or device not connected properly") 
+        # for si in range(bhcount):
+        #     try:
+        #         self.tca.addBH1750(si)
+        #     except Exception as e:
+        #         print(e)
+        #         print("not running on Pi or device not connected properly") 
 
         # initialize ADS1115 i2c ADCs and analog channels for soil moisture sensors, PH4502C pH sensor, and TDS meter EC sensor 
         self.adss = []
