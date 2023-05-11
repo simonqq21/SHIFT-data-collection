@@ -48,10 +48,13 @@ class TCA9548A:
             print("error adding TCA9548 on channel {}".format(i2c))
         
     def addBH1750(self, i2cIndex):
-        if (i2cIndex > 7):
-            self.bhs.append(BH1750(self.tca[i2cIndex%8], altAddr=True))
-        else:
-            self.bhs.append(BH1750(self.tca[i2cIndex%8]))
+        try:
+            if (i2cIndex > 7):
+                self.bhs.append(BH1750(self.tca[i2cIndex%8], altAddr=True))
+            else:
+                self.bhs.append(BH1750(self.tca[i2cIndex%8]))
+        except Exception as err:
+            print(err)
         
     def getLightIntensities(self):
         self.lightIntensities = []
