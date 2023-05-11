@@ -71,7 +71,6 @@ class System():
     return a dataframe containing the indexed sensor data to be transmitted
     '''
     def processSensorDataForPublishing(self, datetime, type, index, rawsensordata):
-        global debug
         data = Config.sensor_data
         data["datetime"] = [datetime]
         data["expt_num"] = [Config.expt_num]
@@ -80,7 +79,7 @@ class System():
         data["index"]= [index]
         data["value"]= [rawsensordata]
         df = pd.DataFrame(data, columns=self.columns)
-        if debug:
+        if Config.debug:
             print(df)
         return df 
 
@@ -100,7 +99,6 @@ class System():
     return a dataframe containing the image data and metadata to be transmitted
     '''
     def processImageDataForPublishing(self, type, index, filename, binaryImage):
-        global debug
         data = Config.image_data
         data["expt_num"] = [Config.expt_num]
         data["sitename"]= [Config.sitename]
@@ -109,7 +107,7 @@ class System():
         data["filename"]= [filename]
         data["imagedata"]= [binaryImage]
         df = pd.DataFrame(data, columns=self.camera_columns)
-        if debug:
+        if Config.debug:
             print(df)
         return df 
 
