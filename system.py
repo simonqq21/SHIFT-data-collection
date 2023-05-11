@@ -166,13 +166,13 @@ class System():
         # initialize TCA9548A i2c multiplexer and i2c BH1750 light intensity sensors 
         bhcount = 9 
         self.tca = TCA9548A(i2c)
-        # for si in range(bhcount):
-        #     try:
-        #         self.tca.addBH1750(si)
-        #     except Exception as e:
-        #         print(e)
-        #         print("not running on Pi or device not connected properly") 
-        # print("=0")
+        print(self.tca)
+        for si in range(bhcount):
+            try:
+                self.tca.addBH1750(si)
+            except Exception as e:
+                print(e)
+                print("not running on Pi or device not connected properly") 
 
         # initialize ADS1115 i2c ADCs and analog channels for soil moisture sensors, PH4502C pH sensor, and TDS meter EC sensor 
         self.adss = []
