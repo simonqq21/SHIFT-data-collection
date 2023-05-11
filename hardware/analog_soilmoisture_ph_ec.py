@@ -86,15 +86,18 @@ class TDSMeter:
 
 class ADS1115:
     def __init__(self, i2c, gain=1, addressIndex=0): # gain=1 to fit the 3v3 range 
-        self.gain = gain
-        self.address = 72 + addressIndex
-        self.ads = ADS.ADS1115(i2c, gain=self.gain, address=self.address)  
-        self.chans = [] 
-        self.chans.append(AnalogIn(self.ads, ADS.P0))
-        self.chans.append(AnalogIn(self.ads, ADS.P1))
-        self.chans.append(AnalogIn(self.ads, ADS.P2))
-        self.chans.append(AnalogIn(self.ads, ADS.P3))
-        self.sensors = []  
+        try:
+            self.gain = gain
+            self.address = 72 + addressIndex
+            self.ads = ADS.ADS1115(i2c, gain=self.gain, address=self.address)  
+            self.chans = [] 
+            self.chans.append(AnalogIn(self.ads, ADS.P0))
+            self.chans.append(AnalogIn(self.ads, ADS.P1))
+            self.chans.append(AnalogIn(self.ads, ADS.P2))
+            self.chans.append(AnalogIn(self.ads, ADS.P3))
+            self.sensors = []  
+        except Exception as err:
+            print(err)
 
     def addSoilMoistureSensor(self, m, b):
         if (len(self.sensors) >= 4):
