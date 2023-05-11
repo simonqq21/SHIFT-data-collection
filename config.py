@@ -67,3 +67,5 @@ class Config(object):
     cameraButtonPin = 9
     pumpPins = (22, 23, 24) 
     pumpButtonPin = 10
+
+    bhcount = 1
