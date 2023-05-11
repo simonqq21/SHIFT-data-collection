@@ -228,28 +228,28 @@ class System():
         curr_soilmoistures = []
         curr_solutionpHs = []
         curr_solutionECs = []
-        for ads in self.adss:
-            for sm in ads.getSoilMoistures():
-                curr_soilmoistures.append(sm)
-            for pH in ads.getSolutionpHs():
-                curr_solutionpHs.append(pH)
-            for ec in ads.getSolutionECs():
-                curr_solutionECs.append(ec)
-        index = 0 
-        for sm in curr_soilmoistures:
-            df_soilmoisture = self.processSensorDataForPublishing(sensorTimeStamp, Config.suffix_soilmoisture, index, sm)
-            self.saveAndPublishData(df_soilmoisture, Config.main_topic+Config.suffix_soilmoisture)
-            index += 1
-        index = 0 
-        for pH in curr_solutionpHs:
-            df_solutionpH = self.processSensorDataForPublishing(sensorTimeStamp, Config.suffix_pH, index, pH)
-            self.saveAndPublishData(df_solutionpH, Config.main_topic+Config.suffix_pH)
-            index += 1
-        index = 0 
-        for ec in curr_solutionECs:
-            df_solutionEC = self.processSensorDataForPublishing(sensorTimeStamp, Config.suffix_EC, index, ec)
-            self.saveAndPublishData(df_solutionEC, Config.main_topic+Config.suffix_EC)
-            index += 1
+        # for ads in self.adss:
+        #     for sm in ads.getSoilMoistures():
+        #         curr_soilmoistures.append(sm)
+        #     for pH in ads.getSolutionpHs():
+        #         curr_solutionpHs.append(pH)
+        #     for ec in ads.getSolutionECs():
+        #         curr_solutionECs.append(ec)
+        # index = 0 
+        # for sm in curr_soilmoistures:
+        #     df_soilmoisture = self.processSensorDataForPublishing(sensorTimeStamp, Config.suffix_soilmoisture, index, sm)
+        #     self.saveAndPublishData(df_soilmoisture, Config.main_topic+Config.suffix_soilmoisture)
+        #     index += 1
+        # index = 0 
+        # for pH in curr_solutionpHs:
+        #     df_solutionpH = self.processSensorDataForPublishing(sensorTimeStamp, Config.suffix_pH, index, pH)
+        #     self.saveAndPublishData(df_solutionpH, Config.main_topic+Config.suffix_pH)
+        #     index += 1
+        # index = 0 
+        # for ec in curr_solutionECs:
+        #     df_solutionEC = self.processSensorDataForPublishing(sensorTimeStamp, Config.suffix_EC, index, ec)
+        #     self.saveAndPublishData(df_solutionEC, Config.main_topic+Config.suffix_EC)
+        #     index += 1
 
     def captureImage(self):
         self.lightscamera.captureImage() 
