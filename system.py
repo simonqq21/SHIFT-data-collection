@@ -223,7 +223,7 @@ class System():
             df_lightintensity = self.processSensorDataForPublishing(sensorTimeStamp, Config.suffix_lightintensity, index, li)
             self.saveAndPublishData(df_lightintensity, Config.main_topic+Config.suffix_lightintensity)
             index += 1
-        print("22")
+        print(f"light index={index}")
         # soil moisture, pH, and EC from soil moisture sensors. PH-4502C, and TDS Meter 1.0 
         curr_soilmoistures = []
         curr_solutionpHs = []
