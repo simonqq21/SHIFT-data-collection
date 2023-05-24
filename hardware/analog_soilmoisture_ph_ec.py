@@ -104,6 +104,9 @@ class ADS1115:
             print("ADS1115 is full, error adding soil moisture sensor")
         else:
             chanIndex = len(self.sensors) - 1 if len(self.sensors) > 0 else 0
+            if debug:
+                print(chanIndex)
+                print(self.chans)
             self.sensors.append(SoilMoistureSensor(self.chans[chanIndex], m, b))
 
     def addPH4502C(self, m, b):
