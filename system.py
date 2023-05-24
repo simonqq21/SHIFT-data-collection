@@ -165,32 +165,32 @@ class System():
         bhcount = Config.bhcount
         self.tca = TCA9548A(i2c)
         print(self.tca)
-        # for si in range(bhcount):
-        #     try:
-        #         self.tca.addBH1750(si)
-        #     except Exception as e:
-        #         print(e)
-        #         print("not running on Pi or device not connected properly") 
+        for si in range(bhcount):
+            try:
+                self.tca.addBH1750(si)
+            except Exception as e:
+                print(e)
+                print("not running on Pi or device not connected properly") 
 
         # initialize ADS1115 i2c ADCs and analog channels for soil moisture sensors, PH4502C pH sensor, and TDS meter EC sensor 
-        # self.adss = []
-        # self.adss.append(ADS1115(i2c, addressIndex=0)) # soil moisture sensors 0-3
-        # self.adss.append(ADS1115(i2c, addressIndex=1)) # soil moisture sensors 4-7
-        # self.adss.append(ADS1115(i2c, addressIndex=2)) # soil moisture sensor 8, pH sensor, and EC sensor
-        # # add 9 soil moisture sensors throughout three ADS1115 consecutively from channel 0 of ADS1115 index 0
-        # self.adss[0].addSoilMoistureSensor(m=-1.98019802, b=7.762376238)
-        # self.adss[0].addSoilMoistureSensor(m=-0.7518796992, b=2.917293233)
-        # self.adss[0].addSoilMoistureSensor(m=-1.007049345, b=3.917421954)
-        # self.adss[0].addSoilMoistureSensor(m=-1.879699248, b=7.612781955)
-        # self.adss[1].addSoilMoistureSensor(m=-2.127659574, b=8.765957447)
-        # self.adss[1].addSoilMoistureSensor(m=-2.192982456, b=9.035087719)
-        # self.adss[1].addSoilMoistureSensor(m=-2.487562189, b=10.2238806)
-        # self.adss[1].addSoilMoistureSensor(m=-2.049180328, b=8.422131148)
-        # self.adss[2].addSoilMoistureSensor(m=-2.049180328, b=8.422131148)
-        # # add 1 pH sensor to channel 1 of ADS1115 index 2
-        # self.adss[2].addPH4502C(m=-0.1723776224, b=3.77251049)
-        # # add 1 EC sensor 
-        # self.adss[2].addTDSMeter()
+        self.adss = []
+        self.adss.append(ADS1115(i2c, addressIndex=0)) # soil moisture sensors 0-3
+        self.adss.append(ADS1115(i2c, addressIndex=1)) # soil moisture sensors 4-7
+        self.adss.append(ADS1115(i2c, addressIndex=2)) # soil moisture sensor 8, pH sensor, and EC sensor
+        # add 9 soil moisture sensors throughout three ADS1115 consecutively from channel 0 of ADS1115 index 0
+        self.adss[0].addSoilMoistureSensor(m=-1.98019802, b=7.762376238)
+        self.adss[0].addSoilMoistureSensor(m=-0.7518796992, b=2.917293233)
+        self.adss[0].addSoilMoistureSensor(m=-1.007049345, b=3.917421954)
+        self.adss[0].addSoilMoistureSensor(m=-1.879699248, b=7.612781955)
+        self.adss[1].addSoilMoistureSensor(m=-2.127659574, b=8.765957447)
+        self.adss[1].addSoilMoistureSensor(m=-2.192982456, b=9.035087719)
+        self.adss[1].addSoilMoistureSensor(m=-2.487562189, b=10.2238806)
+        self.adss[1].addSoilMoistureSensor(m=-2.049180328, b=8.422131148)
+        self.adss[2].addSoilMoistureSensor(m=-2.049180328, b=8.422131148)
+        # add 1 pH sensor to channel 1 of ADS1115 index 2
+        self.adss[2].addPH4502C(m=-0.1723776224, b=3.77251049)
+        # add 1 EC sensor 
+        self.adss[2].addTDSMeter()
 
         # initialize grow lights and camera with camera light
         self.lightscamera = LightsCamera(Config.growLightPin, Config.cameraLightPin, Config.cameraButtonPin, Config.program_root+"/growlight_interval.json", Config.program_root+"/camera_interval.json", Config.images_filepath, Config.images_filename_format)
