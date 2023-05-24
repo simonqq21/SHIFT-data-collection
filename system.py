@@ -177,6 +177,7 @@ class System():
         self.adss.append(ADS1115(i2c, addressIndex=0)) # soil moisture sensors 0-3
         self.adss.append(ADS1115(i2c, addressIndex=1)) # soil moisture sensors 4-7
         self.adss.append(ADS1115(i2c, addressIndex=2)) # soil moisture sensor 8, pH sensor, and EC sensor
+        print(len(self.adss))
         # add 9 soil moisture sensors throughout three ADS1115 consecutively from channel 0 of ADS1115 index 0
         self.adss[0].addSoilMoistureSensor(m=-1.98019802, b=7.762376238)
         self.adss[0].addSoilMoistureSensor(m=-0.7518796992, b=2.917293233)
