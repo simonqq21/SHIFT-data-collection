@@ -68,4 +68,4 @@ class Config(object):
     pumpPins = (22, 23, 24) 
     pumpButtonPin = 10
 
-    bhcount = 1
+    bhcount = 9
