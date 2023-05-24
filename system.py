@@ -217,39 +217,39 @@ class System():
             self.saveAndPublishData(df_humidity, Config.main_topic+Config.suffix_humidity)
             index += 1
         # light intensity from BH1750 
-        # curr_lightIntensities = self.tca.getLightIntensities()
-        # index = 0
-        # for li in curr_lightIntensities:
-        #     df_lightintensity = self.processSensorDataForPublishing(sensorTimeStamp, Config.suffix_lightintensity, index, li)
-        #     self.saveAndPublishData(df_lightintensity, Config.main_topic+Config.suffix_lightintensity)
-        #     index += 1
-        # print("22")
+        curr_lightIntensities = self.tca.getLightIntensities()
+        index = 0
+        for li in curr_lightIntensities:
+            df_lightintensity = self.processSensorDataForPublishing(sensorTimeStamp, Config.suffix_lightintensity, index, li)
+            self.saveAndPublishData(df_lightintensity, Config.main_topic+Config.suffix_lightintensity)
+            index += 1
+        print("22")
         # soil moisture, pH, and EC from soil moisture sensors. PH-4502C, and TDS Meter 1.0 
         curr_soilmoistures = []
         curr_solutionpHs = []
         curr_solutionECs = []
-        # for ads in self.adss:
-        #     for sm in ads.getSoilMoistures():
-        #         curr_soilmoistures.append(sm)
-        #     for pH in ads.getSolutionpHs():
-        #         curr_solutionpHs.append(pH)
-        #     for ec in ads.getSolutionECs():
-        #         curr_solutionECs.append(ec)
-        # index = 0 
-        # for sm in curr_soilmoistures:
-        #     df_soilmoisture = self.processSensorDataForPublishing(sensorTimeStamp, Config.suffix_soilmoisture, index, sm)
-        #     self.saveAndPublishData(df_soilmoisture, Config.main_topic+Config.suffix_soilmoisture)
-        #     index += 1
-        # index = 0 
-        # for pH in curr_solutionpHs:
-        #     df_solutionpH = self.processSensorDataForPublishing(sensorTimeStamp, Config.suffix_pH, index, pH)
-        #     self.saveAndPublishData(df_solutionpH, Config.main_topic+Config.suffix_pH)
-        #     index += 1
-        # index = 0 
-        # for ec in curr_solutionECs:
-        #     df_solutionEC = self.processSensorDataForPublishing(sensorTimeStamp, Config.suffix_EC, index, ec)
-        #     self.saveAndPublishData(df_solutionEC, Config.main_topic+Config.suffix_EC)
-        #     index += 1
+        for ads in self.adss:
+            for sm in ads.getSoilMoistures():
+                curr_soilmoistures.append(sm)
+            for pH in ads.getSolutionpHs():
+                curr_solutionpHs.append(pH)
+            for ec in ads.getSolutionECs():
+                curr_solutionECs.append(ec)
+        index = 0 
+        for sm in curr_soilmoistures:
+            df_soilmoisture = self.processSensorDataForPublishing(sensorTimeStamp, Config.suffix_soilmoisture, index, sm)
+            self.saveAndPublishData(df_soilmoisture, Config.main_topic+Config.suffix_soilmoisture)
+            index += 1
+        index = 0 
+        for pH in curr_solutionpHs:
+            df_solutionpH = self.processSensorDataForPublishing(sensorTimeStamp, Config.suffix_pH, index, pH)
+            self.saveAndPublishData(df_solutionpH, Config.main_topic+Config.suffix_pH)
+            index += 1
+        index = 0 
+        for ec in curr_solutionECs:
+            df_solutionEC = self.processSensorDataForPublishing(sensorTimeStamp, Config.suffix_EC, index, ec)
+            self.saveAndPublishData(df_solutionEC, Config.main_topic+Config.suffix_EC)
+            index += 1
 
     def captureImage(self):
         self.lightscamera.captureImage() 
@@ -273,31 +273,33 @@ class System():
 
     def loop(self):
         self.datetimenow = datetime.now()
-        # update the growLightIntervals and cameraIntervals with the times of the day 
-        if (date.today() > self.lastUpdateDate):
-            # self.datetimenow = datetime.now()
-            self.lastUpdateDate = date.today() 
-            self.lightscamera.getGrowLightIntervalsPerDay()
-            self.lightscamera.getCameraIntervalsPerDay()
-            
-        # loop to check the camera, growlights, and pump
-        if (datetime.now() - self.intervalLastChecked >= Config.checkingInterval):
-            self.intervalLastChecked = datetime.now()
-            # loop to check switch grow lights
-            self.lightscamera.pollGrowLights(self.datetimenow)
-            print("val={}".format(self.lightscamera.growlightval))
-            '''
-            while the camera is capturing an image, the growlight code must be overriden.
-            '''
-            # loop to capture image 
-            self.lightscamera.pollCamera(self.datetimenow)
-            self.publishNewImage()
+        while True:
+            # update the growLightIntervals and cameraIntervals with the times of the day 
+            if (date.today() > self.lastUpdateDate):
+                # self.datetimenow = datetime.now()
+                self.lastUpdateDate = date.today() 
+                self.lightscamera.getGrowLightIntervalsPerDay()
+                self.lightscamera.getCameraIntervalsPerDay()
+                
+            # loop to check the camera, growlights, and pump
+            if (datetime.now() - self.intervalLastChecked >= Config.checkingInterval):
+                self.intervalLastChecked = datetime.now()
+                # loop to check switch grow lights
+                self.lightscamera.pollGrowLights(self.datetimenow)
+                print("val={}".format(self.lightscamera.growlightval))
+                '''
+                while the camera is capturing an image, the growlight code must be overriden.
+                '''
+                # loop to capture image 
+                self.lightscamera.pollCamera(self.datetimenow)
+                self.publishNewImage()
 
-            # loop to check and run irrigation pumps
-            self.pumps.pollPumps(self.datetimenow)
-        # loop to gather sensor data from all sensors, package it into json, and send it via MQTT 
-        if (self.datetimenow - self.sensorsLastPolled >= Config.sensorPollingInterval and \
-            self.datetimenow >= datetime.combine(self.datetimenow.date(), Config.sensor_logging_start) and \
-            self.datetimenow <= datetime.combine(self.datetimenow.date(), Config.sensor_logging_end)):
-            self.sensorsLastPolled = datetime.now()
-            self.captureSensors()
+                # loop to check and run irrigation pumps
+                self.pumps.pollPumps(self.datetimenow)
+            # loop to gather sensor data from all sensors, package it into json, and send it via MQTT 
+            if (self.datetimenow - self.sensorsLastPolled >= Config.sensorPollingInterval and \
+                self.datetimenow >= datetime.combine(self.datetimenow.date(), Config.sensor_logging_start) and \
+                self.datetimenow <= datetime.combine(self.datetimenow.date(), Config.sensor_logging_end)):
+                self.sensorsLastPolled = datetime.now()
+                self.captureSensors()
+            sleep(1)
