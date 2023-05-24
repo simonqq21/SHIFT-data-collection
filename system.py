@@ -217,13 +217,13 @@ class System():
             self.saveAndPublishData(df_humidity, Config.main_topic+Config.suffix_humidity)
             index += 1
         # light intensity from BH1750 
-        curr_lightIntensities = self.tca.getLightIntensities()
-        index = 0
-        for li in curr_lightIntensities:
-            df_lightintensity = self.processSensorDataForPublishing(sensorTimeStamp, Config.suffix_lightintensity, index, li)
-            self.saveAndPublishData(df_lightintensity, Config.main_topic+Config.suffix_lightintensity)
-            index += 1
-        print("22")
+        # curr_lightIntensities = self.tca.getLightIntensities()
+        # index = 0
+        # for li in curr_lightIntensities:
+        #     df_lightintensity = self.processSensorDataForPublishing(sensorTimeStamp, Config.suffix_lightintensity, index, li)
+        #     self.saveAndPublishData(df_lightintensity, Config.main_topic+Config.suffix_lightintensity)
+        #     index += 1
+        # print("22")
         # soil moisture, pH, and EC from soil moisture sensors. PH-4502C, and TDS Meter 1.0 
         curr_soilmoistures = []
         curr_solutionpHs = []
