@@ -7,3 +7,15 @@ try:
 except Exception as e:
     print(e)
 from config import Config
+
+'''
+lights purple on
+lights purple off
+lights white on
+lights white off 
+lights white flash 
+
+00
+first bit - grow lights
+second bit - white lights
+'''

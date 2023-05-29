@@ -1,10 +1,12 @@
-image_data = {
-    'expt_num': [],
-    'sitename': [],
-    'type': [],
-    'index': [],
-    'filename': [],
-    'imagedata': [],
-} 
+class Testing():
+    def __init__(self, a=5, b):
+        self.a = a 
+        self.b = b
 
-print(image_data.keys())
+    def print(self):
+        print(f"value = {self.a}, {self.b}")
+
+a = Testing()
+b = Testing(6)
+a.print()
+b.print()
