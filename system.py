@@ -265,11 +265,11 @@ class System():
             self.publishImage(df_image, Config.main_topic+Config.suffix_camera)
             self.lightscamera.newImage = 0 
 
-    def setCameraLightOperation(self, mode):
-        self.lightscamera.setCameraLightOperation(mode)
+    # def setCameraLightOperation(self, mode):
+    #     self.lightscamera.setCameraLightOperation(mode)
 
-    def setGrowLightOperation(self, mode):
-        self.lightscamera.setGrowLightOperation(mode) 
+    # def setGrowLightOperation(self, mode):
+    #     self.lightscamera.setGrowLightOperation(mode) 
 
     def loop(self):
         self.datetimenow = datetime.now()

@@ -10,122 +10,118 @@ from time import sleep
 import json
 from datetime import datetime, date, time, timedelta
 import threading
-from io import BytesIO
 try:
-    from picamera import PiCamera
     from gpiozero import DigitalOutputDevice, Button
 except Exception as e:
-    print("picamera or gpiozero library not present")
+    print("gpiozero library not present")
     print("Exception = ")
     print(e)
 import os 
 import binascii
+from config import Config
 
 class Lights:
     # 18, 27, 9, "growlight_interval.json", "camera_interval.json"
-    def __init__(self, growLightGPIO, cameraLightGPIO, cameraButtonGPIO, \
-                growLightsIntervalsFilename, cameraIntervalsFilename, \
-                images_filepath, image_filename_format): 
+    def __init__(self, growLightGPIO, cameraLightGPIO): 
         self.growlightval = 0
         self.cameralightval = 0 
-        self.pictureTaking = 0 
-        self.imageStream = BytesIO()
-        self.binaryImage = None
-        self.newImage = 0
-        # flag to indicate if an image is currently being captured
-        self.lastTimePhotoTaken = datetime(year=1970, month=1, day=1)
-        self.images_filepath = images_filepath
-        self.image_filename_format = image_filename_format
-        self.filename = "" 
+
         # amount of time in seconds left before the grow light is shut off
-        self.growLightTimeLeft = 0
-        # 0 for MANUAL, 1 for AUTO
-        self.growLightMode = 1
-        self.cameraLightMode = 1
-        os.makedirs(images_filepath, exist_ok=True) 
+        # self.growLightTimeLeft = 0
         
-#         # initialize GPIOzero outputs
-#         try:
-#             self.growlight = DigitalOutputDevice(growLightGPIO)
-#             self.cameralight = DigitalOutputDevice(cameraLightGPIO)
-#             self.cameraButton = Button(cameraButtonGPIO)
-#         except Exception as e:
-#             print("not running on pi, failed to initialize growlights and cameralights")
-#             print(e)
+        # initialize GPIOzero outputs
+        try:
+            self.growlight = DigitalOutputDevice(growLightGPIO)
+            self.cameralight = DigitalOutputDevice(cameraLightGPIO)
+            # self.cameraButton = Button(cameraButtonGPIO)
+        except Exception as e:
+            print("not running on pi, failed to initialize growlights and cameralights")
+            print(e)
 
-#         try:
-#             print("setting manual camera capture button callback")
-#             self.cameraButton.when_pressed = self.captureImageButton 
-#         except Exception as e:
-#             print(e)
-#             pass
 
-#         # initialize camera object
-#         try:
-#             self.camera = PiCamera()
-#             try:
-#                 self.camera.resolution = (3280, 2464)
-#             except Exception as err:
-#                 self.camera.resolution = (2592, 1944)
-#         except:
-#             print("Failed to create camera object!")
+    '''
+    switch the ON/OFF state of the grow lights
+    '''
+    def switchGrowLights(self, state):
+        self.growlightval = state
+        try:
+            if state:
+                self.growlight.on()
+            else:
+                self.growlight.off()
+        except Exception as e: 
+            print("not running on rpi, switching dummy growlights")
+        if Config.debug:
+            if state:
+                print("growlight on")
+            else:
+                print("growlight off")
 
-#         self.loadGrowLightIntervals(growLightsIntervalsFilename)
-#         self.loadCameraIntervals(cameraIntervalsFilename)
-#         self.getGrowLightIntervalsPerDay()
-#         self.getCameraIntervalsPerDay()
+    '''
+    switch the ON/OFF state of the camera lights 
+    '''
+    def switchCameraLights(self, state):
+        self.cameralightval = state
+        try:
+            if state:
+                self.cameralight.on()
+            else:
+                self.cameralight.off()
+        except Exception as e: 
+            print("not running on rpi, switching dummy cameralights")
+        if Config.debug:
+            if state:
+                print("cameralight on")
+            else:
+                print("cameralight off")
 
-    
+    '''
+    thread function to switch on the grow lights for a certain duration, used for timing
+    '''
+    def growLightOn(self, ondelta):
+        global growLightTimeLeft
+        growLightTimeLeft = ondelta.seconds 
+        # only go to automatic mode if the grow light is set to auto
+        if (self.growLightMode):
+            self.switchGrowLights(1)
+            while (growLightTimeLeft > 0):
+                sleep(1)
+                if Config.debug:
+                    print("{}s of light left".format(growLightTimeLeft))
+                growLightTimeLeft -= 1
+            self.switchGrowLights(0)
 
-#     '''
-#     switch the ON/OFF state of the grow lights
-#     '''
-#     def switchGrowLights(self, state):
-#         self.growlightval = state
-#         try:
-#             if state:
-#                 self.growlight.on()
-#             else:
-#                 self.growlight.off()
-#         except Exception as e: 
-#             print("not running on rpi, switching dummy growlights")
-#         if state:
-#             print("growlight on")
-#         else:
-#             print("growlight off")
+    '''
+    thread function to toggle the grow lights and camera lights and capture an image using the Pi Camera
+    '''
+    def flashCameraLight(self):
+        # save the growlights state and turn off the growlights
+        growLightsWereOn = False 
+        if (self.growlightval):
+            growLightsWereOn = True
+        self.switchGrowLights(0)  
+        sleep(4)
+        # revert the growlights state
+        if (growLightsWereOn):
+            self.switchGrowLights(1)
 
-#     '''
-#     switch the ON/OFF state of the camera lights 
-#     '''
-#     def switchCameraLights(self, state):
-#         self.cameralightval = state
-#         try:
-#             if state:
-#                 self.cameralight.on()
-#             else:
-#                 self.cameralight.off()
-#         except Exception as e: 
-#             print("not running on rpi, switching dummy cameralights")
-            
-#         if state:
-#             print("cameralight on")
-#         else:
-#             print("cameralight off")
 
-#     '''
-#     thread function to switch on the grow lights for a certain duration, used for timing
-#     '''
-#     def growLightOn(self, ondelta):
-#         global growLightTimeLeft
-#         growLightTimeLeft = ondelta.seconds 
-#         # only go to automatic mode if the grow light is set to auto
-#         if (self.growLightMode):
-#             self.switchGrowLights(1)
-#             while (growLightTimeLeft > 0):
-#                 sleep(1)
-#                 print("{}s of light left".format(growLightTimeLeft))
-#                 growLightTimeLeft -= 1
-#             self.switchGrowLights(0)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #     '''
 #     method to set the camera light operation to manual ON, manual OFF, or AUTO.
