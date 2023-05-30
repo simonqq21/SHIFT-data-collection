@@ -8,36 +8,37 @@ except Exception as e:
     print(e)
 from config import Config
 
-HOST = "localhost"
-PORT = 12003
+class LightsClient():
+    def __init__(self):
+        self.HOST = "localhost"
+        self.PORT = 12003
+        self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.client.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.client.bind((self.HOST, self.PORT)) 
+        self.client.listen()
+        self.lights = Lights() 
 
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-client.bind((HOST, PORT)) 
-client.listen()
-
-lights = Lights() 
-
-while True:
-    communication_socket, address = client.accept() 
-    print(f"Connected to {address}")
-    message = communication_socket.recv(1024)
-    print(type(message))
-    message = message.decode('utf-8')
-    commandType = message.split()[0]
-    if commandType == "lights":
-        lightType = message.split()[1]
-        if lightType == 'p': # purple grow light
-            onTime = int(message.split()[2])
-            lights.growLightOn(onTime)
-        elif lightType == 'w': # white camera light 
-            onTime = int(message.split()[2])
-            lights.cameraLightOn(onTime)
-        elif lightType == 'flash': # flash the white camera light 
-            lights.flashCameraLight()
-        # set light states below this line 
-            
-    # communication_socket.close() 
+    def loop(self):
+        while True:
+            self.communication_socket, self.address = self.client.accept() 
+            print(f"Connected to {self.address}")
+            message = self.communication_socket.recv(1024)
+            print(type(message))
+            message = message.decode('utf-8')
+            commandType = message.split()[0]
+            if commandType == "lights":
+                lightType = message.split()[1]
+                if lightType == 'p': # purple grow light
+                    onTime = int(message.split()[2])
+                    self.lights.growLightOn(onTime)
+                elif lightType == 'w': # white camera light 
+                    onTime = int(message.split()[2])
+                    self.lights.cameraLightOn(onTime)
+                elif lightType == 'flash': # flash the white camera light 
+                    self.lights.flashCameraLight()
+                # set light states below this line 
+                    
+            # communication_socket.close() 
 
 '''
 lights p 43200
