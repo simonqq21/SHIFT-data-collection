@@ -79,29 +79,49 @@ class Lights:
     '''
     thread function to switch on the grow lights for a certain duration, used for timing
     '''
-    def growLightOn(self, ondelta):
-        global growLightTimeLeft
-        growLightTimeLeft = ondelta.seconds 
-        # only go to automatic mode if the grow light is set to auto
-        if (self.growLightMode):
+    def growLightOn(self, onTime):
+        if onTime > 0:
             self.switchGrowLights(1)
-            while (growLightTimeLeft > 0):
+            while (onTime > 0):
                 sleep(1)
                 if Config.debug:
-                    print("{}s of light left".format(growLightTimeLeft))
-                growLightTimeLeft -= 1
+                    print("{}s of purple light left".format(onTime))
+                onTime -= 1
             self.switchGrowLights(0)
+        elif onTime == 0:
+            self.switchGrowLights(0)
+        else:
+            self.switchGrowLights(1)
+    
 
     '''
-    thread function to toggle the grow lights and camera lights and capture an image using the Pi Camera
+    thread function to switch on the camera lights for a certain duration, used for timing
+    '''
+    def cameraLightOn(self, onTime):
+        if onTime > 0:
+            self.switchCameraLights(1)
+            while (onTime > 0):
+                sleep(1)
+                if Config.debug:
+                    print("{}s of white light left".format(onTime))
+                onTime -= 1
+            self.switchCameraLights(0)
+        elif onTime == 0:
+            self.switchCameraLights(0)
+        else:
+            self.switchCameraLights(1)
+
+
+    '''
+    thread function to toggle the grow lights and camera lights to capture an image using the Pi Camera
     '''
     def flashCameraLight(self):
         # save the growlights state and turn off the growlights
         growLightsWereOn = False 
         if (self.growlightval):
             growLightsWereOn = True
-        self.switchGrowLights(0)  
-        sleep(4)
+        self.switchGrowLights(0) 
+        self.cameraLightOn(4)
         # revert the growlights state
         if (growLightsWereOn):
             self.switchGrowLights(1)

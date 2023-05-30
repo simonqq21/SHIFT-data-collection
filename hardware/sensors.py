@@ -14,6 +14,7 @@ import paho.mqtt.client as mqtt
 import pandas as pd
 
 from time import sleep 
+from datetime import date, datetime, time, timedelta
 from config import Config 
 
 try:
@@ -38,7 +39,69 @@ except:
 
 class Sensors():
     def __init__(self):
-        pass
+        # create directories for collected data 
+        os.makedirs(Config.csv_filepath, exist_ok=True)
+        # create csv file for sensor data if it doesnt exist 
+        df = pd.DataFrame.from_dict(Config.sensor_data, orient='columns')
+        mode = 'w'
+        index=False
+        header=True
+        if os.path.exists(Config.csv_filepath + Config.csv_filename):
+            mode = 'a'
+            header=False
+            print('exists!')
+        df.to_csv(Config.csv_filepath + Config.csv_filename, mode=mode, index=index, header=header) 
+        self.columns = df.columns.values
+        print(self.columns)
+
+        # mqtt client init
+        try:
+            self.client = mqtt.Client(Config.clientname)
+            self.client.on_connect = self.on_connect
+            self.client.on_message = self.on_message
+            self.client.on_publish = self.on_publish
+            self.client.connect(Config.mqttIP, Config.mqttPort)
+            print(self.client)
+            self.client.loop_start()
+        except Exception as e:
+            print("Failed to connect to broker!")
+            print(e)
+
+        # initialize onewire DHT22 temperature and humidity sensors 
+        self.dhts = []
+        for wire in onewires:
+            self.dhts.append(DHT22(wire))
+        
+        # initialize TCA9548A i2c multiplexer and i2c BH1750 light intensity sensors 
+        bhcount = Config.bhcount
+        self.tca = TCA9548A(i2c)
+        print(self.tca)
+        for si in range(bhcount):
+            try:
+                self.tca.addBH1750(si)
+            except Exception as e:
+                print(e)
+                print("not running on Pi or device not connected properly") 
+
+        # initialize ADS1115 i2c ADCs and analog channels for soil moisture sensors, PH4502C pH sensor, and TDS meter EC sensor 
+        self.adss = []
+        self.adss.append(ADS1115(i2c, addressIndex=0)) # soil moisture sensors 0-3
+        self.adss.append(ADS1115(i2c, addressIndex=1)) # soil moisture sensors 4-7
+        self.adss.append(ADS1115(i2c, addressIndex=2)) # soil moisture sensor 8, pH sensor, and EC sensor
+        # add 9 soil moisture sensors throughout three ADS1115 consecutively from channel 0 of ADS1115 index 0
+        self.adss[0].addSoilMoistureSensor(m=-1.98019802, b=7.762376238)
+        self.adss[0].addSoilMoistureSensor(m=-0.7518796992, b=2.917293233)
+        self.adss[0].addSoilMoistureSensor(m=-1.007049345, b=3.917421954)
+        self.adss[0].addSoilMoistureSensor(m=-1.879699248, b=7.612781955)
+        self.adss[1].addSoilMoistureSensor(m=-2.127659574, b=8.765957447)
+        self.adss[1].addSoilMoistureSensor(m=-2.192982456, b=9.035087719)
+        self.adss[1].addSoilMoistureSensor(m=-2.487562189, b=10.2238806)
+        self.adss[1].addSoilMoistureSensor(m=-2.049180328, b=8.422131148)
+        self.adss[2].addSoilMoistureSensor(m=-2.049180328, b=8.422131148)
+        # add 1 pH sensor to channel 1 of ADS1115 index 2
+        self.adss[2].addPH4502C(m=-0.1723776224, b=3.77251049)
+        # add 1 EC sensor 
+        self.adss[2].addTDSMeter()
 
     '''
     callback functions for MQTT broker
@@ -81,93 +144,28 @@ class Sensors():
         except:
             print("Publish failed, check broker")
 
-    def filesInit(self):
-        # create directories for collected data 
-        os.makedirs(Config.csv_filepath, exist_ok=True)
-        # create csv file for sensor data if it doesnt exist 
-        df = pd.DataFrame.from_dict(Config.sensor_data, orient='columns')
-        mode = 'w'
-        index=False
-        header=True
-        if os.path.exists(Config.csv_filepath + Config.csv_filename):
-            mode = 'a'
-            header=False
-            print('exists!')
-        df.to_csv(Config.csv_filepath + Config.csv_filename, mode=mode, index=index, header=header) 
-        self.columns = df.columns.values
-        print(self.columns)
-        
-    def MQTTInit(self):
-        # mqtt client init
-        try:
-            self.client = mqtt.Client(Config.clientname)
-            self.client.on_connect = self.on_connect
-            self.client.on_message = self.on_message
-            self.client.on_publish = self.on_publish
-            self.client.connect(Config.mqttIP, Config.mqttPort)
-            print(self.client)
-            self.client.loop_start()
-        except Exception as e:
-            print("Failed to connect to broker!")
-            print(e)
-
-    def hwInit(self):
-        # initialize onewire DHT22 temperature and humidity sensors 
-        self.dhts = []
-        for wire in onewires:
-            self.dhts.append(DHT22(wire))
-        
-        # initialize TCA9548A i2c multiplexer and i2c BH1750 light intensity sensors 
-        bhcount = Config.bhcount
-        self.tca = TCA9548A(i2c)
-        print(self.tca)
-        for si in range(bhcount):
-            try:
-                self.tca.addBH1750(si)
-            except Exception as e:
-                print(e)
-                print("not running on Pi or device not connected properly") 
-
-        # initialize ADS1115 i2c ADCs and analog channels for soil moisture sensors, PH4502C pH sensor, and TDS meter EC sensor 
-        self.adss = []
-        self.adss.append(ADS1115(i2c, addressIndex=0)) # soil moisture sensors 0-3
-        self.adss.append(ADS1115(i2c, addressIndex=1)) # soil moisture sensors 4-7
-        self.adss.append(ADS1115(i2c, addressIndex=2)) # soil moisture sensor 8, pH sensor, and EC sensor
-        # add 9 soil moisture sensors throughout three ADS1115 consecutively from channel 0 of ADS1115 index 0
-        self.adss[0].addSoilMoistureSensor(m=-1.98019802, b=7.762376238)
-        self.adss[0].addSoilMoistureSensor(m=-0.7518796992, b=2.917293233)
-        self.adss[0].addSoilMoistureSensor(m=-1.007049345, b=3.917421954)
-        self.adss[0].addSoilMoistureSensor(m=-1.879699248, b=7.612781955)
-        self.adss[1].addSoilMoistureSensor(m=-2.127659574, b=8.765957447)
-        self.adss[1].addSoilMoistureSensor(m=-2.192982456, b=9.035087719)
-        self.adss[1].addSoilMoistureSensor(m=-2.487562189, b=10.2238806)
-        self.adss[1].addSoilMoistureSensor(m=-2.049180328, b=8.422131148)
-        self.adss[2].addSoilMoistureSensor(m=-2.049180328, b=8.422131148)
-        # add 1 pH sensor to channel 1 of ADS1115 index 2
-        self.adss[2].addPH4502C(m=-0.1723776224, b=3.77251049)
-        # add 1 EC sensor 
-        self.adss[2].addTDSMeter()
-
-        # initialize grow lights and camera with camera light
-        self.lightscamera = LightsCamera(Config.growLightPin, Config.cameraLightPin, Config.cameraButtonPin, Config.program_root+"/growlight_interval.json", Config.program_root+"/camera_interval.json", Config.images_filepath, Config.images_filename_format)
-        # initialize irrigation pumps
-        self.pumps = SyncedPumps(Config.pumpPins, Config.pumpButtonPin, Config.program_root+"/pumps_interval.json")
-
-def captureSensors(self):
+    def captureTemperatures(self):
         sensorTimeStamp = datetime.now().strftime("%m/%d/%Y %H:%M")
-        
-        # temperature and humidity from DHT22 
+        # temperature from DHT22 
         index = 0
         for dht in self.dhts:
-            print(dht.getTemperature())
-            print(dht.getHumidity())
             curr_temperature = dht.getTemperature()
-            curr_humidity = dht.getHumidity()
             df_temperature = self.processSensorDataForPublishing(sensorTimeStamp, Config.suffix_temperature, index, curr_temperature)
             self.saveAndPublishData(df_temperature, Config.main_topic+Config.suffix_temperature)
+            index += 1
+
+    def captureHumidities(self):
+        sensorTimeStamp = datetime.now().strftime("%m/%d/%Y %H:%M")
+        # humidity from DHT22 
+        index = 0
+        for dht in self.dhts:
+            curr_humidity = dht.getHumidity()
             df_humidity = self.processSensorDataForPublishing(sensorTimeStamp, Config.suffix_humidity, index, curr_humidity)
             self.saveAndPublishData(df_humidity, Config.main_topic+Config.suffix_humidity)
             index += 1
+
+    def captureLightIntensities(self):
+        sensorTimeStamp = datetime.now().strftime("%m/%d/%Y %H:%M")
         # light intensity from BH1750 
         curr_lightIntensities = self.tca.getLightIntensities()
         index = 0
@@ -176,51 +174,59 @@ def captureSensors(self):
             self.saveAndPublishData(df_lightintensity, Config.main_topic+Config.suffix_lightintensity)
             index += 1
         print(f"light index={index}")
-        # soil moisture, pH, and EC from soil moisture sensors. PH-4502C, and TDS Meter 1.0 
-        curr_soilmoistures = []
-        curr_solutionpHs = []
-        curr_solutionECs = []
+
+    def captureSoilMoistures(self):
+        sensorTimeStamp = datetime.now().strftime("%m/%d/%Y %H:%M")
+        # soil moisture from soil moisture sensors
+        curr_soilmoistures = [] 
         for ads in self.adss:
             for sm in ads.getSoilMoistures():
                 curr_soilmoistures.append(sm)
-            for pH in ads.getSolutionpHs():
-                curr_solutionpHs.append(pH)
-            for ec in ads.getSolutionECs():
-                curr_solutionECs.append(ec)
         index = 0 
         for sm in curr_soilmoistures:
             df_soilmoisture = self.processSensorDataForPublishing(sensorTimeStamp, Config.suffix_soilmoisture, index, sm)
             self.saveAndPublishData(df_soilmoisture, Config.main_topic+Config.suffix_soilmoisture)
-            index += 1
+            index += 1 
+
+    def capturePHs(self):
+        sensorTimeStamp = datetime.now().strftime("%m/%d/%Y %H:%M")
+        # pH from PH-4502C 
+        curr_solutionpHs = [] 
+        for ads in self.adss:
+            for pH in ads.getSolutionpHs():
+                curr_solutionpHs.append(pH)
         index = 0 
         for pH in curr_solutionpHs:
             df_solutionpH = self.processSensorDataForPublishing(sensorTimeStamp, Config.suffix_pH, index, pH)
             self.saveAndPublishData(df_solutionpH, Config.main_topic+Config.suffix_pH)
-            index += 1
+            index += 1 
+
+    def captureECs(self):
+        sensorTimeStamp = datetime.now().strftime("%m/%d/%Y %H:%M")
+        # EC from TDS Meter 1.0 
+        curr_solutionECs = [] 
+        for ads in self.adss:
+            for ec in ads.getSolutionECs():
+                curr_solutionECs.append(ec)
         index = 0 
         for ec in curr_solutionECs:
             df_solutionEC = self.processSensorDataForPublishing(sensorTimeStamp, Config.suffix_EC, index, ec)
             self.saveAndPublishData(df_solutionEC, Config.main_topic+Config.suffix_EC)
-            index += 1
+            index += 1 
 
+    '''
+    method to capture all kinds of sensors into the CSV file and transmit it via MQTT
+    '''
+    def captureSensors(self):
+        self.captureTemperatures()
+        self.captureHumidities()
+        self.captureLightIntensities()
+        self.captureSoilMoistures()
+        self.capturePHs()
+        self.captureECs()
+        
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        
 class DHT22():
     def __init__(self, GPIO): # board.D4 or board.D17
         try:

@@ -5,7 +5,7 @@ try:
     import threading
     from datetime import date, datetime, time, timedelta
     from time import sleep
-    from hardware.irrigation_pumps import SyncedPumps
+    from hardware.pumps import SyncedPumps
     import socket
 except Exception as e:
     print(e)
@@ -39,10 +39,11 @@ class PumpsClient():
         # communication_socket.send(f"client 1 response!".encode('utf-8'))
         communication_socket.close() 
 '''
-pumps <n> on
-pumps <n> off 
-where <n> is the pump index
+1 10
+2 10
+3 10
 
-000 
-each bit - represents one pump from 1-3
+<pump index> <time on in seconds>
+pump index - one-indexed 
+time on in seconds - positive for timer, 0 for off 
 '''
