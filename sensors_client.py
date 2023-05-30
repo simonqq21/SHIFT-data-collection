@@ -36,7 +36,8 @@ while True:
         command = message.split()[1]
         if command == "capture":
             print("logging sensor data")
-            sensors.captureSensors() 
+            sensorLoggingThread = threading.Thread(target=sensors.captureSensors)
+            sensorLoggingThread.start() 
             
     # print(f"Message from client is: {message}")
     # communication_socket.send(f"client 2 response!".encode('utf-8'))

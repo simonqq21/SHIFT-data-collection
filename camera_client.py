@@ -30,11 +30,12 @@ while True:
     message = message.decode('utf-8')
     commandType = message.split()[0]
     if commandType == "camera":
-        # log sensor data 
+        # capture image with camera  
         command = message.split()[1]
         if command == "capture":
             print("capturing and transmitting image")
-            camera.captureImage() 
+            cameraCaptureThread = threading.Thread(target=camera.captureImage) 
+            cameraCaptureThread.start() 
             
     # print(f"Message from client is: {message}")
     # communication_socket.send(f"client 2 response!".encode('utf-8'))

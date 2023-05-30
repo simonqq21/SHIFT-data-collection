@@ -5,39 +5,39 @@ try:
     import threading
     from datetime import date, datetime, time, timedelta
     from time import sleep
-    from hardware.pumps import SyncedPumps
+    from hardware.pumps import PumpSystem
     import socket
 except Exception as e:
     print(e)
 from config import Config
 
-class PumpsClient():
-    def __init__(self):
-        self.HOST = "localhost"
-        self.PORT = 12002
-        self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.client.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.client.bind((self.HOST, self.PORT)) 
-        self.client.listen()
+HOST = "localhost"
+PORT = 12002
 
-    def loop(self):
-        communication_socket, address = self.client.accept() 
-        print(f"Connected to {address}")
-        message = communication_socket.recv(1024)
-        # print(type(message))
-        message = message.decode('utf-8')
-        commandType = message.split()[0]
-        if commandType == "pumps":
-            pumpStates = message.split()[1]
-            print(pumpStates)
-            for i in range(len(pumpStates)):
-                print(f"pump {i} state: {pumpStates[i]}")
-                # set pump states below this line 
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+client.bind((HOST, PORT)) 
+client.listen()
 
-            print()
+pumps = PumpSystem() 
+
+while True:
+    communication_socket, address = client.accept() 
+    print(f"Connected to {address}")
+    message = communication_socket.recv(1024)
+    # print(type(message))
+    message = message.decode('utf-8')
+    commandType = message.split()[0]
+    if commandType == "pumps":
+        pumpIndex = int(message.split()[1]) 
+        duration = int(message.split()[2]) 
+        # set pump states below this line 
+        pumpOnThread = threading.Thread(target=pumps.switchOn, args=(pumpIndex, duration))
+        pumpOnThread.start()
+        
         # print(f"Message from server is: {message}")
         # communication_socket.send(f"client 1 response!".encode('utf-8'))
-        communication_socket.close() 
+        # communication_socket.close() 
 '''
 pumps 1 10
 pumps 2 10
