@@ -2,6 +2,11 @@ from datetime import datetime, date, time, timedelta
 import os 
 
 class Config(object):
+    debug = 1
+
+    # root dir of the program
+    program_root = os.path.realpath(os.path.dirname(__file__)) 
+
     # MQTT broker 
     mqttIP = "ccscloud2.dlsu.edu.ph"
     mqttPort = 20010
@@ -25,8 +30,6 @@ class Config(object):
     # image filepath and filename 
     images_filepath = "/home/pi/blast/images/"
     images_filename_format = "IMG_{}.jpg"
-    # create image filepath if it doesn't exist 
-    debug = 1
 
     # dataframe template for sensor data packet
     sensor_data = {
@@ -47,19 +50,30 @@ class Config(object):
         'filename': [],
         'imagedata': [],
     }
-    # camera_columns = ["type", "index", "filename", "binary_image"]
 
     # time of the day when sensor logging will start and end 
     sensor_logging_start = time(hour=0, minute=0)
     sensor_logging_end = time(hour=23, minute=59)
+    # interval to poll sensors and upload sensor data
+    sensorPollingInterval = timedelta(minutes=60) 
 
-    # root dir of the program
-    program_root = os.path.realpath(os.path.dirname(__file__)) 
+    # time of the day when sensor logging will start and end 
+    camera_capture_start = time(hour=6, minute=0)
+    sensor_logging_end = time(hour=22, minute=00)
+    # interval to poll camera and upload image data
+    cameraPollingInterval = timedelta(minutes=60) 
+
+    # times of the day when plants will be watered
+    pumps_start_time = [time(hour=10, minute=0),
+                        time(hour=10, minute=0),
+                        time(hour=10, minute=0)]
+    # length of time the pumps will be on
+    pumps_on_duration = [timedelta(seconds=10),
+                        timedelta(seconds=10),
+                        timedelta(seconds=10)]
 
     # interval to check all sensors and actuators 
     checkingInterval = timedelta(seconds=10)
-    # interval to poll sensors and upload sensor data
-    sensorPollingInterval = timedelta(minutes=60) # 30 minutes
 
     # GPIO pins 
     growLightPin = 18
@@ -68,7 +82,3 @@ class Config(object):
     pumpPins = (22, 23, 24) 
     pumpButtonPin = 10
 
-    bhcount = 9
-
-    # pollingMinutes = 1/6
-    # timeElapsedIncrement = timedelta(seconds=(pollingMinutes * 60)) 

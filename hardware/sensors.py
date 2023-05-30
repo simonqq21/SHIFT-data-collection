@@ -73,10 +73,10 @@ class Sensors():
             self.dhts.append(DHT22(wire))
         
         # initialize TCA9548A i2c multiplexer and i2c BH1750 light intensity sensors 
-        bhcount = Config.bhcount
+        self.bhcount = 9
         self.tca = TCA9548A(i2c)
         print(self.tca)
-        for si in range(bhcount):
+        for si in range(self.bhcount):
             try:
                 self.tca.addBH1750(si)
             except Exception as e:
