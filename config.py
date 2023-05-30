@@ -69,3 +69,6 @@ class Config(object):
     pumpButtonPin = 10
 
     bhcount = 9
+
+    # pollingMinutes = 1/6
+    # timeElapsedIncrement = timedelta(seconds=(pollingMinutes * 60)) 

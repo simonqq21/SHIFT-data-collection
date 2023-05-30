@@ -18,9 +18,6 @@ except:
     print("gpiozero library not present, pumps not added")
 from config import Config 
 
-pollingMinutes = 1/6
-timeElapsedIncrement = timedelta(seconds=(pollingMinutes * 60)) 
-
 class Pump():
     def __init__(self, gpio, interval):
         try:
@@ -39,9 +36,10 @@ class Pump():
             self.pumpObject.on()
         except:  
             print("not running on rpi, switching dummy pump {} on".format(self.interval["index"]))
-        self.interval["state"] = True
-        self.interval["time_elapsed_since_last_watering"] = timedelta(seconds=self.interval["on_seconds"].seconds)
-        sleep(self.interval["on_seconds"].seconds)
+        # self.interval["state"] = True
+        # self.interval["time_elapsed_since_last_watering"] = timedelta(seconds=self.interval["on_seconds"].seconds)
+        # sleep(self.interval["on_seconds"].seconds)
+        sleep(self.interval)
         try:
             self.pumpObject.off()
         except:  
@@ -49,20 +47,12 @@ class Pump():
             pass
         self.interval["state"] = False
 
-class SyncedPumps:
-    # (22, 23, 24), 10, "pumps_interval.json"
-    def __init__(self, pumpGPIOs, buttonGPIO, pumpIntervalsFilename):
-        self.pumpIntervals = []
-        self.pumps = []
-        # create GPIOZero output objects for the pumps
-        try:
-            for i, (gpio, interval) in enumerate(zip(pumpGPIOs, self.pumpIntervals)):
-                self.pumps.append(Pump(gpio, interval))
+# (22, 23, 24), 10, "pumps_interval.json" 
+
+
             # self.manualWateringButton = Button(buttonGPIO)
             # self.manualWateringButton.when_pressed = self.forceWateringButton 
-        except:
-            print("gpiozero not present, pumps not added")
-    
+
     # def loadPumpsIntervals(self, filename): # "pumps_interval.json"
     #     self.pumpIntervals = []
     #     # read pump configuration json file
