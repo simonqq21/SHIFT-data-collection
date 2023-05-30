@@ -23,7 +23,7 @@ from config import Config
 
 class Lights:
     # 18, 27, 9, "growlight_interval.json", "camera_interval.json"
-    def __init__(self, growLightGPIO, cameraLightGPIO): 
+    def __init__(self, growLightGPIO=18, cameraLightGPIO=27): 
         self.growlightval = 0
         self.cameralightval = 0 
 
