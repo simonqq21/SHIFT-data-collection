@@ -5,9 +5,12 @@ when taking the picture
 turn on the purple led grow lights at set intervals
 time on and duration on
 '''
+import os 
+import sys 
+here = os.path.dirname(__file__)
+sys.path.append(os.path.join(here, '..'))
 
 from time import sleep
-import json
 from datetime import datetime, date, time, timedelta
 import threading
 try:
@@ -16,8 +19,6 @@ except Exception as e:
     print("gpiozero library not present")
     print("Exception = ")
     print(e)
-import os 
-import binascii
 from config import Config
 
 class Lights:

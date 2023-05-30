@@ -3,6 +3,10 @@ switch on the pumps at different intervals
 each daily pump interval - time start, time on, period in days
 
 '''
+import os 
+import sys 
+here = os.path.dirname(__file__)
+sys.path.append(os.path.join(here, '..')) 
 
 from time import sleep 
 import json 

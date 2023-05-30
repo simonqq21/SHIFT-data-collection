@@ -1,3 +1,8 @@
+import os 
+import sys 
+here = os.path.dirname(__file__)
+sys.path.append(os.path.join(here, '..'))
+
 from time import sleep
 import json
 from datetime import datetime, date, time, timedelta
@@ -14,7 +19,6 @@ except Exception as e:
     print("picamera library not present")
     print("Exception = ")
     print(e)
-import os 
 import binascii
 from config import Config 
 
@@ -29,9 +33,27 @@ class Camera():
         self.images_filepath = images_filepath
         self.image_filename_format = image_filename_format
         self.filename = "" 
-        os.makedirs(images_filepath, exist_ok=True) 
 
-# initialize camera object
+        # create directories for collected data 
+        os.makedirs(Config.images_filepath, exist_ok=True)
+        # columns for image dataframe
+        self.camera_columns = np.array(list(Config.image_data.keys()))
+        print(self.camera_columns) 
+
+        # initialize the MQTT client 
+        try:
+            self.client = mqtt.Client(Config.clientname)
+            self.client.on_connect = self.on_connect
+            self.client.on_message = self.on_message
+            self.client.on_publish = self.on_publish
+            self.client.connect(Config.mqttIP, Config.mqttPort)
+            print(self.client)
+            self.client.loop_start()
+        except Exception as e:
+            print("Failed to connect to broker!")
+            print(e)  
+
+        # initialize camera object
         try:
             self.camera = PiCamera()
             try:
@@ -59,22 +81,6 @@ class Camera():
         print("Message published")
 
     '''
-    mqtt client init
-    '''
-    def MQTTInit(self):
-        try:
-            self.client = mqtt.Client(Config.clientname)
-            self.client.on_connect = self.on_connect
-            self.client.on_message = self.on_message
-            self.client.on_publish = self.on_publish
-            self.client.connect(Config.mqttIP, Config.mqttPort)
-            print(self.client)
-            self.client.loop_start()
-        except Exception as e:
-            print("Failed to connect to broker!")
-            print(e) 
-
-        '''
     return a dataframe containing the image data and metadata to be transmitted
     '''
     def processImageDataForPublishing(self, type, index, filename, binaryImage):
