@@ -39,11 +39,11 @@ class PumpsClient():
         # communication_socket.send(f"client 1 response!".encode('utf-8'))
         communication_socket.close() 
 '''
-1 10
-2 10
-3 10
+pumps 1 10
+pumps 2 10
+pumps 3 10
 
-<pump index> <time on in seconds>
+pumps <pump index> <time on in seconds>
 pump index - one-indexed 
 time on in seconds - positive for timer, 0 for off 
 '''

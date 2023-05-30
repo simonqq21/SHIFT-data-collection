@@ -23,15 +23,13 @@ import binascii
 from config import Config 
 
 class Camera():
-    def __init__(self, images_filepath, image_filename_format): 
-        self.pictureTaking = 0 
+    def __init__(self, images_filepath=Config.images_filepath, images_filename_format=Config.images_filename_format): 
         self.imageStream = BytesIO()
         self.binaryImage = None
-        self.newImage = 0
         # flag to indicate if an image is currently being captured
         self.lastTimePhotoTaken = datetime(year=1970, month=1, day=1)
         self.images_filepath = images_filepath
-        self.image_filename_format = image_filename_format
+        self.images_filename_format = images_filename_format
         self.filename = "" 
 
         # create directories for collected data 
@@ -109,12 +107,11 @@ class Camera():
     def captureImage(self, filepath=None, filename=None):
         self.imageStream = BytesIO()
         self.binaryImage = None
-        self.pictureTaking = 1
         
         if filepath is None:
             filepath=self.images_filepath 
         if filename is None:
-            self.filename=self.image_filename_format.format(datetime.now().strftime("%Y%m%d_%H%M"))
+            self.filename=self.images_filename_format.format(datetime.now().strftime("%Y%m%d_%H%M"))
         else:
             self.filename = filename
         try:
@@ -134,8 +131,6 @@ class Camera():
             self.camera.stop_preview()
         except:
             pass
-        self.pictureTaking = 0
-        self.newImage = 1
 
         # transmit photo via MQTT 
         index=0

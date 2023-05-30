@@ -89,15 +89,28 @@ class Sensors():
         self.adss.append(ADS1115(i2c, addressIndex=1)) # soil moisture sensors 4-7
         self.adss.append(ADS1115(i2c, addressIndex=2)) # soil moisture sensor 8, pH sensor, and EC sensor
         # add 9 soil moisture sensors throughout three ADS1115 consecutively from channel 0 of ADS1115 index 0
-        self.adss[0].addSoilMoistureSensor(m=-1.98019802, b=7.762376238)
-        self.adss[0].addSoilMoistureSensor(m=-0.7518796992, b=2.917293233)
-        self.adss[0].addSoilMoistureSensor(m=-1.007049345, b=3.917421954)
-        self.adss[0].addSoilMoistureSensor(m=-1.879699248, b=7.612781955)
-        self.adss[1].addSoilMoistureSensor(m=-2.127659574, b=8.765957447)
-        self.adss[1].addSoilMoistureSensor(m=-2.192982456, b=9.035087719)
-        self.adss[1].addSoilMoistureSensor(m=-2.487562189, b=10.2238806)
-        self.adss[1].addSoilMoistureSensor(m=-2.049180328, b=8.422131148)
-        self.adss[2].addSoilMoistureSensor(m=-2.049180328, b=8.422131148)
+        # previous calibration
+        # self.adss[0].addSoilMoistureSensor(m=-1.98019802, b=7.762376238)
+        # self.adss[0].addSoilMoistureSensor(m=-0.7518796992, b=2.917293233)
+        # self.adss[0].addSoilMoistureSensor(m=-1.007049345, b=3.917421954)
+        # self.adss[0].addSoilMoistureSensor(m=-1.879699248, b=7.612781955)
+        # self.adss[1].addSoilMoistureSensor(m=-2.127659574, b=8.765957447)
+        # self.adss[1].addSoilMoistureSensor(m=-2.192982456, b=9.035087719)
+        # self.adss[1].addSoilMoistureSensor(m=-2.487562189, b=10.2238806)
+        # self.adss[1].addSoilMoistureSensor(m=-2.049180328, b=8.422131148)
+        # self.adss[2].addSoilMoistureSensor(m=-2.049180328, b=8.422131148)
+
+        # current calibration
+        self.adss[0].addSoilMoistureSensor(m=-1.61, b=6.16)
+        self.adss[0].addSoilMoistureSensor(m=-1.03, b=4.05)
+        self.adss[0].addSoilMoistureSensor(m=-1.09, b=4.28)
+        self.adss[0].addSoilMoistureSensor(m=-1.97, b=8.17)
+        self.adss[1].addSoilMoistureSensor(m=-2.97, b=6.74)
+        self.adss[1].addSoilMoistureSensor(m=-2.46, b=10.2)
+        self.adss[1].addSoilMoistureSensor(m=-2.26, b=9.39)
+        self.adss[1].addSoilMoistureSensor(m=-1.84, b=7.76)
+        self.adss[2].addSoilMoistureSensor(m=-2.06, b=4.74)
+
         # add 1 pH sensor to channel 1 of ADS1115 index 2
         self.adss[2].addPH4502C(m=-0.1723776224, b=3.77251049)
         # add 1 EC sensor 
@@ -225,7 +238,6 @@ class Sensors():
         self.capturePHs()
         self.captureECs()
         
-
         
 class DHT22():
     def __init__(self, GPIO): # board.D4 or board.D17
