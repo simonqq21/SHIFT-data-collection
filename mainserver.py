@@ -21,8 +21,8 @@ class SyncServer():
         self.lastUpdateDate = date(year=1970, month=1, day=1)
         # used for timing
         self.intervalLastChecked = datetime(year=1970, month=1, day=1)
-        self.sensorsLastPolled = datetime(year=1970, month=1, day=1)
-     
+        self.sensorsLastPolled = datetime(year=1970, month=1, day=1)      
+
     def connect(self, server, HOST, PORT, retries=8, timeout_per_retry=5):
         for i in range(retries):
             try:
@@ -42,7 +42,8 @@ class SyncServer():
         command = f"pumps {pumpIndex} {duration}"
         if status:
             server.send(command.encode('utf-8')) 
-            print("sent pumps command") 
+            if Config.debug:
+                print("sent pumps command") 
     '''
     lightType is either 'p', 'w', or 'flash'
     '''
@@ -51,10 +52,14 @@ class SyncServer():
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         status = self.connect(server, self.HOST, PORT)
-        command = f"lights {lightType} {duration}"
+        if lightType == 'flash':
+            command = "lights flash"
+        else:    
+            command = f"lights {lightType} {duration}"
         if status:
             server.send(command.encode('utf-8')) 
-            print("sent lights command")
+            if Config.debug:
+                print("sent lights command")
             # print(server.recv(1024)) 
 
     def cameraCapture(self): 
@@ -65,7 +70,8 @@ class SyncServer():
         command = "camera capture"
         if status:
             server.send(command.encode('utf-8'))  
-            print("sent camera command")
+            if Config.debug:
+                print("sent camera command")
 
     def sensorsLog(self): 
         PORT = 12005
@@ -75,40 +81,41 @@ class SyncServer():
         command = "sensors capture"
         if status:
             server.send(command.encode('utf-8')) 
-            print("sent sensors command") 
+            if Config.debug:
+                print("sent sensors command") 
 
-    # load intervals of grow lights
-    def loadGrowLightIntervals(self, filename):
-        self.growLightIntervals = None
-        try:
-            j = open(filename)
-            self.growLightIntervals = json.load(j)["intervals"]
-        except:
-            print("error opening file, or file doesn't exist") 
-        # initial processing of grow light intervals 
-        lastUpdatedDate = date.today() 
-        for interval in self.growLightIntervals:
-            interval["on_time"] = datetime.strptime(interval["on_time"], "%H:%M").time()
-            interval["duration"] = timedelta(hours=int(interval["duration"][:2]), minutes=int(interval["duration"][3:]))
-            # ensure that duration doesn't exceed 24h
-            if (interval["duration"] > timedelta(hours=24)):
-                interval["duration"] = timedelta(hours=24)
-        print(self.growLightIntervals)
+    # # load intervals of grow lights
+    # def loadGrowLightIntervals(self, filename):
+    #     self.growLightIntervals = None
+    #     try:
+    #         j = open(filename)
+    #         self.growLightIntervals = json.load(j)["intervals"]
+    #     except:
+    #         print("error opening file, or file doesn't exist") 
+    #     # initial processing of grow light intervals 
+    #     lastUpdatedDate = date.today() 
+    #     for interval in self.growLightIntervals:
+    #         interval["on_time"] = datetime.strptime(interval["on_time"], "%H:%M").time()
+    #         interval["duration"] = timedelta(hours=int(interval["duration"][:2]), minutes=int(interval["duration"][3:]))
+    #         # ensure that duration doesn't exceed 24h
+    #         if (interval["duration"] > timedelta(hours=24)):
+    #             interval["duration"] = timedelta(hours=24)
+    #     print(self.growLightIntervals)
 
-    # load intervals of image capture 
-    def loadCameraIntervals(self, filename): 
-        self.cameraIntervals = None
-        try:
-            j = open(filename)
-            self.cameraIntervals = json.load(j)["intervals"]
-        except:
-            print("error opening file, or file doesn't exist")  
-        # initial processing of camera intervals 
-        for interval in self.cameraIntervals:
-            interval["start_time"] = datetime.strptime(interval["start_time"], "%H:%M").time()
-            interval["interval"] = timedelta(hours=int(interval["interval"][:2]), minutes=int(interval["interval"][3:]))
-            interval["end_time"] = datetime.strptime(interval["end_time"], "%H:%M").time()
-        print(self.cameraIntervals)
+    # # load intervals of image capture 
+    # def loadCameraIntervals(self, filename): 
+    #     self.cameraIntervals = None
+    #     try:
+    #         j = open(filename)
+    #         self.cameraIntervals = json.load(j)["intervals"]
+    #     except:
+    #         print("error opening file, or file doesn't exist")  
+    #     # initial processing of camera intervals 
+    #     for interval in self.cameraIntervals:
+    #         interval["start_time"] = datetime.strptime(interval["start_time"], "%H:%M").time()
+    #         interval["interval"] = timedelta(hours=int(interval["interval"][:2]), minutes=int(interval["interval"][3:]))
+    #         interval["end_time"] = datetime.strptime(interval["end_time"], "%H:%M").time()
+    #     print(self.cameraIntervals)
 
     # compute for the grow light intervals for each new day
     def getGrowLightIntervalsPerDay(self):
@@ -137,6 +144,15 @@ class SyncServer():
         # self.datetimenow = datetime.combine(date.today(), time(hour=7, minute=0, second=0))
         self.datetimenow = datetime.now()
         while True:
+        # load the timings for the sensors
+
+        # load the timings for the camera
+
+        # load the timings for the pumps
+
+        # load the timings for the lights
+  
+
             # update the growLightIntervals and cameraIntervals with the times of the day 
             if (date.today() > self.lastUpdateDate):
                 # self.datetimenow = datetime.now()
