@@ -34,19 +34,17 @@ class SyncServer():
         print("Connection timed out.")
         return 0 
 
-    def pumpsControl(self, pumpStates): 
+    def pumpsControl(self, pumpIndex, duration): 
         PORT = 12002
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         status = self.connect(server, self.HOST, PORT)
-        command = "pumps "
-        for pumpState in pumpStates:
-            command += str(pumpState)
+        command = f"pumps {pumpIndex} {duration}"
         if status:
             server.send(command.encode('utf-8')) 
             print("sent pumps command") 
 
-    def lightsControl(self, purpleState=0, whiteState=0):
+    def lightsControl(self, lightType = "purple", duration=0):
         PORT = 12003
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
