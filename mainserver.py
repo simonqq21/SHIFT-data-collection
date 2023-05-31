@@ -142,23 +142,26 @@ class SyncServer():
     def loop(self):
         # for timekeeping
         # self.datetimenow = datetime.combine(date.today(), time(hour=7, minute=0, second=0))
-        self.datetimenow = datetime.now()
+
         while True:
-        # load the timings for the sensors
+            self.datetimenow = datetime.now()
+            timeNow = self.datetimenow.time
+            # tell the sensors module to capture and transmit sensor data
+            
 
-        # load the timings for the camera
+            # tell the camera module to capture and transmit image data
 
-        # load the timings for the pumps
+            # tell the pumps module to turn the pumps on for a certain duration
 
-        # load the timings for the lights
+            # tell the lights module to turn on the lights to the correct mode
   
 
             # update the growLightIntervals and cameraIntervals with the times of the day 
-            if (date.today() > self.lastUpdateDate):
-                # self.datetimenow = datetime.now()
-                self.lastUpdateDate = date.today() 
-                self.lightscamera.getGrowLightIntervalsPerDay()
-                self.lightscamera.getCameraIntervalsPerDay()
+            # if (date.today() > self.lastUpdateDate):
+            #     # self.datetimenow = datetime.now()
+            #     self.lastUpdateDate = date.today() 
+            #     self.lightscamera.getGrowLightIntervalsPerDay()
+            #     self.lightscamera.getCameraIntervalsPerDay()
                 
             # loop to check the camera, growlights, and pump
             if (datetime.now() - self.intervalLastChecked >= Config.checkingInterval):
