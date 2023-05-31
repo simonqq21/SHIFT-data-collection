@@ -43,13 +43,15 @@ class SyncServer():
         if status:
             server.send(command.encode('utf-8')) 
             print("sent pumps command") 
-
-    def lightsControl(self, lightType = "purple", duration=0):
+    '''
+    lightType is either 'p', 'w', or 'flash'
+    '''
+    def lightsControl(self, lightType = "p", duration=0):
         PORT = 12003
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         status = self.connect(server, self.HOST, PORT)
-        command = "lights " + str(purpleState) + str(whiteState)
+        command = f"lights {lightType} {duration}"
         if status:
             server.send(command.encode('utf-8')) 
             print("sent lights command")
@@ -60,7 +62,7 @@ class SyncServer():
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         status = self.connect(server, self.HOST, PORT)
-        command = "camera"
+        command = "camera capture"
         if status:
             server.send(command.encode('utf-8'))  
             print("sent camera command")
@@ -70,7 +72,7 @@ class SyncServer():
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         status = self.connect(server, self.HOST, PORT) 
-        command = "sensors"
+        command = "sensors capture"
         if status:
             server.send(command.encode('utf-8')) 
             print("sent sensors command") 
