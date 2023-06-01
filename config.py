@@ -65,7 +65,7 @@ class Config(object):
     camera_capture_start = time(hour=6, minute=0)
     sensor_logging_end = time(hour=22, minute=00)
     # interval to poll camera and upload image data
-    cameraPollingInterval = timedelta(minutes=60) 
+    cameraCaptureInterval = timedelta(minutes=60) 
 
     # times of the day when plants will be watered
     pumps_start_time = [time(hour=10, minute=0),
