@@ -27,7 +27,15 @@ class SyncServer():
         self.timeLastSensorsLogged = datetime(year=1970, month=1, day=1)      
         self.timeLastCameraCaptured = datetime(year=1970, month=1, day=1)
 
+        # store the number of times each pump was switched on for the day
+        self.pumpsOnCount = [0, 0, 0] # three pumps
 
+        # flag that is True whenever the camera is capturing an image 
+        '''
+        this is checked by the sensor logging code so that the light intensity sensors
+        do not capture readings when the white camera light is on 
+        '''
+        self.whiteLightOn = False
 
     def connect(self, server, HOST, PORT, retries=8, timeout_per_retry=5):
         for i in range(retries):
@@ -61,8 +69,11 @@ class SyncServer():
         duration = duration.total_seconds()
         if lightType == 'flash':
             command = "lights flash"
+            self.whiteLightOn = True
         else:    
             command = f"lights {lightType} {duration}"
+        if lightType == 'w':
+            self.whiteLightOn = True
         if status:
             server.send(command.encode('utf-8')) 
             if Config.debug:
@@ -75,10 +86,13 @@ class SyncServer():
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         status = self.connect(server, self.HOST, PORT)
         command = "camera capture"
+        time.sleep(2)
         if status:
             server.send(command.encode('utf-8'))  
             if Config.debug:
                 print("sent camera command")
+        time.sleep(3)
+        self.whiteLightOn = False
 
     def sensorsLog(self): 
         PORT = 12005
@@ -86,6 +100,11 @@ class SyncServer():
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         status = self.connect(server, self.HOST, PORT) 
         command = "sensors capture"
+        # do not capture light intensity readings when the white camera light is on 
+        while self.whiteLightOn:
+            sleep(0.5)
+            if Config.debug:
+                print("sensors waiting for white light to turn off")
         if status:
             server.send(command.encode('utf-8')) 
             if Config.debug:
@@ -98,6 +117,16 @@ class SyncServer():
         while True:
             self.datetimenow = datetime.now()
             timeNow = self.datetimenow.time
+
+            # code to run at the start of each day 
+            if (self.datetimenow.time() >= time(hour=0, minute=0, second=0) and \
+                self.datetimenow.time() <= time(hour=0, minute=0, second=59)):
+                if Config.debug:
+                    print("new day")
+                    # reset pumps on count each day
+                    for i in range(len(self.pumpsOnCount)):
+                        self.pumpsOnCount[i] = 0
+
             # tell the sensors module to capture and transmit sensor data
             '''
             if the current time is in between the start and end times for sensor logging and if the 
@@ -107,7 +136,9 @@ class SyncServer():
                 self.datetimenow >= datetime.combine(self.datetimenow.date(), Config.sensor_logging_start) and \
                 self.datetimenow <= datetime.combine(self.datetimenow.date(), Config.sensor_logging_end)): 
                 self.timeLastSensorsLogged = self.datetimenow
-                self.sensorsLog()
+                # start the sensor logging thread 
+                sensorThread = threading.Thread(target=self.sensorsLog)
+                sensorThread.start()
 
             # tell the camera module to capture and transmit image data
             '''
@@ -119,16 +150,19 @@ class SyncServer():
                 self.datetimenow <= datetime.combine(self.datetimenow.date(), Config.camera_capture_end)): 
                 self.timeLastCameraCaptured = self.datetimenow
                 # flash the white light and capture an image 
-                self.lightsControl("flash")
-                self.cameraCapture()
+                cameraLightThread = threading.Thread(target=self.lightsControl, args=("flash,"))
+                cameraLightThread.start()
+                # capture the image 
+                cameraCaptureThread = threading.Thread(target=self.cameraCapture)
+                cameraCaptureThread.start()
 
             # tell the pumps module to turn the pumps on for a certain duration
             '''
-            iterate through each 
+            iterate through each pump and run it with start time and duration
             '''
-            if (self.datetimenow - self.timeLastCameraCaptured >= Config.cameraCaptureInterval and \
-                self.datetimenow >= datetime.combine(self.datetimenow.date(), Config.camera_capture_start) and \
-                self.datetimenow <= datetime.combine(self.datetimenow.date(), Config.camera_capture_end)): 
+            self.
+            for (start, duration) in Config.pumps_start_duration:
+            
                 self.timeLastCameraCaptured = self.datetimenow
                 self.cameraCapture()
 

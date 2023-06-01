@@ -1,20 +1,21 @@
 from datetime import datetime, date, time, timedelta
-import os 
+import os
+
 
 class Config(object):
     debug = 1
 
     # root dir of the program
-    program_root = os.path.realpath(os.path.dirname(__file__)) 
+    program_root = os.path.realpath(os.path.dirname(__file__))
 
-    # MQTT broker 
+    # MQTT broker
     mqttIP = "ccscloud2.dlsu.edu.ph"
     mqttPort = 20010
     clientname = "DLSU_SHIFT"
     # MQTT data constants
-    expt_num = 0 
+    expt_num = 0
     sitename = "DLSU-BLAST"
-    # MQTT topics 
+    # MQTT topics
     main_topic = "sensor/dlsu/node-1/"
     suffix_temperature = "temperature"
     suffix_humidity = "humidity"
@@ -24,10 +25,10 @@ class Config(object):
     suffix_EC = "solution_EC"
     suffix_camera = "camera"
 
-    # csv filepath and filename 
+    # csv filepath and filename
     csv_filepath = "/home/pi/blast/csv/"
     csv_filename = "BLAST_sensors.csv"
-    # image filepath and filename 
+    # image filepath and filename
     images_filepath = "/home/pi/blast/images/"
     images_filename_format = "IMG_{}.jpg"
 
@@ -55,41 +56,40 @@ class Config(object):
     Camera and sensors are periodic with a start and end time, while 
     pumps and lights are periodic with defined opening and closing times.
     '''
-    # time of the day when sensor logging will start and end 
+    # time of the day when sensor logging will start and end
     sensor_logging_start = time(hour=0, minute=0)
     sensor_logging_end = time(hour=23, minute=59)
     # interval to poll sensors and upload sensor data
-    sensorLoggingInterval = timedelta(minutes=60) 
+    sensorLoggingInterval = timedelta(minutes=60)
 
-    # time of the day when sensor logging will start and end 
+    # time of the day when sensor logging will start and end
     camera_capture_start = time(hour=6, minute=0)
     camera_capture_end = time(hour=22, minute=00)
     # interval to poll camera and upload image data
-    cameraCaptureInterval = timedelta(minutes=60) 
+    cameraCaptureInterval = timedelta(minutes=60)
 
     # times of the day when plants will be watered and length of time the pumps will be on
     pumps_start_duration = [[(time(hour=10, minute=0), timedelta(seconds=10))],
-                        [(time(hour=10, minute=0), timedelta(seconds=10))],
-                        [(time(hour=10, minute=0), timedelta(seconds=10))]]
+                            [(time(hour=10, minute=0), timedelta(seconds=10))],
+                            [(time(hour=10, minute=0), timedelta(seconds=10))]]
 
-    # times of the day when grow lights will be automatically switched on 
+    # times of the day when grow lights will be automatically switched on
     growlights_on_times = [time(hour=6, minute=0)]
     growlight_on_durations = [timedelta(hours=10)]
-    # compute for the growlight off times
-    growlights_off_times = []
-    dt = date.today()
-    for i in range(len(growlights_on_times)):
-        growlights_off_times.append( \
-            (datetime.combine(date.today(), growlights_on_times[i]) + \
-             growlight_on_durations[i]).time())
+#    # compute for the growlight off times
+    # growlights_off_times = []
+    # dt = date.today()
+    # for i in range(len(growlights_on_times)):
+    #     growlights_off_times.append(
+    #         (datetime.combine(date.today(), growlights_on_times[i]) +
+    #          growlight_on_durations[i]).time())
 
-    # interval to check all sensors and actuators 
+    # interval to check all sensors and actuators
     checkingInterval = timedelta(seconds=10)
 
-    # GPIO pins 
+    # GPIO pins
     growLightPin = 18
     cameraLightPin = 27
     cameraButtonPin = 9
-    pumpPins = (22, 23, 24) 
+    pumpPins = (22, 23, 24)
     pumpButtonPin = 10
-
