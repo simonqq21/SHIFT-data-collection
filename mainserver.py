@@ -17,11 +17,17 @@ from config import Config
 class SyncServer(): 
     def __init__(self):
         self.HOST = "localhost"
-        # last date when the datetimes for the camera and sensors were generated
-        self.lastUpdateDate = date(year=1970, month=1, day=1)
-        # used for timing
-        self.intervalLastChecked = datetime(year=1970, month=1, day=1)
-        self.sensorsLastPolled = datetime(year=1970, month=1, day=1)      
+        
+        '''
+        Camera and sensors are periodic with a start and end time, while 
+        pumps and lights are periodic with defined opening and closing times.
+        '''
+
+        # used for timing periodic events such as the cameras and sensors
+        self.timeLastSensorsLogged = datetime(year=1970, month=1, day=1)      
+        self.timeLastCameraCaptured = datetime(year=1970, month=1, day=1)
+
+
 
     def connect(self, server, HOST, PORT, retries=8, timeout_per_retry=5):
         for i in range(retries):
@@ -84,38 +90,7 @@ class SyncServer():
             if Config.debug:
                 print("sent sensors command") 
 
-    # # load intervals of grow lights
-    # def loadGrowLightIntervals(self, filename):
-    #     self.growLightIntervals = None
-    #     try:
-    #         j = open(filename)
-    #         self.growLightIntervals = json.load(j)["intervals"]
-    #     except:
-    #         print("error opening file, or file doesn't exist") 
-    #     # initial processing of grow light intervals 
-    #     lastUpdatedDate = date.today() 
-    #     for interval in self.growLightIntervals:
-    #         interval["on_time"] = datetime.strptime(interval["on_time"], "%H:%M").time()
-    #         interval["duration"] = timedelta(hours=int(interval["duration"][:2]), minutes=int(interval["duration"][3:]))
-    #         # ensure that duration doesn't exceed 24h
-    #         if (interval["duration"] > timedelta(hours=24)):
-    #             interval["duration"] = timedelta(hours=24)
-    #     print(self.growLightIntervals)
-
-    # # load intervals of image capture 
-    # def loadCameraIntervals(self, filename): 
-    #     self.cameraIntervals = None
-    #     try:
-    #         j = open(filename)
-    #         self.cameraIntervals = json.load(j)["intervals"]
-    #     except:
-    #         print("error opening file, or file doesn't exist")  
-    #     # initial processing of camera intervals 
-    #     for interval in self.cameraIntervals:
-    #         interval["start_time"] = datetime.strptime(interval["start_time"], "%H:%M").time()
-    #         interval["interval"] = timedelta(hours=int(interval["interval"][:2]), minutes=int(interval["interval"][3:]))
-    #         interval["end_time"] = datetime.strptime(interval["end_time"], "%H:%M").time()
-    #     print(self.cameraIntervals)
+    
 
     # compute for the grow light intervals for each new day
     def getGrowLightIntervalsPerDay(self):
@@ -147,6 +122,9 @@ class SyncServer():
             self.datetimenow = datetime.now()
             timeNow = self.datetimenow.time
             # tell the sensors module to capture and transmit sensor data
+                if (self.datetimenow - self.sensorsLastPolled >= Config.sensorLoInterval and \
+                self.datetimenow >= datetime.combine(self.datetimenow.date(), Config.sensor_logging_start) and \
+                self.datetimenow <= datetime.combine(self.datetimenow.date(), Config.sensor_logging_end)):
             
 
             # tell the camera module to capture and transmit image data
@@ -156,13 +134,7 @@ class SyncServer():
             # tell the lights module to turn on the lights to the correct mode
   
 
-            # update the growLightIntervals and cameraIntervals with the times of the day 
-            # if (date.today() > self.lastUpdateDate):
-            #     # self.datetimenow = datetime.now()
-            #     self.lastUpdateDate = date.today() 
-            #     self.lightscamera.getGrowLightIntervalsPerDay()
-            #     self.lightscamera.getCameraIntervalsPerDay()
-                
+              
             # loop to check the camera, growlights, and pump
             if (datetime.now() - self.intervalLastChecked >= Config.checkingInterval):
                 self.intervalLastChecked = datetime.now()
@@ -179,9 +151,6 @@ class SyncServer():
                 # loop to check and run irrigation pumps
                 self.pumps.pollPumps(self.datetimenow)
             # loop to gather sensor data from all sensors, package it into json, and send it via MQTT 
-            if (self.datetimenow - self.sensorsLastPolled >= Config.sensorPollingInterval and \
-                self.datetimenow >= datetime.combine(self.datetimenow.date(), Config.sensor_logging_start) and \
-                self.datetimenow <= datetime.combine(self.datetimenow.date(), Config.sensor_logging_end)):
                 self.sensorsLastPolled = datetime.now()
                 self.captureSensors()
             sleep(1)

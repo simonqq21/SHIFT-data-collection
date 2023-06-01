@@ -51,11 +51,15 @@ class Config(object):
         'imagedata': [],
     }
 
+    '''
+    Camera and sensors are periodic with a start and end time, while 
+    pumps and lights are periodic with defined opening and closing times.
+    '''
     # time of the day when sensor logging will start and end 
     sensor_logging_start = time(hour=0, minute=0)
     sensor_logging_end = time(hour=23, minute=59)
     # interval to poll sensors and upload sensor data
-    sensorPollingInterval = timedelta(minutes=60) 
+    sensorLoggingInterval = timedelta(minutes=60) 
 
     # time of the day when sensor logging will start and end 
     camera_capture_start = time(hour=6, minute=0)
