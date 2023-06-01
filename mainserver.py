@@ -124,7 +124,7 @@ class SyncServer():
 
             # tell the pumps module to turn the pumps on for a certain duration
             '''
-            
+            iterate through each 
             '''
             if (self.datetimenow - self.timeLastCameraCaptured >= Config.cameraCaptureInterval and \
                 self.datetimenow >= datetime.combine(self.datetimenow.date(), Config.camera_capture_start) and \

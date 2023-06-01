@@ -67,14 +67,10 @@ class Config(object):
     # interval to poll camera and upload image data
     cameraCaptureInterval = timedelta(minutes=60) 
 
-    # times of the day when plants will be watered
-    pumps_start_time = [time(hour=10, minute=0),
-                        time(hour=10, minute=0),
-                        time(hour=10, minute=0)]
-    # length of time the pumps will be on
-    pumps_on_duration = [timedelta(seconds=10),
-                        timedelta(seconds=10),
-                        timedelta(seconds=10)]
+    # times of the day when plants will be watered and length of time the pumps will be on
+    pumps_start_duration = [[(time(hour=10, minute=0), timedelta(seconds=10))],
+                        [(time(hour=10, minute=0), timedelta(seconds=10))],
+                        [(time(hour=10, minute=0), timedelta(seconds=10))]]
 
     # times of the day when grow lights will be automatically switched on 
     growlights_on_times = [time(hour=6, minute=0)]
