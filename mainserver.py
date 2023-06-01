@@ -160,9 +160,10 @@ class SyncServer():
                 cameraCaptureThread.start()
 
             # tell the pumps module to turn the pumps on for a certain duration
-            '''
+            ''' 
             iterate through each pump and run it with start time and duration
             '''
+
             for pumpIndex in range(len(Config.pumps_start_duration)):
                 for (start, duration) in Config.pumps_start_duration[pumpIndex]:
                     # get the number of times the pump is activated in a day
@@ -173,10 +174,20 @@ class SyncServer():
                             self.pumpsOnCount[pumpIndex] < maxOnCount):
                         pumpOnThread = threading.Thread(target=self.pumpsControl, args=(pumpIndex, duration))
                         pumpOnThread.start()
+                        if Config.debug:
+                            print(f"sent pump {pumpIndex} start command")
                         self.pumpsOnCount[pumpIndex] += 1
 
-            # tell the lights module to turn on the lights to the correct mode
-                
+            # tell the lights module to turn on the grow lights to the correct mode
+            for (start, duration) in Config.growlights_on_times_durations:
+                if (self.datetimenow >= datetime.combine(self.datetimenow.date(), start) and \
+                        self.datetimenow <= datetime.combine(self.datetimenow.date(), \
+                                                             start + duration)):
+                    duration = datetime.combine(self.datetimenow.date(), start) + duration - self.datetimenow
+                    growLightsOnThread = threading.Thread(target=self.lightsControl, args=('p', duration))
+                    growLightsOnThread.start() 
+                    if Config.debug:
+                        print("sent growlights on command") 
 
             # # loop to check the camera, growlights, and pump
             # if (datetime.now() - self.intervalLastChecked >= Config.checkingInterval):
