@@ -63,7 +63,7 @@ class Config(object):
 
     # time of the day when sensor logging will start and end 
     camera_capture_start = time(hour=6, minute=0)
-    sensor_logging_end = time(hour=22, minute=00)
+    camera_capture_end = time(hour=22, minute=00)
     # interval to poll camera and upload image data
     cameraCaptureInterval = timedelta(minutes=60) 
 

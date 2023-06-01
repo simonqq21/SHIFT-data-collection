@@ -109,7 +109,16 @@ class SyncServer():
                 self.sensorsLog()
 
             # tell the camera module to capture and transmit image data
-            
+            '''
+            if the current time is in between the start and end times for camera capture and if the 
+            time since last camera capture has exceeded the set camera capture interval  
+            '''
+            if (self.datetimenow - self.timeLastCameraCaptured >= Config.cameraCaptureInterval and \
+                self.datetimenow >= datetime.combine(self.datetimenow.date(), Config.camera_capture_start) and \
+                self.datetimenow <= datetime.combine(self.datetimenow.date(), Config.camera_capture_end)): 
+                self.timeLastCameraCaptured = self.datetimenow
+                self.cameraCapture()
+
             # tell the pumps module to turn the pumps on for a certain duration
 
             # tell the lights module to turn on the lights to the correct mode
