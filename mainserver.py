@@ -147,8 +147,13 @@ class SyncServer():
             self.datetimenow = datetime.now()
             timeNow = self.datetimenow.time
             # tell the sensors module to capture and transmit sensor data
-            
-
+            # if the current time is in between the start and end times for sensor logging and 
+            if (self.datetimenow - self.sensorsLastPolled >= Config.sensorPollingInterval and \
+                self.datetimenow >= datetime.combine(self.datetimenow.date(), Config.sensor_logging_start) and \
+                self.datetimenow <= datetime.combine(self.datetimenow.date(), Config.sensor_logging_end)): 
+                # if the time since last sensor logging has exceeded the set sensor logging interval 
+                if (self.datetimenow - lastTimeSensorsLogged > Config.sensorLoggingInterval): 
+                    lastTimeSensorsLogged = self.datetimenow
             # tell the camera module to capture and transmit image data
 
             # tell the pumps module to turn the pumps on for a certain duration
