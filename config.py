@@ -76,6 +76,17 @@ class Config(object):
                         timedelta(seconds=10),
                         timedelta(seconds=10)]
 
+    # times of the day when grow lights will be automatically switched on 
+    growlights_on_times = [time(hour=6, minute=0)]
+    growlight_on_durations = [timedelta(hours=10)]
+    # compute for the growlight off times
+    growlights_off_times = []
+    dt = date.today()
+    for i in range(len(growlights_on_times)):
+        growlights_off_times.append( \
+            (datetime.combine(date.today(), growlights_on_times[i]) + \
+             growlight_on_durations[i]).time())
+
     # interval to check all sensors and actuators 
     checkingInterval = timedelta(seconds=10)
 

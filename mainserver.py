@@ -53,11 +53,12 @@ class SyncServer():
     '''
     lightType is either 'p', 'w', or 'flash'
     '''
-    def lightsControl(self, lightType = "p", duration=0):
+    def lightsControl(self, lightType = "p", duration=timedelta(seconds=5)):
         PORT = 12003
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         status = self.connect(server, self.HOST, PORT)
+        duration = duration.total_seconds()
         if lightType == 'flash':
             command = "lights flash"
         else:    
@@ -117,9 +118,19 @@ class SyncServer():
                 self.datetimenow >= datetime.combine(self.datetimenow.date(), Config.camera_capture_start) and \
                 self.datetimenow <= datetime.combine(self.datetimenow.date(), Config.camera_capture_end)): 
                 self.timeLastCameraCaptured = self.datetimenow
+                # flash the white light and capture an image 
+                self.lightsControl("flash")
                 self.cameraCapture()
 
             # tell the pumps module to turn the pumps on for a certain duration
+            '''
+            
+            '''
+            if (self.datetimenow - self.timeLastCameraCaptured >= Config.cameraCaptureInterval and \
+                self.datetimenow >= datetime.combine(self.datetimenow.date(), Config.camera_capture_start) and \
+                self.datetimenow <= datetime.combine(self.datetimenow.date(), Config.camera_capture_end)): 
+                self.timeLastCameraCaptured = self.datetimenow
+                self.cameraCapture()
 
             # tell the lights module to turn on the lights to the correct mode
   
