@@ -10,9 +10,17 @@ if [ ! -f $install_dir ]; then
 fi 
 
 sudo pip3 install -r requirements.txt
-sudo cp blast_logger.service /lib/systemd/system
+sudo cp blast_camera.service /lib/systemd/system
+sudo cp blast_lights.service /lib/systemd/system
+sudo cp blast_mainserver.service /lib/systemd/system
+sudo cp blast_pumps.service /lib/systemd/system
+sudo cp blast_sensors.service /lib/systemd/system
 sudo systemctl daemon-reload
-sudo systemctl enable blast_logger.service
+sudo systemctl enable blast_camera.service
+sudo systemctl enable blast_lights.service
+sudo systemctl enable blast_mainserver.service
+sudo systemctl enable blast_pumps.service
+sudo systemctl enable blast_sensors.service
 echo -n 'Reboot? (y/n) '
 read ans
 echo $ans
