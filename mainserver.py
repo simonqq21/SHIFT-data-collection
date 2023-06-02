@@ -76,7 +76,7 @@ class SyncServer():
             for i in range(len(Config.pumps_start_duration)): 
                 newPump = []
                 # for each schedule in pump
-                for j in range(len(Config.pumps_start_duration[i]])):
+                for j in range(len(Config.pumps_start_duration[i])):
                     newPump.append(0) 
                 pumpsSchedulesDoneList.append(newPump)
             if Config.debug:
