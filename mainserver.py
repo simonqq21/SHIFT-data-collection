@@ -62,38 +62,73 @@ class SyncServer():
                 print("sent pumps command")
 
     def pumpsThreadLoop(self):        
+        # initialize datetime
         pumpsDateTime = datetime.now()
         timeOffset = datetime.now() - pumpsDateTime # offset timedelta 
+
+        '''
+        generate pump schedule completion array
+        0 if not done yet, 1 if done 
+        '''
+        def createPumpSchedules():
+            pumpsSchedulesDoneList = []
+            # for each pump in pumps
+            for i in range(len(Config.pumps_start_duration)): 
+                newPump = []
+                # for each schedule in pump
+                for j in range(len(Config.pumps_start_duration[i]])):
+                    newPump.append(0) 
+                pumpsSchedulesDoneList.append(newPump)
+            if Config.debug:
+                print(pumpsSchedulesDoneList)
+            return pumpsSchedulesDoneList 
+        
+        def resetPumpSchedules(pumpsSchedulesDoneList):
+            # for each pump in pumps
+            for pumpSchedules in pumpsSchedulesDoneList:
+                # for each schedule in pump
+                for schedule in pumpSchedules:
+                    schedule = 0
+            if Config.debug:
+                print("Reset pump schedules done list")
+            return pumpsSchedulesDoneList
+
+        def checkAllZeroes(pumpsSchedulesDoneList):
+            # for each pump in pumps
+            for pumpSchedules in pumpsSchedulesDoneList:
+                # for each schedule in pump
+                for schedule in pumpSchedules:
+                    if schedule !=0:
+                        return False
+            return True
+
+        pumpsSchedulesDoneList = createPumpSchedules()
         while True:
             timeNow = pumpsDateTime.time()
             dateNow = pumpsDateTime.date()
             # code to run at the start of each day
-            if (timeNow >= time(hour=0, minute=0, second=0) and \
-                    timeNow <= time(hour=0, minute=0, second=59)):
-                if Config.debug:
-                    print("new day")
-                    # reset pumps on count each day
-                    for i in range(len(self.pumpsOnCount)):
-                        self.pumpsOnCount[i] = 0
-            pumpsDateTime = datetime.now() - timeOffset
+            dayStart = time(hour=0, minute=0, second=0)
+            if (timeNow >= dayStart and timeNow <= dayStart + timedelta(seconds=59)):
+                # reset pumps schedules done list each start of the day 
+                if (not checkAllZeroes(pumpsSchedulesDoneList)):
+                    pumpsSchedulesDoneList = resetPumpSchedules(pumpsSchedulesDoneList)
+                    if Config.debug:
+                        print("new day")
 
-                        # tell the pumps module to turn the pumps on for a certain duration
-            ''' 
-            iterate through each pump and run it with start time and duration
-            '''
+            
             for pumpIndex in range(len(Config.pumps_start_duration)):
                 for (start, duration) in Config.pumps_start_duration[pumpIndex]:
                     # get the number of times the pump is activated in a day
                     maxOnCount = len(Config.pumps_start_duration[pumpIndex])
-                    if (self.datetimenow >= datetime.combine(self.datetimenow.date(), start) and \
-                        self.datetimenow <= datetime.combine(self.datetimenow.date(), \
-                                                             start + timedelta(seconds=59)) and \
-                            self.pumpsOnCount[pumpIndex] < maxOnCount):
+                    if (pumpsDateTime >= datetime.combine(dateNow, start) and \
+                        pumpsDateTime <= datetime.combine(dateNow, start + timedelta(seconds=59)) and \
+                        self.pumpsOnCount[pumpIndex] < maxOnCount):
                         pumpOnThread = threading.Thread(target=self.pumpsControl, args=(pumpIndex, duration))
                         pumpOnThread.start()
                         if Config.debug:
                             print(f"sent pump {pumpIndex} start command")
                         self.pumpsOnCount[pumpIndex] += 1
+            pumpsDateTime = datetime.now() - timeOffset
 
     '''
     lightType is either 'p', 'w', or 'flash'
