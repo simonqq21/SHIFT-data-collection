@@ -22,7 +22,7 @@ class SyncServer():
         Camera and sensors are periodic with a start and end time, while 
         pumps and lights are periodic with defined opening and closing times.
         '''
-
+                                                 
         # used for timing periodic events such as the cameras and sensors
         self.timeLastSensorsLogged = datetime(year=1970, month=1, day=1)
         self.timeLastCameraCaptured = datetime(year=1970, month=1, day=1)
@@ -58,10 +58,13 @@ class SyncServer():
             server.send(command.encode('utf-8'))
             if Config.debug:
                 print("sent pumps command")
+
+    def pumpsThreadLoop(self):
+        pass 
+
     '''
     lightType is either 'p', 'w', or 'flash'
     '''
-
     def lightsControl(self, lightType="p", duration=timedelta(seconds=5)):
         PORT = 12003
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -81,6 +84,9 @@ class SyncServer():
                 print("sent lights command")
             # print(server.recv(1024))
 
+    def lightsThreadLoop(self):
+        pass 
+
     def cameraCapture(self):
         PORT = 12004
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -92,8 +98,11 @@ class SyncServer():
             server.send(command.encode('utf-8'))
             if Config.debug:
                 print("sent camera command")
-        time.sleep(3)
+        time.sleep(5)
         self.whiteLightOn = False
+
+    def cameraThreadLoop(self):
+        pass 
 
     def sensorsLog(self):
         PORT = 12005
@@ -111,16 +120,19 @@ class SyncServer():
             if Config.debug:
                 print("sent sensors command")
 
+    def sensorThreadLoop(self):
+        pass
+
     def loop(self):
         # for timekeeping
         # self.datetimenow = datetime.combine(date.today(), time(hour=7, minute=0, second=0))
 
         while True:
             self.datetimenow = datetime.now()
-            timeNow = self.datetimenow.time
-
+            timeNow = self.datetimenow.time()
+            dateNow = self.datetimenow.date()
             # code to run at the start of each day
-            if (self.datetimenow.time() >= time(hour=0, minute=0, second=0) and
+            if (self.datetimenow.time() >= time(hour=0, minute=0, second=0) and \
                     self.datetimenow.time() <= time(hour=0, minute=0, second=59)):
                 if Config.debug:
                     print("new day")
@@ -133,8 +145,8 @@ class SyncServer():
             if the current time is in between the start and end times for sensor logging and if the 
             time since last sensor logging has exceeded the set sensor logging interval  
             '''
-            if (self.datetimenow - self.timeLastSensorsLogged >= Config.sensorLoggingInterval and
-                self.datetimenow >= datetime.combine(self.datetimenow.date(), Config.sensor_logging_start) and
+            if (self.datetimenow - self.timeLastSensorsLogged >= Config.sensorLoggingInterval and \
+                self.datetimenow >= datetime.combine(self.datetimenow.date(), Config.sensor_logging_start) and \
                     self.datetimenow <= datetime.combine(self.datetimenow.date(), Config.sensor_logging_end)):
                 self.timeLastSensorsLogged = self.datetimenow
                 # start the sensor logging thread
@@ -146,24 +158,21 @@ class SyncServer():
             if the current time is in between the start and end times for camera capture and if the 
             time since last camera capture has exceeded the set camera capture interval  
             '''
-            if (self.datetimenow - self.timeLastCameraCaptured >= Config.cameraCaptureInterval and
-                self.datetimenow >= datetime.combine(self.datetimenow.date(), Config.camera_capture_start) and
+            if (self.datetimenow - self.timeLastCameraCaptured >= Config.cameraCaptureInterval and \
+                self.datetimenow >= datetime.combine(self.datetimenow.date(), Config.camera_capture_start) and \
                     self.datetimenow <= datetime.combine(self.datetimenow.date(), Config.camera_capture_end)):
                 self.timeLastCameraCaptured = self.datetimenow
                 # flash the white light and capture an image
-                cameraLightThread = threading.Thread(
-                    target=self.lightsControl, args=("flash,"))
+                cameraLightThread = threading.Thread(target=self.lightsControl, args=("flash,"))
                 cameraLightThread.start()
                 # capture the image
-                cameraCaptureThread = threading.Thread(
-                    target=self.cameraCapture)
+                cameraCaptureThread = threading.Thread(target=self.cameraCapture)
                 cameraCaptureThread.start()
 
             # tell the pumps module to turn the pumps on for a certain duration
             ''' 
             iterate through each pump and run it with start time and duration
             '''
-
             for pumpIndex in range(len(Config.pumps_start_duration)):
                 for (start, duration) in Config.pumps_start_duration[pumpIndex]:
                     # get the number of times the pump is activated in a day
@@ -189,22 +198,4 @@ class SyncServer():
                     if Config.debug:
                         print("sent growlights on command") 
 
-            # # loop to check the camera, growlights, and pump
-            # if (datetime.now() - self.intervalLastChecked >= Config.checkingInterval):
-            #     self.intervalLastChecked = datetime.now()
-            #     # loop to check switch grow lights
-            #     self.lightscamera.pollGrowLights(self.datetimenow)
-            #     print("val={}".format(self.lightscamera.growlightval))
-            #     '''
-            #     while the camera is capturing an image, the growlight code must be overriden.
-            #     '''
-            #     # loop to capture image
-            #     self.lightscamera.pollCamera(self.datetimenow)
-            #     self.publishNewImage()
-
-            #     # loop to check and run irrigation pumps
-            #     self.pumps.pollPumps(self.datetimenow)
-            # # loop to gather sensor data from all sensors, package it into json, and send it via MQTT
-            #     self.sensorsLastPolled = datetime.now()
-            #     self.captureSensors()
-            # sleep(1)
+          # sleep(1)
