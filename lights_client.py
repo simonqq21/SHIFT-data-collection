@@ -30,12 +30,15 @@ class LightsClient():
                 lightType = message.split()[1]
                 if lightType == 'p': # purple grow light
                     onTime = int(message.split()[2])
-                    self.lights.growLightOn(onTime)
+                    growLightThread = threading.Thread(target=self.lights.growLightOn, args=(onTime,))
+                    growLightThread.start()
                 elif lightType == 'w': # white camera light 
                     onTime = int(message.split()[2])
-                    self.lights.cameraLightOn(onTime)
+                    whiteLightThread = threading.Thread(target=self.lights.cameraLightOn, args=(onTime,))
+                    whiteLightThread.start()
                 elif lightType == 'flash': # flash the white camera light 
-                    self.lights.flashCameraLight()
+                    cameraFlashThread = threading.Thread(target=self.lights.flashCameraLight)
+                    cameraFlashThread.start()
                 # set light states below this line 
                     
             # communication_socket.close() 

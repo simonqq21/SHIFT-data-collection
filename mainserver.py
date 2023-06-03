@@ -113,9 +113,8 @@ class SyncServer():
                 if (not checkAllZeroes(pumpsSchedulesDoneList)):
                     pumpsSchedulesDoneList = resetPumpSchedules(pumpsSchedulesDoneList)
                     if Config.debug:
-                        print("new day")
+                        print("reset pump schedules for new day")
 
-            
             for pumpIndex in range(len(Config.pumps_start_duration)):
                 currentPump = Config.pumps_start_duration[pumpIndex]
                 for scheduleIndex in range(len(currentPump)):
@@ -154,28 +153,28 @@ class SyncServer():
 
     def lightsThreadLoop(self):
         lightsDateTime = self.datetimenow
+        timeOffset = datetime.now() - lightsDateTime # offset timedelta
         while True:
-            timeNow = self.datetimenow.time()
-            dateNow = self.datetimenow.date()
+            timeNow = lightsDateTime.time()
+            dateNow = lightsDateTime.date()
             # code to run at the start of each day
-            if (self.datetimenow.time() >= time(hour=0, minute=0, second=0) and \
-                    self.datetimenow.time() <= time(hour=0, minute=0, second=59)):
+            if (timeNow >= time(hour=0, minute=0, second=0) and \
+                    timeNow <= time(hour=0, minute=0, second=59)):
                 if Config.debug:
                     print("new day")
                 # insert code to run at the start of each day
             
-            self.datetimenow += 1
-        
                         # tell the lights module to turn on the grow lights to the correct mode
             for (start, duration) in Config.growlights_on_times_durations:
-                if (self.datetimenow >= datetime.combine(self.datetimenow.date(), start) and \
-                        self.datetimenow <= datetime.combine(self.datetimenow.date(), \
-                                                             start + duration)):
-                    duration = datetime.combine(self.datetimenow.date(), start) + duration - self.datetimenow
+                if (lightsDateTime >= datetime.combine(dateNow, start) and \
+                    lightsDateTime <= datetime.combine(dateNow, start + duration)):
+                    duration = datetime.combine(dateNow, start) + duration - lightsDateTime
                     growLightsOnThread = threading.Thread(target=self.lightsControl, args=('p', duration))
                     growLightsOnThread.start() 
                     if Config.debug:
                         print("sent growlights on command") 
+
+            lightsDateTime = datetime.now() - timeOffset
 
 
     def cameraCapture(self):
