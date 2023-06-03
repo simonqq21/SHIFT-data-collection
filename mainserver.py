@@ -162,16 +162,18 @@ class SyncServer():
             timeNow = lightsDateTime.time()
             dateNow = lightsDateTime.date()
             # code to run at the start of each day
-            dayStart = datetime.combine(
-                dateNow, time(hour=0, minute=0, second=0))
+            dayStart = datetime.combine(dateNow, time(hour=0, minute=0, second=0))
             if (lightsDateTime >= dayStart and lightsDateTime <= dayStart + timedelta(seconds=59)):
                 pass
                 # if Config.debug:
                 #     print("new day")
                 # insert code to run at the start of each day
 
+            print('ltr')
                 # tell the lights module to turn on the grow lights to the correct mode
             for (start, duration) in Config.growlights_on_times_durations:
+                print(f"start={start}")
+                print(f"duration={duration}")
                 if (lightsDateTime >= datetime.combine(dateNow, start) and
                         lightsDateTime <= datetime.combine(dateNow, start) + duration):
                     duration = datetime.combine(dateNow, start) + duration - lightsDateTime
