@@ -33,6 +33,7 @@ class LightsClient():
                     growLightThread = threading.Thread(target=self.lights.growLightOn, args=(onTime,))
                     growLightThread.start()
                 elif lightType == 'w': # white camera light 
+                    print(type(message.split()[2]))
                     onTime = int(message.split()[2])
                     whiteLightThread = threading.Thread(target=self.lights.cameraLightOn, args=(onTime,))
                     whiteLightThread.start()
