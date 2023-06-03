@@ -29,7 +29,7 @@ class LightsClient():
             if commandType == "lights":
                 lightType = message.split()[1]
                 if lightType == 'p': # purple grow light
-                    onTime = int(message.split()[2])
+                    onTime = int(float(message.split()[2]))
                     growLightThread = threading.Thread(target=self.lights.growLightOn, args=(onTime,))
                     growLightThread.start()
                 elif lightType == 'w': # white camera light 
