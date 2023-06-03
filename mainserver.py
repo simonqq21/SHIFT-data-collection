@@ -195,6 +195,7 @@ class SyncServer():
 
     def cameraThreadLoop(self):
         cameraDateTime = self.datetimenow
+        timeOffset = datetime.now() - cameraDateTime # offset timedelta
         while True:
             timeNow = cameraDateTime.time()
             dateNow = cameraDateTime.date()
@@ -214,7 +215,7 @@ class SyncServer():
             if (cameraDateTime - self.timeLastCameraCaptured >= Config.cameraCaptureInterval and \
                 cameraDateTime >= datetime.combine(dateNow, Config.camera_capture_start) and \
                 cameraDateTime <= datetime.combine(dateNow, Config.camera_capture_end)):
-                self.timeLastCameraCaptured = self.datetimenow
+                self.timeLastCameraCaptured = cameraDateTime
                 # flash the white light and capture an image
                 cameraLightThread = threading.Thread(target=self.lightsControl, args=("flash,"))
                 cameraLightThread.start()
@@ -222,6 +223,8 @@ class SyncServer():
                 cameraCaptureThread = threading.Thread(target=self.cameraCapture)
                 cameraCaptureThread.start()
 
+            cameraDateTime = datetime.now() - timeOffset
+            time.sleep(1)
 
     def sensorsLog(self):
         PORT = 12005
@@ -240,15 +243,16 @@ class SyncServer():
                 print("sent sensors command")
 
     def sensorsThreadLoop(self):
+        sensorsDateTime = self.datetimenow
+        timeOffset = datetime.now() - sensorsDateTime # offset timedelta
         while True:
-            
-            timeNow = self.datetimenow.time()
-            dateNow = self.datetimenow.date()
+            timeNow = sensorsDateTime.time()
+            dateNow = sensorsDateTime.date()
             # code to run at the start of each day
-            if (self.datetimenow.time() >= time(hour=0, minute=0, second=0) and \
-                    self.datetimenow.time() <= time(hour=0, minute=0, second=59)):
-                if Config.debug:
-                    print("new day")
+            # if (self.datetimenow.time() >= time(hour=0, minute=0, second=0) and \
+            #         self.datetimenow.time() <= time(hour=0, minute=0, second=59)):
+            #     if Config.debug:
+            #         print("new day")
                 # insert code to run at the start of each day
 
             # tell the sensors module to capture and transmit sensor data
@@ -256,14 +260,16 @@ class SyncServer():
             if the current time is in between the start and end times for sensor logging and if the 
             time since last sensor logging has exceeded the set sensor logging interval  
             '''
-            if (self.datetimenow - self.timeLastSensorsLogged >= Config.sensorLoggingInterval and \
-                self.datetimenow >= datetime.combine(self.datetimenow.date(), Config.sensor_logging_start) and \
-                    self.datetimenow <= datetime.combine(self.datetimenow.date(), Config.sensor_logging_end)):
-                self.timeLastSensorsLogged = self.datetimenow
+            if (sensorsDateTime - self.timeLastSensorsLogged >= Config.sensorLoggingInterval and \
+                sensorsDateTime >= datetime.combine(dateNow, Config.sensor_logging_start) and \
+                sensorsDateTime <= datetime.combine(dateNow, Config.sensor_logging_end)):
+                self.timeLastSensorsLogged = sensorsDateTime
                 # start the sensor logging thread
                 sensorThread = threading.Thread(target=self.sensorsLog)
                 sensorThread.start()
-
+            
+            sensorsDateTime = datetime.now() - timeOffset
+            time.sleep(1)
 
     def loop(self):
         # self.datetimenow = datetime.combine(date.today(), time(hour=7, minute=0, second=0))
