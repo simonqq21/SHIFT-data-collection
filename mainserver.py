@@ -225,7 +225,7 @@ class SyncServer():
                 self.timeLastCameraCaptured = cameraDateTime
                 # flash the white light and capture an image
                 cameraLightThread = threading.Thread(
-                    target=self.lightsControl, args=("flash,"))
+                    target=self.lightsControl, args=("flash",))
                 cameraLightThread.start()
                 # capture the image
                 cameraCaptureThread = threading.Thread(
