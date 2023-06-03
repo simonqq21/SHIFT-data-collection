@@ -107,8 +107,8 @@ class SyncServer():
             timeNow = pumpsDateTime.time()
             dateNow = pumpsDateTime.date()
             # code to run at the start of each day
-            dayStart = time(hour=0, minute=0, second=0)
-            if (timeNow >= dayStart and timeNow <= dayStart + timedelta(seconds=59)):
+            dayStart = datetime.combine(dateNow, time(hour=0, minute=0, second=0))
+            if (pumpsDateTime >= dayStart and pumpsDateTime <= dayStart + timedelta(seconds=59)):
                 # reset pumps schedules done list each start of the day 
                 if (not checkAllZeroes(pumpsSchedulesDoneList)):
                     pumpsSchedulesDoneList = resetPumpSchedules(pumpsSchedulesDoneList)
@@ -159,8 +159,8 @@ class SyncServer():
             timeNow = lightsDateTime.time()
             dateNow = lightsDateTime.date()
             # code to run at the start of each day
-            dayStart = time(hour=0, minute=0, second=0)
-            if (timeNow >= dayStart and timeNow <= dayStart + timedelta(seconds=59)):
+            dayStart = datetime.combine(dateNow, time(hour=0, minute=0, second=0))
+            if (lightsDateTime >= dayStart and lightsDateTime <= dayStart + timedelta(seconds=59)):
                 pass 
                 # if Config.debug:
                 #     print("new day")
@@ -200,8 +200,8 @@ class SyncServer():
             timeNow = cameraDateTime.time()
             dateNow = cameraDateTime.date()
             # code to run at the start of each day
-            dayStart = time(hour=0, minute=0, second=0)
-            if (timeNow >= dayStart and timeNow <= dayStart + timedelta(seconds=59)):
+            dayStart = datetime.combine(dateNow, time(hour=0, minute=0, second=0))
+            if (cameraDateTime >= dayStart and cameraDateTime <= dayStart + timedelta(seconds=59)):
                 pass
                     # if Config.debug:
                     # print("new day")
@@ -249,8 +249,7 @@ class SyncServer():
             timeNow = sensorsDateTime.time()
             dateNow = sensorsDateTime.date()
             # code to run at the start of each day
-            # if (self.datetimenow.time() >= time(hour=0, minute=0, second=0) and \
-            #         self.datetimenow.time() <= time(hour=0, minute=0, second=59)):
+            
             #     if Config.debug:
             #         print("new day")
                 # insert code to run at the start of each day
