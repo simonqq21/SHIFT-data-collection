@@ -287,7 +287,7 @@ class SyncServer():
         lightsThread.start()
         sensorsThread = threading.Thread(target=self.sensorsThreadLoop)
         sensorsThread.start()
-        time.sleep(5)
+        sleep(5)
         cameraThreadLoop = threading.Thread(target=self.cameraThreadLoop)
         cameraThreadLoop.start()
 
