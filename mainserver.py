@@ -26,9 +26,6 @@ class SyncServer():
         self.timeLastSensorsLogged = datetime(year=1970, month=1, day=1)
         self.timeLastCameraCaptured = datetime(year=1970, month=1, day=1)
 
-        # store the number of times each pump was switched on for the day
-        self.pumpsOnCount = [0, 0, 0]  # three pumps
-
         # flag that is True whenever the camera is capturing an image
         '''
         this is checked by the sensor logging code so that the light intensity sensors
@@ -153,7 +150,7 @@ class SyncServer():
             server.send(command.encode('utf-8'))
             if Config.debug:
                 print("sent lights command")
-            # print(server.recv(1024))
+                print(server.recv(1024))
 
     def lightsThreadLoop(self):
         lightsDateTime = self.datetimenow
@@ -169,22 +166,24 @@ class SyncServer():
                 #     print("new day")
                 # insert code to run at the start of each day
 
-            print('ltr')
                 # tell the lights module to turn on the grow lights to the correct mode
             for (start, duration) in Config.growlights_on_times_durations:
-                print(f"start={start}")
-                print(f"duration={duration}")
-                if (lightsDateTime >= datetime.combine(dateNow, start) and
+                if Config.debug:
+                    print(f"start={start}")
+                    print(f"duration={duration}")
+                if (lightsDateTime >= datetime.combine(dateNow, start) and \
                         lightsDateTime <= datetime.combine(dateNow, start) + duration):
-                    duration = datetime.combine(dateNow, start) + duration - lightsDateTime
-                    print(f"lights duration = {duration}")
+                    currDuration = datetime.combine(dateNow, start) + duration - lightsDateTime
+                    print(f"lights duration = {currDuration}")
                     growLightsOnThread = threading.Thread(
-                        target=self.lightsControl, args=('p', duration))
+                        target=self.lightsControl, args=('p', currDuration))
                     growLightsOnThread.start()
                     if Config.debug:
                         print("sent growlights on command")
 
             lightsDateTime = datetime.now() - timeOffset
+            if Config.debug:
+                print(f"lightsDateTime={lightsDateTime}")
             sleep(1)
 
     def cameraCapture(self):
