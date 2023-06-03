@@ -128,6 +128,7 @@ class SyncServer():
                         if Config.debug:
                             print(f"sent pump {pumpIndex} start command")
             pumpsDateTime = datetime.now() - timeOffset
+            time.sleep(1)
 
     '''
     lightType is either 'p', 'w', or 'flash'
@@ -158,10 +159,11 @@ class SyncServer():
             timeNow = lightsDateTime.time()
             dateNow = lightsDateTime.date()
             # code to run at the start of each day
-            if (timeNow >= time(hour=0, minute=0, second=0) and \
-                    timeNow <= time(hour=0, minute=0, second=59)):
-                if Config.debug:
-                    print("new day")
+            dayStart = time(hour=0, minute=0, second=0)
+            if (timeNow >= dayStart and timeNow <= dayStart + timedelta(seconds=59)):
+                pass 
+                # if Config.debug:
+                #     print("new day")
                 # insert code to run at the start of each day
             
                         # tell the lights module to turn on the grow lights to the correct mode
@@ -175,7 +177,7 @@ class SyncServer():
                         print("sent growlights on command") 
 
             lightsDateTime = datetime.now() - timeOffset
-
+            time.sleep(1)
 
     def cameraCapture(self):
         PORT = 12004
@@ -197,10 +199,11 @@ class SyncServer():
             timeNow = cameraDateTime.time()
             dateNow = cameraDateTime.date()
             # code to run at the start of each day
-            if (self.datetimenow.time() >= time(hour=0, minute=0, second=0) and \
-                    self.datetimenow.time() <= time(hour=0, minute=0, second=59)):
-                if Config.debug:
-                    print("new day")
+            dayStart = time(hour=0, minute=0, second=0)
+            if (timeNow >= dayStart and timeNow <= dayStart + timedelta(seconds=59)):
+                pass
+                    # if Config.debug:
+                    # print("new day")
                 # insert code to run at the start of each day
 
                         # tell the camera module to capture and transmit image data
@@ -208,9 +211,9 @@ class SyncServer():
             if the current time is in between the start and end times for camera capture and if the 
             time since last camera capture has exceeded the set camera capture interval  
             '''
-            if (self.datetimenow - self.timeLastCameraCaptured >= Config.cameraCaptureInterval and \
-                self.datetimenow >= datetime.combine(self.datetimenow.date(), Config.camera_capture_start) and \
-                    self.datetimenow <= datetime.combine(self.datetimenow.date(), Config.camera_capture_end)):
+            if (cameraDateTime - self.timeLastCameraCaptured >= Config.cameraCaptureInterval and \
+                cameraDateTime >= datetime.combine(dateNow, Config.camera_capture_start) and \
+                cameraDateTime <= datetime.combine(dateNow, Config.camera_capture_end)):
                 self.timeLastCameraCaptured = self.datetimenow
                 # flash the white light and capture an image
                 cameraLightThread = threading.Thread(target=self.lightsControl, args=("flash,"))
