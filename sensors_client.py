@@ -7,7 +7,6 @@ try:
     from time import sleep
     import socket
     import numpy as np
-    import paho.mqtt.client as mqtt
     import pandas as pd
     from hardware.sensors import Sensors
 except Exception as e:
