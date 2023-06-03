@@ -31,9 +31,11 @@ class SyncServer():
         this is checked by the sensor logging code so that the light intensity sensors
         do not capture readings when the white camera light is on 
         '''
-        self.whiteLightOn = False
+        self.growLightStatus = 0
+        self.whiteLightStatus = 0
 
         self.datetimenow = datetime.now()
+
 
     def connect(self, server, HOST, PORT, retries=8, timeout_per_retry=5):
         for i in range(retries):
@@ -141,16 +143,20 @@ class SyncServer():
         duration = duration.total_seconds()
         if lightType == 'flash':
             command = "lights flash"
-            self.whiteLightOn = True
+            self.whiteLightStatus = True
         else:
             command = f"lights {lightType} {duration}"
         if lightType == 'w':
-            self.whiteLightOn = True
+            self.whiteLightStatus = True
         if status:
             server.send(command.encode('utf-8'))
             if Config.debug:
                 print("sent lights command")
-                print(server.recv(1024))
+                
+            lightsClientResponse = server.recv(1024).decode("utf-8")
+            print("lightsClientResponse={lightsClientResponse}")
+            self.growLightStatus = int(float(lightsClientResponse.split()[0]))
+            self.whiteLightStatus = int(float(lightsClientResponse.split()[1]))
 
     def lightsThreadLoop(self):
         lightsDateTime = self.datetimenow
@@ -169,10 +175,14 @@ class SyncServer():
                 # tell the lights module to turn on the grow lights to the correct mode
             for (start, duration) in Config.growlights_on_times_durations:
                 if Config.debug:
-                    print(f"start={start}")
-                    print(f"duration={duration}")
+                #     print(f"start={start}")
+                #     print(f"duration={duration}")
+                    print(f"lightsdatetime {lightsDateTime >= datetime.combine(dateNow, start)}  & \
+                        {lightsDateTime <= datetime.combine(dateNow, start) + duration} & \
+                        {self.growLightStatus == 0}")
                 if (lightsDateTime >= datetime.combine(dateNow, start) and \
-                        lightsDateTime <= datetime.combine(dateNow, start) + duration):
+                        lightsDateTime <= datetime.combine(dateNow, start) + duration and \
+                        self.growLightStatus == 0):
                     currDuration = datetime.combine(dateNow, start) + duration - lightsDateTime
                     print(f"lights duration = {currDuration}")
                     growLightsOnThread = threading.Thread(
@@ -182,8 +192,8 @@ class SyncServer():
                         print("sent growlights on command")
 
             lightsDateTime = datetime.now() - timeOffset
-            if Config.debug:
-                print(f"lightsDateTime={lightsDateTime}")
+            # if Config.debug:
+            #     print(f"lightsDateTime={lightsDateTime}")
             sleep(1)
 
     def cameraCapture(self):
@@ -198,7 +208,7 @@ class SyncServer():
             if Config.debug:
                 print("sent camera command")
         sleep(5)
-        self.whiteLightOn = False
+        self.whiteLightStatus = False
 
     def cameraThreadLoop(self):
         cameraDateTime = self.datetimenow
@@ -243,7 +253,7 @@ class SyncServer():
         status = self.connect(server, self.HOST, PORT)
         command = "sensors capture"
         # do not capture light intensity readings when the white camera light is on
-        while self.whiteLightOn:
+        while self.whiteLightStatus:
             sleep(0.5)
             if Config.debug:
                 print("sensors waiting for white light to turn off")

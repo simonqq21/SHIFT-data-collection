@@ -39,7 +39,7 @@ class LightsClient():
                 elif lightType == 'flash': # flash the white camera light 
                     cameraFlashThread = threading.Thread(target=self.lights.flashCameraLight)
                     cameraFlashThread.start()
-                self.communication_socket.send(f"lights state {self.lights.growlightval} {self.lights.cameralightval}".encode('utf-8'))
+                self.communication_socket.send(f"{self.lights.growlightval} {self.lights.cameralightval}".encode('utf-8'))
             # communication_socket.close() 
 
 '''
