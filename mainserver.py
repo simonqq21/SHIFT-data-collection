@@ -117,17 +117,16 @@ class SyncServer():
 
             
             for pumpIndex in range(len(Config.pumps_start_duration)):
-                for (start, duration) in Config.pumps_start_duration[pumpIndex]:
-                    # get the number of times the pump is activated in a day
-                    maxOnCount = len(Config.pumps_start_duration[pumpIndex])
+                currentPump = Config.pumps_start_duration[pumpIndex]
+                for scheduleIndex in range(len(currentPump)):
+                    (start, duration) = currentPump[scheduleIndex] 
                     if (pumpsDateTime >= datetime.combine(dateNow, start) and \
                         pumpsDateTime <= datetime.combine(dateNow, start + timedelta(seconds=59)) and \
-                        self.pumpsOnCount[pumpIndex] < maxOnCount):
+                        pumpsSchedulesDoneList[pumpIndex][scheduleIndex] == 0):
                         pumpOnThread = threading.Thread(target=self.pumpsControl, args=(pumpIndex, duration))
                         pumpOnThread.start()
                         if Config.debug:
                             print(f"sent pump {pumpIndex} start command")
-                        self.pumpsOnCount[pumpIndex] += 1
             pumpsDateTime = datetime.now() - timeOffset
 
     '''
