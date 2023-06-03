@@ -123,6 +123,7 @@ class SyncServer():
                     if (pumpsDateTime >= datetime.combine(dateNow, start) and \
                         pumpsDateTime <= datetime.combine(dateNow, start + timedelta(seconds=59)) and \
                         pumpsSchedulesDoneList[pumpIndex][scheduleIndex] == 0):
+                        pumpsSchedulesDoneList[pumpIndex][scheduleIndex] = 1
                         pumpOnThread = threading.Thread(target=self.pumpsControl, args=(pumpIndex, duration))
                         pumpOnThread.start()
                         if Config.debug:
@@ -272,3 +273,7 @@ class SyncServer():
         sensorsThread.start()
         cameraThreadLoop = threading.Thread(target=self.cameraThreadLoop)
         cameraThreadLoop.start()
+
+if __name__ == "__main__":
+    syncserver = SyncServer()
+    syncserver.cameraCapture()
