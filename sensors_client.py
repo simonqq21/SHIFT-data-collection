@@ -14,7 +14,7 @@ except Exception as e:
     print(e)
 from config import Config
 
-class SensorClient():
+class SensorsClient():
     def __init__(self):
         self.HOST = "localhost"
         self.PORT = 12005
@@ -47,3 +47,7 @@ class SensorClient():
 sensors capture 
 - log all environmental sensors, save it to CSV file, and publish it on MQTT broker
 '''
+
+if __name__ == "__main__":
+    sensorsclient = SensorsClient()
+    sensorsclient.loop()

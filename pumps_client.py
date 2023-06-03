@@ -48,3 +48,7 @@ pumps <pump index> <time on in seconds>
 pump index - one-indexed 
 time on in seconds - positive for timer, 0 for off 
 '''
+
+if __name__ == "__main__":
+    pumpsclient = PumpsClient()
+    pumpsclient.loop()

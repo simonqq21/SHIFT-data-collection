@@ -54,3 +54,7 @@ camera_flash - save state of grow lamps, shut down grow lamps,
 turn on white camera lights for 4 secs, turns off white camera lights,
 then restores state of grow lamps.
 '''
+
+if __name__ == "__main__":
+    lightsclient = LightsClient()
+    lightsclient.loop()

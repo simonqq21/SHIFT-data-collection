@@ -45,3 +45,7 @@ class CameraClient():
 camera capture
 - capture an image, save it to internal storage, and publish it on MQTT broker
 '''
+
+if __name__ == "__main__":
+    cameraclient = CameraClient()
+    cameraclient.loop()

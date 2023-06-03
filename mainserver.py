@@ -276,4 +276,4 @@ class SyncServer():
 
 if __name__ == "__main__":
     syncserver = SyncServer()
-    syncserver.cameraCapture()
+    syncserver.loop()
