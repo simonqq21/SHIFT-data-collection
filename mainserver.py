@@ -177,9 +177,10 @@ class SyncServer():
                 if Config.debug:
                 #     print(f"start={start}")
                 #     print(f"duration={duration}")
-                    print(f"lightsdatetime {lightsDateTime >= datetime.combine(dateNow, start)} and " 
-                        f"{lightsDateTime <= (datetime.combine(dateNow, start) + duration)} and "
-                        f"{self.growLightStatus == 0}")
+                    # print(f"lightsdatetime {lightsDateTime >= datetime.combine(dateNow, start)} and " 
+                    #     f"{lightsDateTime <= (datetime.combine(dateNow, start) + duration)} and "
+                    #     f"{self.growLightStatus == 0}")
+                    print(f"{lightsDateTime} and {datetime.combine(dateNow, start) + duration}")
                 if (lightsDateTime >= datetime.combine(dateNow, start) and \
                         lightsDateTime <= datetime.combine(dateNow, start) + duration and \
                         self.growLightStatus == 0):
