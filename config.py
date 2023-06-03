@@ -74,7 +74,7 @@ class Config(object):
                             [(time(hour=10, minute=0), timedelta(seconds=10)),]]
 
     # times of the day when grow lights will be automatically switched on
-    growlights_on_times_durations = [(time(hour=6, minute=0), timedelta(hours=10))]
+    growlights_on_times_durations = [(time(hour=6, minute=0), timedelta(hours=16))]
 #    # compute for the growlight off times
     # growlights_off_times = []
     # dt = date.today()
