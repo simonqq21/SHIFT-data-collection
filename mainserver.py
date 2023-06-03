@@ -173,7 +173,7 @@ class SyncServer():
                 # tell the lights module to turn on the grow lights to the correct mode
             for (start, duration) in Config.growlights_on_times_durations:
                 if (lightsDateTime >= datetime.combine(dateNow, start) and
-                        lightsDateTime <= datetime.combine(dateNow, start + duration)):
+                        lightsDateTime <= datetime.combine(dateNow, start) + duration):
                     duration = datetime.combine(dateNow, start) + duration - lightsDateTime
                     print(f"lights duration = {duration}")
                     growLightsOnThread = threading.Thread(
