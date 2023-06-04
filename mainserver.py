@@ -14,7 +14,6 @@ except Exception as e:
     print(e)
 from config import Config
 
-
 class SyncServer():
     def __init__(self):
         self.HOST = "localhost"
@@ -34,8 +33,6 @@ class SyncServer():
         self.growLightStatus = 0
         self.whiteLightStatus = 0
 
-        self.datetimenow = datetime.now()
-
 
     def connect(self, server, HOST, PORT, retries=8, timeout_per_retry=5):
         for i in range(retries):
@@ -47,6 +44,15 @@ class SyncServer():
                 sleep(timeout_per_retry)
         print("Connection timed out.")
         return 0
+
+    def timingThreadLoop(self):
+        self.datetimenow = datetime.now()
+        timeOffset = datetime.now() - self.datetimenow  # offset timedelta
+        while True:
+            self.timeNow = self.datetimenow.time()
+            self.dateNow = self.datetimenow.date()
+            self.datetimenow = datetime.now() - timeOffset
+            sleep(1)
 
     def pumpsControl(self, pumpIndex, duration):
         PORT = 12002
@@ -60,10 +66,6 @@ class SyncServer():
                 print("sent pumps command")
 
     def pumpsThreadLoop(self):
-        # initialize datetime
-        pumpsDateTime = datetime.now()
-        timeOffset = datetime.now() - pumpsDateTime  # offset timedelta
-
         '''
         generate pump schedule completion array
         0 if not done yet, 1 if done 
@@ -102,12 +104,9 @@ class SyncServer():
 
         pumpsSchedulesDoneList = createPumpSchedules()
         while True:
-            timeNow = pumpsDateTime.time()
-            dateNow = pumpsDateTime.date()
             # code to run at the start of each day
-            dayStart = datetime.combine(
-                dateNow, time(hour=0, minute=0, second=0))
-            if (pumpsDateTime >= dayStart and pumpsDateTime <= dayStart + timedelta(seconds=59)):
+            dayStart = datetime.combine(self.dateNow, time(hour=0, minute=0, second=0))
+            if (self.datetimenow >= dayStart and self.datetimenow <= dayStart + timedelta(seconds=59)):
                 # reset pumps schedules done list each start of the day
                 if (not checkAllZeroes(pumpsSchedulesDoneList)):
                     pumpsSchedulesDoneList = resetPumpSchedules(
@@ -119,8 +118,8 @@ class SyncServer():
                 currentPump = Config.pumps_start_duration[pumpIndex]
                 for scheduleIndex in range(len(currentPump)):
                     (start, duration) = currentPump[scheduleIndex]
-                    if (pumpsDateTime >= datetime.combine(dateNow, start) and
-                        pumpsDateTime <= datetime.combine(dateNow, start) + timedelta(seconds=59) and
+                    if (self.datetimenow >= datetime.combine(self.dateNow, start) and
+                        self.datetimenow <= datetime.combine(self.dateNow, start) + timedelta(seconds=59) and
                             pumpsSchedulesDoneList[pumpIndex][scheduleIndex] == 0):
                         pumpsSchedulesDoneList[pumpIndex][scheduleIndex] = 1
                         pumpOnThread = threading.Thread(
@@ -128,7 +127,6 @@ class SyncServer():
                         pumpOnThread.start()
                         if Config.debug:
                             print(f"sent pump {pumpIndex} start command")
-            pumpsDateTime = datetime.now() - timeOffset
             sleep(1)
 
     '''
@@ -159,14 +157,10 @@ class SyncServer():
             self.whiteLightStatus = int(float(lightsClientResponse.split()[1]))
 
     def lightsThreadLoop(self):
-        lightsDateTime = self.datetimenow
-        timeOffset = datetime.now() - lightsDateTime  # offset timedelta
         while True:
-            timeNow = lightsDateTime.time()
-            dateNow = lightsDateTime.date()
             # code to run at the start of each day
-            dayStart = datetime.combine(dateNow, time(hour=0, minute=0, second=0))
-            if (lightsDateTime >= dayStart and lightsDateTime <= dayStart + timedelta(seconds=59)):
+            dayStart = datetime.combine(self.dateNow, time(hour=0, minute=0, second=0))
+            if (self.datetimenow >= dayStart and self.datetimenow <= dayStart + timedelta(seconds=59)):
                 pass
                 # if Config.debug:
                 #     print("new day")
@@ -174,27 +168,23 @@ class SyncServer():
 
                 # tell the lights module to turn on the grow lights to the correct mode
             for (start, duration) in Config.growlights_on_times_durations:
-                if Config.debug:
+                # if Config.debug:
                 #     print(f"start={start}")
                 #     print(f"duration={duration}")
-                    # print(f"lightsdatetime {lightsDateTime >= datetime.combine(dateNow, start)} and " 
-                    #     f"{lightsDateTime <= (datetime.combine(dateNow, start) + duration)} and "
+                    # print(f"self.datetimenow {self.datetimenow >= datetime.combine(self.dateNow, start)} and " 
+                    #     f"{self.datetimenow <= (datetime.combine(self.dateNow, start) + duration)} and "
                     #     f"{self.growLightStatus == 0}")
-                    print(f"{lightsDateTime} and {datetime.combine(dateNow, start) + duration}")
-                if (lightsDateTime >= datetime.combine(dateNow, start) and \
-                        lightsDateTime <= datetime.combine(dateNow, start) + duration and \
+                    # print(f"self.datetimenow={self.datetimenow}")
+                if (self.datetimenow >= datetime.combine(self.dateNow, start) and \
+                        self.datetimenow <= datetime.combine(self.dateNow, start) + duration and \
                         self.growLightStatus == 0):
-                    currDuration = datetime.combine(dateNow, start) + duration - lightsDateTime
+                    currDuration = datetime.combine(self.dateNow, start) + duration - self.datetimenow
                     print(f"lights duration = {currDuration}")
                     growLightsOnThread = threading.Thread(
                         target=self.lightsControl, args=('p', currDuration))
                     growLightsOnThread.start()
                     if Config.debug:
                         print("sent growlights on command")
-
-            lightsDateTime = datetime.now() - timeOffset
-            # if Config.debug:
-            #     print(f"lightsDateTime={lightsDateTime}")
             sleep(1)
 
     def cameraCapture(self):
@@ -212,15 +202,10 @@ class SyncServer():
         self.whiteLightStatus = False
 
     def cameraThreadLoop(self):
-        cameraDateTime = self.datetimenow
-        timeOffset = datetime.now() - cameraDateTime  # offset timedelta
         while True:
-            timeNow = cameraDateTime.time()
-            dateNow = cameraDateTime.date()
             # code to run at the start of each day
-            dayStart = datetime.combine(
-                dateNow, time(hour=0, minute=0, second=0))
-            if (cameraDateTime >= dayStart and cameraDateTime <= dayStart + timedelta(seconds=59)):
+            dayStart = datetime.combine(self.dateNow, time(hour=0, minute=0, second=0))
+            if (self.datetimenow >= dayStart and self.datetimenow <= dayStart + timedelta(seconds=59)):
                 pass
                 # if Config.debug:
                 # print("new day")
@@ -231,20 +216,16 @@ class SyncServer():
             if the current time is in between the start and end times for camera capture and if the 
             time since last camera capture has exceeded the set camera capture interval  
             '''
-            if (cameraDateTime - self.timeLastCameraCaptured >= Config.cameraCaptureInterval and
-                cameraDateTime >= datetime.combine(dateNow, Config.camera_capture_start) and
-                    cameraDateTime <= datetime.combine(dateNow, Config.camera_capture_end)):
-                self.timeLastCameraCaptured = cameraDateTime
+            if (self.datetimenow - self.timeLastCameraCaptured >= Config.cameraCaptureInterval and
+                self.datetimenow >= datetime.combine(self.dateNow, Config.camera_capture_start) and
+                    self.datetimenow <= datetime.combine(self.dateNow, Config.camera_capture_end)):
+                self.timeLastCameraCaptured = self.datetimenow
                 # flash the white light and capture an image
-                cameraLightThread = threading.Thread(
-                    target=self.lightsControl, args=("flash",))
+                cameraLightThread = threading.Thread(target=self.lightsControl, args=("flash",))
                 cameraLightThread.start()
                 # capture the image
-                cameraCaptureThread = threading.Thread(
-                    target=self.cameraCapture)
+                cameraCaptureThread = threading.Thread(target=self.cameraCapture)
                 cameraCaptureThread.start()
-
-            cameraDateTime = datetime.now() - timeOffset
             sleep(1)
 
     def sensorsLog(self):
@@ -264,11 +245,7 @@ class SyncServer():
                 print("sent sensors command")
 
     def sensorsThreadLoop(self):
-        sensorsDateTime = self.datetimenow
-        timeOffset = datetime.now() - sensorsDateTime  # offset timedelta
         while True:
-            timeNow = sensorsDateTime.time()
-            dateNow = sensorsDateTime.date()
             # code to run at the start of each day
 
             #     if Config.debug:
@@ -280,19 +257,19 @@ class SyncServer():
             if the current time is in between the start and end times for sensor logging and if the 
             time since last sensor logging has exceeded the set sensor logging interval  
             '''
-            if (sensorsDateTime - self.timeLastSensorsLogged >= Config.sensorLoggingInterval and
-                sensorsDateTime >= datetime.combine(dateNow, Config.sensor_logging_start) and
-                    sensorsDateTime <= datetime.combine(dateNow, Config.sensor_logging_end)):
-                self.timeLastSensorsLogged = sensorsDateTime
+            if (self.datetimenow - self.timeLastSensorsLogged >= Config.sensorLoggingInterval and
+                self.datetimenow >= datetime.combine(self.dateNow, Config.sensor_logging_start) and
+                    self.datetimenow <= datetime.combine(self.dateNow, Config.sensor_logging_end)):
+                self.timeLastSensorsLogged = self.datetimenow
                 # start the sensor logging thread
                 sensorThread = threading.Thread(target=self.sensorsLog)
                 sensorThread.start()
-
-            sensorsDateTime = datetime.now() - timeOffset
             sleep(1)
 
     def loop(self):
         # self.datetimenow = datetime.combine(date.today(), time(hour=7, minute=0, second=0))
+        timingThread = threading.Thread(target=self.timingThreadLoop)
+        timingThread.start()
         pumpsThread = threading.Thread(target=self.pumpsThreadLoop)
         pumpsThread.start()
         lightsThread = threading.Thread(target=self.lightsThreadLoop)
