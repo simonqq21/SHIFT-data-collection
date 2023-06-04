@@ -123,7 +123,7 @@ class SyncServer():
                 currentPump = Config.pumps_start_duration[pumpIndex]
                 for scheduleIndex in range(len(currentPump)):
                     (start, duration) = currentPump[scheduleIndex]
-                    print(f"type(duration)={type(duration)}")
+                    # print(f"type(duration)={type(duration)}")
                     if (self.datetimenow >= datetime.combine(self.dateNow, start) and
                         self.datetimenow <= datetime.combine(self.dateNow, start) + timedelta(seconds=59) and
                             pumpsSchedulesDoneList[pumpIndex][scheduleIndex] == 0):
