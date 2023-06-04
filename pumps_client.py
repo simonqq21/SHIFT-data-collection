@@ -31,7 +31,7 @@ class PumpsClient():
             commandType = message.split()[0]
             if commandType == "pumps":
                 pumpIndex = int(message.split()[1]) 
-                duration = int(message.split()[2]) 
+                duration = int(float(message.split()[2]))
                 # set pump states below this line 
                 pumpOnThread = threading.Thread(target=self.pumps.switchOn, args=(pumpIndex, duration))
                 pumpOnThread.start()
