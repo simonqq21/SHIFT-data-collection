@@ -150,9 +150,8 @@ class SyncServer():
             server.send(command.encode('utf-8'))
             if Config.debug:
                 print("sent lights command")
-                
-            lightsClientResponse = server.recv(1024).decode("utf-8")
-            print("lightsClientResponse={lightsClientResponse}")
+                lightsClientResponse = server.recv(1024).decode("utf-8")
+                print(f"lightsClientResponse={lightsClientResponse}")
             self.growLightStatus = int(float(lightsClientResponse.split()[0]))
             self.whiteLightStatus = int(float(lightsClientResponse.split()[1]))
 
