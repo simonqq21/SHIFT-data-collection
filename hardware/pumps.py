@@ -48,16 +48,11 @@ class Pump():
             self.pumpObject.on()
         except:  
             print("not running on rpi, switching dummy pump {} on".format(self.duration["index"]))
-        # self.duration["state"] = True
-        # self.duration["time_elapsed_since_last_watering"] = timedelta(seconds=self.duration["on_seconds"].seconds)
-        # sleep(self.duration["on_seconds"].seconds)
         sleep(self.duration)
         try:
             self.pumpObject.off()
         except:  
             print("switching dummy pump {} off".format(self.duration["index"]))
-            pass
-        self.duration["state"] = False
 
 # (22, 23, 24), 10, "pumps_duration.json" 
 
