@@ -17,13 +17,13 @@ class PumpsClient():
         self.PORT = 12002
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.client.bind((self.HOST, self.PORT)) 
+        self.client.bind((self.HOST, self.PORT))
         self.client.listen()
-        self.pumps = PumpSystem() 
+        self.pumps = PumpSystem()
 
     def loop(self):
         while True:
-            self.communication_socket, self.address = self.client.accept() 
+            self.communication_socket, self.address = self.client.accept()
             print(f"Connected to {self.address}")
             message = self.communication_socket.recv(1024)
             # print(type(message))
@@ -37,7 +37,8 @@ class PumpsClient():
                 pumpOnThread.start()
                 
                 # print(f"Message from server is: {message}")
-                # self.communication_socket.send(f"self.client 1 response!".encode('utf-8'))
+            
+            self.communication_socket.send(f"".encode('utf-8'))
                 # self.communication_socket.close() 
 '''
 pumps 1 10

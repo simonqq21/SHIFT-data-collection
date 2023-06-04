@@ -29,7 +29,11 @@ class Lights:
 
         # amount of time in seconds left before the grow light is shut off
         # self.growLightTimeLeft = 0
-        
+
+        # mutex lock for timed growlights 
+        self.growLightsLock = threading.Lock()
+        self.growLightsLock.release() 
+
         # initialize GPIOzero outputs
         try:
             self.growlight = DigitalOutputDevice(growLightGPIO)
@@ -81,13 +85,21 @@ class Lights:
     '''
     def growLightOn(self, onTime):
         if onTime > 0:
-            self.switchGrowLights(1)
-            while (onTime > 0):
-                sleep(1)
+            if self.growLightsLock.locked():
                 if Config.debug:
-                    print("{}s of purple light left".format(onTime))
-                onTime -= 1
-            self.switchGrowLights(0)
+                    print("growlights timer already running!") 
+            else:
+                # acquire the timed growlight lock
+                self.growLightsLock.acquire()
+                self.switchGrowLights(1)
+                while (onTime > 0):
+                    sleep(1)
+                    if Config.debug:
+                        print("{}s of purple light left".format(onTime))
+                    onTime -= 1
+                self.switchGrowLights(0)
+                # release the timed growlight lock 
+                self.growLightsLock.release()
         elif onTime == 0:
             self.switchGrowLights(0)
         else:
@@ -99,6 +111,7 @@ class Lights:
     '''
     def cameraLightOn(self, onTime):
         if onTime > 0:
+            self.growLightsLock
             self.switchCameraLights(1)
             while (onTime > 0):
                 sleep(1)

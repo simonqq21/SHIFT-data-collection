@@ -37,6 +37,7 @@ class Pump():
             self.pumpObject = None
             print("gpiozero not present, hardware pump not added")
         self.duration = 0
+        self.state = 0
 
     '''
     # thread function to turn on the pumps for a specified on-time
@@ -46,14 +47,17 @@ class Pump():
         print("Manually started irrigation")
         try:
             self.pumpObject.on()
-        except:  
+        except:
             print("not running on rpi, switching dummy pump {} on".format(self.duration["index"]))
+        finally:
+            self.state = 1
         sleep(self.duration)
         try:
             self.pumpObject.off()
         except:  
             print("switching dummy pump {} off".format(self.duration["index"]))
-
+        finally:
+            self.state = 0
 # (22, 23, 24), 10, "pumps_duration.json" 
 
 
