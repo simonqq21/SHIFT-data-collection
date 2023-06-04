@@ -42,6 +42,8 @@ class Lights:
             print("not running on pi, failed to initialize growlights and cameralights")
             print(e)
 
+        self.purpleOnTime = 0 
+        self.whiteOnTime = 0
 
     '''
     switch the ON/OFF state of the grow lights
@@ -83,7 +85,8 @@ class Lights:
     thread function to switch on the grow lights for a certain duration, used for timing
     '''
     def growLightOn(self, onTime):
-        if onTime > 0:
+        self.purpleOnTime = onTime
+        if self.purpleOnTime > 0:
             if self.growLightsLock.locked():
                 if Config.debug:
                     print("growlights timer already running!") 
@@ -91,15 +94,15 @@ class Lights:
                 # acquire the timed growlight lock
                 self.growLightsLock.acquire()
                 self.switchGrowLights(1)
-                while (onTime > 0):
+                while (self.purpleOnTime > 0):
                     sleep(1)
                     if Config.debug:
-                        print("{}s of purple light left".format(onTime))
-                    onTime -= 1
+                        print("{}s of purple light left".format(self.purpleOnTime))
+                    self.purpleOnTime -= 1
                 self.switchGrowLights(0)
                 # release the timed growlight lock 
                 self.growLightsLock.release()
-        elif onTime == 0:
+        elif self.purpleOnTime == 0:
             self.switchGrowLights(0)
         else:
             self.switchGrowLights(1)
@@ -109,16 +112,17 @@ class Lights:
     thread function to switch on the camera lights for a certain duration, used for timing
     '''
     def cameraLightOn(self, onTime):
-        if onTime > 0:
+        self.whiteOnTime = onTime
+        if self.whiteOnTime > 0:
             self.growLightsLock
             self.switchCameraLights(1)
-            while (onTime > 0):
+            while (self.whiteOnTime > 0):
                 sleep(1)
                 if Config.debug:
-                    print("{}s of white light left".format(onTime))
-                onTime -= 1
+                    print("{}s of white light left".format(self.whiteOnTime))
+                self.whiteOnTime -= 1
             self.switchCameraLights(0)
-        elif onTime == 0:
+        elif self.whiteOnTime == 0:
             self.switchCameraLights(0)
         else:
             self.switchCameraLights(1)
@@ -135,7 +139,7 @@ class Lights:
         self.switchGrowLights(0) 
         self.cameraLightOn(4)
         # revert the growlights state
-        if (growLightsWereOn):
+        if (growLightsWereOn and self.purpleOnTime > 0):
             self.switchGrowLights(1)
 
 
