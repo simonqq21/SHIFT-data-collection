@@ -32,7 +32,6 @@ class Lights:
 
         # mutex lock for timed growlights 
         self.growLightsLock = threading.Lock()
-        self.growLightsLock.release() 
 
         # initialize GPIOzero outputs
         try:
