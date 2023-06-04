@@ -45,7 +45,11 @@ class SyncServer():
         print("Connection timed out.")
         return 0
 
+    '''
+    This thread function keeps track of time with a defined offset.
+    '''
     def timingThreadLoop(self):
+        # change the value for testing
         self.datetimenow = datetime.now()
         timeOffset = datetime.now() - self.datetimenow  # offset timedelta
         while True:
@@ -59,7 +63,8 @@ class SyncServer():
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         status = self.connect(server, self.HOST, PORT)
-        command = f"pumps {pumpIndex} {duration}"
+        pumpDurationSeconds = duration.total_seconds()
+        command = f"pumps {pumpIndex} {pumpDurationSeconds}"
         if status:
             server.send(command.encode('utf-8'))
             if Config.debug:
