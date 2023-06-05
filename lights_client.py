@@ -7,6 +7,8 @@ try:
 except Exception as e:
     print(e)
 from config import Config
+from email_sender import send_email, emailExited, emailCrashed
+import atexit
 
 class LightsClient():
     def __init__(self):
@@ -65,5 +67,14 @@ then restores state of grow lamps.
 '''
 
 if __name__ == "__main__":
-    lightsclient = LightsClient()
-    lightsclient.loop()
+    datetimenow = datetime.now()
+    name = "PGMS lights client"
+    try:
+        lightsclient = LightsClient()
+        atexit.register(emailExited, name, datetimenow)
+        lightsclient.loop()
+    except Exception as e:
+        if Config.debug:
+            print(f"{name} crashed")
+            print(f"exception={e}")
+        emailCrashed(name, datetimenow, e)

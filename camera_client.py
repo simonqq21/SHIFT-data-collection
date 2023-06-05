@@ -10,6 +10,8 @@ try:
 except Exception as e:
     print(e)
 from config import Config
+from email_sender import send_email, emailExited, emailCrashed
+import atexit
 
 class CameraClient():
     def __init__(self):
@@ -47,5 +49,14 @@ camera capture
 '''
 
 if __name__ == "__main__":
-    cameraclient = CameraClient()
-    cameraclient.loop()
+    datetimenow = datetime.now()
+    name = "PGMS camera client"
+    try:
+        cameraclient = CameraClient()
+        atexit.register(emailExited, name, datetimenow)
+        cameraclient.loop()
+    except Exception as e:
+        if Config.debug:
+            print(f"{name} crashed")
+            print(f"exception={e}")
+        emailCrashed(name, datetimenow, e)

@@ -10,6 +10,8 @@ try:
 except Exception as e:
     print(e)
 from config import Config
+from email_sender import send_email, emailExited, emailCrashed
+import atexit
 
 class PumpsClient():
     def __init__(self):
@@ -51,5 +53,14 @@ time on in seconds - positive for timer, 0 for off
 '''
 
 if __name__ == "__main__":
-    pumpsclient = PumpsClient()
-    pumpsclient.loop()
+    datetimenow = datetime.now()
+    name = "PGMS pumps client"
+    try:
+        pumpsclient = PumpsClient()
+        atexit.register(emailExited, name, datetimenow)
+        pumpsclient.loop()
+    except Exception as e:
+        if Config.debug:
+            print(f"{name} crashed")
+            print(f"exception={e}")
+        emailCrashed(name, datetimenow, e)

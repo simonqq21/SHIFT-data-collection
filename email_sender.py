@@ -1,6 +1,7 @@
 from email.message import EmailMessage
 import ssl
 import smtplib
+from config import Config 
 
 def send_email(subject, body):
     email_sender = 'pgms.thesis@gmail.com'
@@ -31,3 +32,15 @@ def send_email(subject, body):
             print("Email sent successfully!")
     except:
         print("Email was not sent.")
+
+
+def emailExited(name, datetimenow):
+    if Config.email:
+        send_email("{name} exited", \
+                f'''Hello, {name} was exited on {datetimenow}.''')
+
+def emailCrashed(name, datetimenow, e):
+    if Config.email:
+        send_email(f"{name} crashed", \
+                f'''Hello, {name} crashed on {datetimenow}.
+                Exception: {e}''')
