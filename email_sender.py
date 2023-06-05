@@ -7,7 +7,7 @@ def send_email(subject, body):
     email_password = 'bkpqdjxsjgdemsjw'
 
     # Add emails here Enter emails here
-    email_receivers = ['william_dimaculangan@dlsu.edu.ph']
+    email_receivers = ['william_dimaculangan@dlsu.edu.ph', 'simon_justin_que@dlsu.edu.ph']
 
     # subject = 'Server Potentially Down'
     # body = """
