@@ -226,7 +226,7 @@ class SyncServer():
                     self.datetimenow <= datetime.combine(self.dateNow, Config.camera_capture_end)):
                 self.timeLastCameraCaptured = self.datetimenow
                 # flash the white light and capture an image
-                cameraLightThread = threading.Thread(target=self.lightsControl, args=("flash",))
+                cameraLightThread = threading.Thread(target=self.lightsControl, args=("flash", 6))
                 cameraLightThread.start()
                 # capture the image
                 cameraCaptureThread = threading.Thread(target=self.cameraCapture)
