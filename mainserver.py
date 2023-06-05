@@ -145,12 +145,8 @@ class SyncServer():
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         status = self.connect(server, self.HOST, PORT)
         duration = duration.total_seconds()
-        if lightType == 'flash':
-            command = "lights flash"
-            self.whiteLightStatus = True
-        else:
-            command = f"lights {lightType} {duration}"
-        if lightType == 'w':
+        command = f"lights {lightType} {duration}"
+        if lightType == 'w' or lightType == 'flash':
             self.whiteLightStatus = True
         if status:
             server.send(command.encode('utf-8'))
