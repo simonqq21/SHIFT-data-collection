@@ -131,13 +131,13 @@ class Lights:
     '''
     thread function to toggle the grow lights and camera lights to capture an image using the Pi Camera
     '''
-    def flashCameraLight(self):
+    def flashCameraLight(self, flashTime):
         # save the growlights state and turn off the growlights
         growLightsWereOn = False 
         if (self.growlightval):
             growLightsWereOn = True
         self.switchGrowLights(0) 
-        self.cameraLightOn(4)
+        self.cameraLightOn(flashTime)
         # revert the growlights state
         if (growLightsWereOn and self.purpleOnTime > 0):
             self.switchGrowLights(1)
