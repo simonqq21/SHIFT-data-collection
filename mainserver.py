@@ -283,7 +283,6 @@ class SyncServer():
         cameraThreadLoop = threading.Thread(target=self.cameraThreadLoop)
         cameraThreadLoop.start()
 
-@atexit.register(datetimenow)
 def exitMainServer(datetimenow):
     if Config.email:
         send_email("PGMS mainserver exited", \
@@ -299,6 +298,7 @@ if __name__ == "__main__":
     datetimenow = datetime.now()
     try:
         syncserver = SyncServer()
+        atexit.register(exitMainServer, datetimenow)
         syncserver.loop()
     except Exception as e:
         if Config.debug:
