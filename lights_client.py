@@ -25,17 +25,25 @@ class LightsClient():
             message = self.communication_socket.recv(1024)
             print(type(message))
             message = message.decode('utf-8')
+            if Config.debug:
+                print(f"message={message}")
             commandType = message.split()[0]
             if commandType == "lights":
                 lightType = message.split()[1]
                 onTime = int(float(message.split()[2]))
                 if lightType == 'p': # purple grow light
+                    if Config.debug:
+                        print("lights purple")
                     growLightThread = threading.Thread(target=self.lights.growLightOn, args=(onTime,))
                     growLightThread.start()
                 elif lightType == 'w': # white camera light 
+                    if Config.debug:
+                        print("lights white")
                     whiteLightThread = threading.Thread(target=self.lights.cameraLightOn, args=(onTime,))
                     whiteLightThread.start()
                 elif lightType == 'flash': # flash the white camera light 
+                    if Config.debug:
+                        print("lights flash")
                     cameraFlashThread = threading.Thread(target=self.lights.flashCameraLight, args=(onTime,))
                     cameraFlashThread.start()
                 self.communication_socket.send(f"{self.lights.growlightval} {self.lights.cameralightval}".encode('utf-8'))
