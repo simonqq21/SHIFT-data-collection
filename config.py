@@ -4,6 +4,7 @@ import os
 
 class Config(object):
     debug = 1
+    email = 1 
 
     # root dir of the program
     program_root = os.path.realpath(os.path.dirname(__file__))

@@ -13,6 +13,8 @@ try:
 except Exception as e:
     print(e)
 from config import Config
+from email_sender import send_email 
+import atexit
 
 class SyncServer():
     def __init__(self):
@@ -281,7 +283,25 @@ class SyncServer():
         cameraThreadLoop = threading.Thread(target=self.cameraThreadLoop)
         cameraThreadLoop.start()
 
+@atexit.register(datetimenow)
+def exitMainServer(datetimenow):
+    if Config.email:
+        send_email("PGMS mainserver exited", \
+                f'''Hello, PGMS mainserver was exited on {datetimenow}.''')
+
+def crashedMainServer(datetimenow, e):
+    if Config.email:
+        send_email("PGMS mainserver crashed", \
+                f'''Hello, PGMS mainserver crashed on {datetimenow}.
+                Exception: {e}''')
 
 if __name__ == "__main__":
-    syncserver = SyncServer()
-    syncserver.loop()
+    datetimenow = datetime.now()
+    try:
+        syncserver = SyncServer()
+        syncserver.loop()
+    except Exception as e:
+        if Config.debug:
+            print("syncserver crashed")
+            print(f"exception={e}")
+        crashedMainServer(datetimenow, e)
