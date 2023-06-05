@@ -273,7 +273,7 @@ class SyncServer():
 
     def loop(self):
         # self.datetimenow = datetime.combine(date.today(), time(hour=7, minute=0, second=0))
-        time.sleep(10)
+        sleep(10)
         timingThread = threading.Thread(target=self.timingThreadLoop)
         timingThread.start()
         pumpsThread = threading.Thread(target=self.pumpsThreadLoop)
