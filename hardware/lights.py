@@ -89,7 +89,7 @@ class Lights:
         if self.purpleOnTime > 0:
             if self.growLightsLock.locked():
                 if Config.debug:
-                    print("growlights timer already running!") 
+                    print(f"Reset growlights timer to {onTime}")             
             else:
                 # acquire the timed growlight lock
                 self.growLightsLock.acquire()
@@ -100,13 +100,12 @@ class Lights:
                         print("{}s of purple light left".format(self.purpleOnTime))
                     self.purpleOnTime -= 1
                 self.switchGrowLights(0)
-                # release the timed growlight lock 
+            # release the timed growlight lock 
                 self.growLightsLock.release()
         elif self.purpleOnTime == 0:
             self.switchGrowLights(0)
         else:
             self.switchGrowLights(1)
-    
 
     '''
     thread function to switch on the camera lights for a certain duration, used for timing
