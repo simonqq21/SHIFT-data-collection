@@ -103,8 +103,9 @@ class Camera():
     def publishImage(self, df, imagePublishTopic):
         try:
             self.client.publish(imagePublishTopic, df.to_json())
-        except:
+        except Exception as e:
             print("Publish failed, check broker")  
+            emailCrashed("PGMS camera broker", self.datetimenow, e)
             
     # thread function to toggle the grow lights and camera lights and capture an image using the Pi Camera
     def captureImage(self, filepath=None, filename=None):

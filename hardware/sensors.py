@@ -157,8 +157,10 @@ class Sensors():
         df.to_csv(Config.csv_filepath + Config.csv_filename, mode='a', index=False, header=False)
         try:
             self.client.publish(sensorPublishTopic, df.to_json())
-        except:
+        except Exception as e:
             print("Publish failed, check broker")
+            emailCrashed("PGMS sensors broker", self.datetimenow, e)
+
 
     def captureTemperatures(self):
         sensorTimeStamp = datetime.now().strftime("%m/%d/%Y %H:%M")
