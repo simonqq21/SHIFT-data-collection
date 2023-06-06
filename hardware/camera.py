@@ -21,6 +21,7 @@ except Exception as e:
     print(e)
 import binascii
 from config import Config 
+from email_sender import emailCrashed
 
 class Camera():
     def __init__(self, images_filepath=Config.images_filepath, images_filename_format=Config.images_filename_format): 
@@ -31,6 +32,7 @@ class Camera():
         self.images_filepath = images_filepath
         self.images_filename_format = images_filename_format
         self.filename = "" 
+        self.datetimenow = datetime.now()
 
         # create directories for collected data 
         os.makedirs(Config.images_filepath, exist_ok=True)
@@ -49,6 +51,7 @@ class Camera():
             self.client.loop_start()
         except Exception as e:
             print("Failed to connect to broker!")
+            emailCrashed("PGMS camera broker", self.datetimenow, e)
             print(e)  
 
         # initialize camera object

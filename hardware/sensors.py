@@ -16,6 +16,7 @@ import pandas as pd
 from time import sleep 
 from datetime import date, datetime, time, timedelta
 from config import Config 
+from email_sender import emailCrashed
 
 try:
     from hardware.pi_interfaces import i2c 
@@ -53,6 +54,7 @@ class Sensors():
         df.to_csv(Config.csv_filepath + Config.csv_filename, mode=mode, index=index, header=header) 
         self.columns = df.columns.values
         print(self.columns)
+        self.datetimenow = datetime.now()
 
         # mqtt client init
         try:
@@ -65,6 +67,7 @@ class Sensors():
             self.client.loop_start()
         except Exception as e:
             print("Failed to connect to broker!")
+            emailCrashed("PGMS sensors broker", self.datetimenow, e)
             print(e)
 
         # initialize onewire DHT22 temperature and humidity sensors 

@@ -7,7 +7,7 @@ try:
 except Exception as e:
     print(e)
 from config import Config
-from email_sender import send_email, emailExited, emailCrashed
+from email_sender import emailExited, emailCrashed
 import atexit
 
 class LightsClient():
