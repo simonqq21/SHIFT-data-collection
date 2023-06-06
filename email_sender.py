@@ -36,7 +36,7 @@ def send_email(subject, body):
 
 def emailExited(name, datetimenow):
     if Config.email:
-        send_email("{name} exited", \
+        send_email(f"{name} exited", \
                 f'''Hello, {name} was exited on {datetimenow}.''')
 
 def emailCrashed(name, datetimenow, e):
