@@ -9,7 +9,6 @@ import sys
 here = os.path.dirname(__file__)
 sys.path.append(os.path.join(here, '..'))
 
-import numpy as np
 import paho.mqtt.client as mqtt
 import pandas as pd
 

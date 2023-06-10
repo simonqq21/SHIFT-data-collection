@@ -1,10 +1,7 @@
 try:
     import socket
-    import json
-    import os
     import threading
-    from datetime import date, datetime, time, timedelta
-    from time import sleep
+    from datetime import datetime
     from hardware.camera import Camera
     import socket
 except Exception as e:

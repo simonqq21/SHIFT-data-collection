@@ -1,13 +1,8 @@
 try:
     import socket
-    import json
-    import os
     import threading
-    from datetime import date, datetime, time, timedelta
-    from time import sleep
+    from datetime import datetime
     import socket
-    import numpy as np
-    import pandas as pd
     from hardware.sensors import Sensors
 except Exception as e:
     print(e)

@@ -4,7 +4,6 @@ here = os.path.dirname(__file__)
 sys.path.append(os.path.join(here, '..'))
 
 from time import sleep
-import json
 from datetime import datetime, date, time, timedelta
 import threading
 from io import BytesIO
@@ -146,43 +145,8 @@ class Camera():
         return self.binaryImage
 
 
-
-
-    
-
-
-
 #     #wrapper function to capture an image every time the capture button is pressed 
 #     def captureImageButton(self):
 #         # change the filepath and filename
 #         thread = threading.Thread(target=self.captureImage, daemon=True)
 #         thread.start()
-
-#     def pollGrowLights(self, datetimenow):
-#         # loop to check switch grow lights
-#         for dayinterval in self.growLightDailyIntervals:
-#             # If the time is between the on and off time and the grow lights are off, switch them on.
-#             print("{},{},{},{},".format(datetimenow >= dayinterval["on_time"], \
-#                 datetimenow < dayinterval["off_time"], \
-#                 self.growlightval, \
-#                 self.pictureTaking))
-#             print()
-#             if (datetimenow >= dayinterval["on_time"] \
-#                 and datetimenow < dayinterval["off_time"] \
-#                 and not self.growlightval \
-#                 and not self.pictureTaking):
-#                 actualOnInterval = dayinterval["duration"] - (datetimenow - dayinterval["on_time"])
-#                 thread = threading.Thread(target=self.growLightOn, args=(actualOnInterval, ), daemon=True)
-#                 thread.start()
-
-#     def pollCamera(self, datetimenow):
-#         # loop to capture image 
-#         for dayinterval in self.cameraDailyIntervals: 
-#             if (datetimenow >= dayinterval["start_time"] \
-#                 and datetimenow <= dayinterval["end_time"] \
-#                 and datetime.now() - self.lastTimePhotoTaken >= dayinterval["interval"]):
-#                 self.lastTimePhotoTaken = datetime.now()
-#                 # change the filepath and filename
-#                 thread = threading.Thread(target=self.captureImage, daemon=True)
-#                 thread.start()
-

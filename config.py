@@ -1,8 +1,8 @@
 from datetime import datetime, date, time, timedelta
 import os
 
-
 class Config(object):
+    # debugging and email switches
     debug = 1
     email = 1 
 
@@ -60,7 +60,7 @@ class Config(object):
     # time of the day when sensor logging will start and end
     sensor_logging_start = time(hour=0, minute=0)
     sensor_logging_end = time(hour=23, minute=59)
-    # interval to poll sensors and upload sensor data
+    # interval to log sensors and upload sensor data
     sensorLoggingInterval = timedelta(minutes=60)
 
     # time of the day when sensor logging will start and end
@@ -70,19 +70,15 @@ class Config(object):
     cameraCaptureInterval = timedelta(minutes=60)
 
     # times of the day when plants will be watered and length of time the pumps will be on
-    pumps_start_duration = [[(time(hour=10, minute=0), timedelta(seconds=10)),],
-                            [(time(hour=10, minute=0), timedelta(seconds=10)),],
-                            [(time(hour=10, minute=0), timedelta(seconds=10)),]]
+    pumps_start_duration = [[(time(hour=6, minute=0), timedelta(seconds=8)), \
+                                (time(hour=12, minute=0), timedelta(seconds=8))],
+                            [(time(hour=6, minute=0), timedelta(seconds=8)), \
+                                (time(hour=12, minute=0), timedelta(seconds=8))],
+                            [(time(hour=6, minute=0), timedelta(seconds=8)), \
+                                (time(hour=12, minute=0), timedelta(seconds=8))]]
 
     # times of the day when grow lights will be automatically switched on
     growlights_on_times_durations = [(time(hour=6, minute=0), timedelta(hours=16))]
-#    # compute for the growlight off times
-    # growlights_off_times = []
-    # dt = date.today()
-    # for i in range(len(growlights_on_times)):
-    #     growlights_off_times.append(
-    #         (datetime.combine(date.today(), growlights_on_times[i]) +
-    #          growlight_on_durations[i]).time())
 
     # interval to check all sensors and actuators
     checkingInterval = timedelta(seconds=10)

@@ -9,7 +9,6 @@ here = os.path.dirname(__file__)
 sys.path.append(os.path.join(here, '..')) 
 
 from time import sleep 
-import json 
 from datetime import datetime, date, time, timedelta
 import threading 
 try:
@@ -58,55 +57,12 @@ class Pump():
             print("switching dummy pump {} off".format(self.duration["index"]))
         finally:
             self.state = 0
-# (22, 23, 24), 10, "pumps_duration.json" 
 
-
+# (22, 23, 24), 10
             # self.manualWateringButton = Button(buttonGPIO)
             # self.manualWateringButton.when_pressed = self.forceWateringButton 
-
-    # def loadPumpsdurations(self, filename): # "pumps_duration.json"
-    #     self.pumpdurations = []
-    #     # read pump configuration json file
-    #     try:
-    #         j = open(filename)
-    #         self.pumpdurations = json.load(j)["pumps"]
-    #     except Exception as e:
-    #         print(e)
-    #         print("error opening file, or file doesn't exist")  
-    #     # convert the data into Times and TimeDeltas and add a time_elapsed_since_last_watering element
-    #     for i in range(len(self.pumpdurations)):
-    #         self.pumpdurations[i]["index"] = i
-    #     for pumpduration in self.pumpdurations: 
-    #         pumpduration["start_time"] = datetime.strptime(pumpduration["start_time"], "%H:%M").time()
-    #         pumpduration["on_seconds"] = timedelta(seconds=pumpduration["on_seconds"])
-    #         pumpduration["period_days"] = timedelta(days=pumpduration["period_days"]) 
-    #         # pumpduration["time_elapsed_since_last_watering"] = timedelta(seconds=99999999)
-    #         pumpduration["time_elapsed_since_last_watering"] = timedelta(seconds=0)
-    #         pumpduration["state"] = False
-    #     print(self.pumpdurations) 
 
     # def forceWateringButton(self): 
     #     for pump in self.pumps: 
     #         thread = threading.Thread(target=pump.pumpOn, daemon=True)
     #         thread.start()
-
-    # def pollPumps(self, datetimenow):
-    #     for pump in self.pumps: 
-    #         '''
-    #         water the plants per pump every specified period of time
-    #         the plants will be watered with the specified durations if either the manual watering button has been pressed,
-    #         or if the time elapsed since watering exceeds the period time and the starting time 
-    #         '''
-    #         if pump.duration["time_elapsed_since_last_watering"] >= pump.duration["period_days"] - timedelta(hours=12) \
-    #             and datetimenow.time().hour == pump.duration["start_time"].hour \
-    #             and datetimenow.time().minute >= pump.duration["start_time"].minute \
-    #             and datetimenow.time().minute <= pump.duration["start_time"].minute + 1:
-    #             thread = threading.Thread(target=pump.pumpOn, daemon=True)
-    #             thread.start()
-    #         elif (not pump.duration["state"]):
-    #             pump.duration["time_elapsed_since_last_watering"] += timeElapsedIncrement 
-    #             print("pump {} timer: {}".format(pump.duration["index"], pump.duration["time_elapsed_since_last_watering"]))
-
-
-
-        
