@@ -3,12 +3,12 @@ import ssl
 import smtplib
 from config import Config 
 
+# Add email addresses here
+email_receivers = ['william_dimaculangan@dlsu.edu.ph', 'simon_justin_que@dlsu.edu.ph']
+
 def send_email(subject, body):
     email_sender = 'pgms.thesis@gmail.com'
     email_password = 'bkpqdjxsjgdemsjw'
-
-    # Add emails here Enter emails here
-    email_receivers = ['william_dimaculangan@dlsu.edu.ph', 'simon_justin_que@dlsu.edu.ph']
 
     # subject = 'Server Potentially Down'
     # body = """

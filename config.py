@@ -80,9 +80,6 @@ class Config(object):
     # times of the day when grow lights will be automatically switched on
     growlights_on_times_durations = [(time(hour=6, minute=0), timedelta(hours=16))]
 
-    # interval to check all sensors and actuators
-    checkingInterval = timedelta(seconds=10)
-
     # GPIO pins
     growLightPin = 18
     cameraLightPin = 27
