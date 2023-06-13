@@ -18,11 +18,10 @@ except:
 from config import Config 
 
 class PumpSystem():
-    def __init__(self):
+    def __init__(self, gpioPins=(22,23,24)):
         self.pumps = [] 
-        self.pumps.append(Pump(22))
-        self.pumps.append(Pump(23))
-        self.pumps.append(Pump(24))
+        for gpio in gpioPins:
+            self.pumps.append(Pump(gpio))
 
     def switchOn(self, pumpIndex, duration):
         self.pumps[pumpIndex].pumpOn(duration)
