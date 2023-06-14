@@ -83,12 +83,13 @@ class Camera():
     '''
     return a dataframe containing the image data and metadata to be transmitted
     '''
-    def processImageDataForPublishing(self, type, index, filename, binaryImage):
+    def processImageDataForPublishing(self, type, index, datetimestamp, filename, binaryImage):
         data = Config.image_data
         data["expt_num"] = [Config.expt_num]
         data["sitename"]= [Config.sitename]
         data["type"]= [type]
         data["index"]= [index]
+        data["datetime"] = [datetimestamp]
         data["filename"]= [filename]
         data["imagedata"]= [binaryImage]
         df = pd.DataFrame(data, columns=self.camera_columns)
@@ -138,7 +139,7 @@ class Camera():
         # transmit photo via MQTT 
         index=0
         cameraTimeStamp = datetime.now().strftime("%m/%d/%Y %H:%M")
-        df_image = self.processImageDataForPublishing(Config.suffix_camera, index, self.filename, self.binaryImage)
+        df_image = self.processImageDataForPublishing(Config.suffix_camera, index, cameraTimeStamp, self.filename, self.binaryImage)
         self.publishImage(df_image, Config.main_topic+Config.suffix_camera)
         if Config.debug:
             print("successfully transmitted image")
