@@ -375,6 +375,8 @@ class ADS1115:
         self.sensors = []   
         try:   
             self.ads = ADS.ADS1115(i2c, gain=self.gain, address=self.address)  
+            if Config.debug:
+                print("ADS1115 init")
             self.chans.append(AnalogIn(self.ads, ADS.P0))
             self.chans.append(AnalogIn(self.ads, ADS.P1))
             self.chans.append(AnalogIn(self.ads, ADS.P2))
@@ -454,6 +456,7 @@ class BH1750:
                 self.sensor = adafruit_bh1750.BH1750(i2c)
         except:
             print("error adding BH1750 on channel {}".format(i2c))
+            
         self.lightintensity = None
 
     def getLightIntensity(self):

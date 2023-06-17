@@ -1,7 +1,7 @@
 #!/bin/bash
 install_dir=/home/pi/SHIFT-data-collection
 sudo apt-get update
-sudo apt-get install python3-pip apt-offline libatlas3-base i2c-tools
+sudo apt-get install python3-pip libatlas3-base i2c-tools
 
 if [ ! -f $install_dir ]; then 
     echo "copying files..."
