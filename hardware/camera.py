@@ -72,7 +72,8 @@ class Camera():
     callback functions for MQTT broker
     '''
     def on_connect(self, client, userdata, flags, rc):
-        print("Connected with result code " + str(rc))
+        pass
+        # print("Connected with result code " + str(rc))
 
     def on_message(self, client, userdata, msg):
         print(msg.topic)
