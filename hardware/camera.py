@@ -141,6 +141,8 @@ class Camera():
         index=0
         cameraTimeStamp = datetime.now().strftime("%m/%d/%Y %H:%M")
         df_image = self.processImageDataForPublishing(Config.suffix_camera, index, cameraTimeStamp, self.filename, self.binaryImage)
+        if Config.debug:
+            print(f"topic={Config.main_topic+Config.suffix_camera}")
         self.publishImage(df_image, Config.main_topic+Config.suffix_camera)
         if Config.debug:
             print("successfully transmitted image")
