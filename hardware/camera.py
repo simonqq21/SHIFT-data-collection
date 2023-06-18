@@ -103,7 +103,15 @@ class Camera():
     '''
     def publishImage(self, df, imagePublishTopic):
         try:
-            self.client.publish(imagePublishTopic, df.to_json())
+            status = self.client.publish(imagePublishTopic, df.to_json())
+            result = status[0]
+            if result == 0:
+                if Config.debug:
+                    print(f"successfully published image data to {imagePublishTopic}")
+            else:
+                if Config.debug:
+                    print(f"failed to publish image data to {imagePublishTopic}")
+
         except Exception as e:
             print("Publish failed, check broker")  
             emailCrashed("PGMS camera broker", self.datetimenow, e)

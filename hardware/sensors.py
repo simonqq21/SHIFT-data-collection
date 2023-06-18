@@ -156,7 +156,14 @@ class Sensors():
             print(df)
         df.to_csv(Config.csv_filepath + Config.csv_filename, mode='a', index=False, header=False)
         try:
-            self.client.publish(sensorPublishTopic, df.to_json())
+            status = self.client.publish(sensorPublishTopic, df.to_json())
+            result = status[0]
+            if result == 0:
+                if Config.debug:
+                    print(f"successfully published sensor data to {sensorPublishTopic}")
+            else:
+                if Config.debug:
+                    print(f"failed to publish sensor data to {sensorPublishTopic}")
         except Exception as e:
             print("Publish failed, check broker")
             emailCrashed("PGMS sensors broker", self.datetimenow, e)
