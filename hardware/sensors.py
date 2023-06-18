@@ -62,6 +62,7 @@ class Sensors():
             self.client.on_message = self.on_message
             self.client.on_publish = self.on_publish
             self.client.connect(Config.mqttIP, Config.mqttPort)
+            print(f"MQTT IP = {Config.mqttIP}, MQTT port = {Config.mqttPort}")
             print(self.client)
             self.client.loop_start()
         except Exception as e:
