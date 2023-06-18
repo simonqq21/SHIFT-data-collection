@@ -160,6 +160,7 @@ class Sensors():
             self.client.loop_start()
             status = self.client.publish(sensorPublishTopic, df.to_json())
             result = status[0]
+            sleep(5)
             if result == 0:
                 if Config.debug:
                     print(f"successfully published sensor data to {sensorPublishTopic}")
