@@ -48,7 +48,7 @@ class Camera():
             self.client.connect(Config.mqttIP, Config.mqttPort)
             print(f"MQTT IP = {Config.mqttIP}, MQTT port = {Config.mqttPort}")
             print(self.client)
-            # self.client.loop_start()
+            self.client.loop_start()
         except Exception as e:
             print("Failed to connect to broker!")
             emailCrashed("PGMS camera broker", self.datetimenow, e)

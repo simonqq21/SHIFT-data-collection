@@ -40,6 +40,9 @@ class CameraClient():
     # communication_socket.send(f"client 2 response!".encode('utf-8'))
     # communication_socket.close() 
 
+    # def exitProgram(self, name, datetimenow):
+    #     self.camera.client.
+    #     emailExited(name, datetimenow)
 '''
 camera capture
 - capture an image, save it to internal storage, and publish it on MQTT broker
