@@ -108,7 +108,7 @@ class Camera():
             status = self.client.publish(imagePublishTopic, df.to_json())
             result = status[0]
             if Config.debug:
-                print(f"result = {result}")
+                print(f"status = {status}, result = {result}")
             if result == 0:
                 if Config.debug:
                     print(f"successfully published image data to {imagePublishTopic}")
