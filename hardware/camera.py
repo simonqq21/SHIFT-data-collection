@@ -48,7 +48,7 @@ class Camera():
             self.client.connect(Config.mqttIP, Config.mqttPort)
             print(f"MQTT IP = {Config.mqttIP}, MQTT port = {Config.mqttPort}")
             print(self.client)
-            self.client.loop_start()
+            # self.client.loop_start()
         except Exception as e:
             print("Failed to connect to broker!")
             emailCrashed("PGMS camera broker", self.datetimenow, e)
@@ -104,6 +104,7 @@ class Camera():
     '''
     def publishImage(self, df, imagePublishTopic):
         try:
+            self.client.loop_start()
             status = self.client.publish(imagePublishTopic, df.to_json())
             result = status[0]
             if result == 0:
@@ -112,7 +113,7 @@ class Camera():
             else:
                 if Config.debug:
                     print(f"failed to publish image data to {imagePublishTopic}")
-
+            self.client.loop_stop()
         except Exception as e:
             print("Publish failed, check broker")  
             emailCrashed("PGMS camera broker", self.datetimenow, e)
