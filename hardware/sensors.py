@@ -57,14 +57,14 @@ class Sensors():
 
         # mqtt client init
         try:
-            self.client = mqtt.Client(Config.clientname)
+            self.client = mqtt.Client(Config.clientname + "_sensors")
             self.client.on_connect = self.on_connect
             self.client.on_message = self.on_message
             self.client.on_publish = self.on_publish
             self.client.connect(Config.mqttIP, Config.mqttPort)
             print(f"MQTT IP = {Config.mqttIP}, MQTT port = {Config.mqttPort}")
             print(self.client)
-            # self.client.loop_start()
+            self.client.loop_start()
         except Exception as e:
             print("Failed to connect to broker!")
             emailCrashed("PGMS sensors broker", self.datetimenow, e)
@@ -157,17 +157,16 @@ class Sensors():
             print(df)
         df.to_csv(Config.csv_filepath + Config.csv_filename, mode='a', index=False, header=False)
         try:
-            self.client.loop_start()
+            # self.client.loop_start()
             status = self.client.publish(sensorPublishTopic, df.to_json())
             result = status[0]
-            sleep(5)
             if result == 0:
                 if Config.debug:
                     print(f"successfully published sensor data to {sensorPublishTopic}")
             else:
                 if Config.debug:
                     print(f"failed to publish sensor data to {sensorPublishTopic}")
-            self.client.loop_stop()
+            # self.client.loop_stop()
         except Exception as e:
             print("Publish failed, check broker")
             emailCrashed("PGMS sensors broker", self.datetimenow, e)
