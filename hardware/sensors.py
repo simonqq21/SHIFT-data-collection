@@ -57,7 +57,7 @@ class Sensors():
 
         # mqtt client init
         try:
-            self.client = mqtt.Client(Config.clientname)
+            self.client = mqtt.Client(Config.clientname + "_sensors")
             self.client.on_connect = self.on_connect
             self.client.on_message = self.on_message
             self.client.on_publish = self.on_publish
@@ -157,6 +157,7 @@ class Sensors():
             print(df)
         df.to_csv(Config.csv_filepath + Config.csv_filename, mode='a', index=False, header=False)
         try:
+            # self.client.loop_start()
             status = self.client.publish(sensorPublishTopic, df.to_json())
             result = status[0]
             if result == 0:
@@ -165,6 +166,7 @@ class Sensors():
             else:
                 if Config.debug:
                     print(f"failed to publish sensor data to {sensorPublishTopic}")
+            # self.client.loop_stop()
         except Exception as e:
             print("Publish failed, check broker")
             emailCrashed("PGMS sensors broker", self.datetimenow, e)

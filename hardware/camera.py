@@ -41,7 +41,7 @@ class Camera():
 
         # initialize the MQTT client 
         try:
-            self.client = mqtt.Client(Config.clientname)
+            self.client = mqtt.Client(Config.clientname + "_camera")
             self.client.on_connect = self.on_connect
             self.client.on_message = self.on_message
             self.client.on_publish = self.on_publish
@@ -104,15 +104,18 @@ class Camera():
     '''
     def publishImage(self, df, imagePublishTopic):
         try:
+            # self.client.loop_start()
             status = self.client.publish(imagePublishTopic, df.to_json())
             result = status[0]
+            if Config.debug:
+                print(f"status = {status}, result = {result}")
             if result == 0:
                 if Config.debug:
                     print(f"successfully published image data to {imagePublishTopic}")
             else:
                 if Config.debug:
                     print(f"failed to publish image data to {imagePublishTopic}")
-
+            # self.client.loop_stop()
         except Exception as e:
             print("Publish failed, check broker")  
             emailCrashed("PGMS camera broker", self.datetimenow, e)
@@ -153,8 +156,6 @@ class Camera():
         if Config.debug:
             print(f"topic={Config.main_topic+Config.suffix_camera}")
         self.publishImage(df_image, Config.main_topic+Config.suffix_camera)
-        if Config.debug:
-            print("successfully transmitted image")
         return self.binaryImage
 
 
