@@ -309,73 +309,82 @@ class DHT22():
             self.humidity = self.prevHumidity
         return self.humidity
 
-class SoilMoistureSensor:
-    def __init__(self, ADSchan, m, b):
-        self.type = "soil_moisture"
+class AnalogSensor:
+    def __init__(self, ADSchan):
         self.chan = ADSchan
+        self.prevVoltage = None
         self.voltage = None
+
+    def getVoltage(self):
+        valid_readings = 0
+        total_voltage = 0
+        for i in range(5):
+            try:
+                total_voltage += self.chan.voltage
+                valid_readings += 1
+            except Exception as e:
+                print("analog sensor or ADS1115 error") 
+                print(e)
+            sleep(2)
+        if (valid_readings > 0):
+            self.voltage = total_voltage / valid_readings
+            self.prevVoltage = self.voltage
+        else:
+            self.voltage = self.prevVoltage
+
+class SoilMoistureSensor(AnalogSensor):
+    def __init__(self, ADSchan, m, b):
+        super.__init__(ADSchan)
+        self.type = "soil_moisture"
         self.soilMoisture = None 
         # calibration data 
         self.m = m
         self.b = b
 
     def getSoilMoisture(self):
-        try:
-            self.voltage = self.chan.voltage
-            self.soilMoisture = self.voltage * self.m + self.b    
-            if self.soilMoisture < 0:
-                self.soilMoisture = 0 
-            elif self.soilMoisture > 1:
-                self.soilMoisture = 1
-            if Config.debug:
-                print(f"sm_voltage = {self.voltage}")
-        except:
-            print("ADS1115 not connected properly")
+        super.getVoltage()
+        self.soilMoisture = self.voltage * self.m + self.b
+        if self.soilMoisture < 0:
+            self.soilMoisture = 0
+        elif self.soilMoisture > 1:
+            self.soilMoisture = 1
+        if Config.debug:
+            print(f"sm_voltage = {self.voltage}")
         return self.soilMoisture
 
-
-class PH4502C:
+class PH4502C(AnalogSensor):
     def __init__(self, ADSchan, m, b):
+        super.__init__(ADSchan)
         self.type = "solution_pH"
-        self.chan = ADSchan
-        self.voltage = None
         self.pH = None 
         # calibration data 
         self.m = m
         self.b = b
 
     def getSolutionpH(self):
-        try:
-            self.voltage = self.chan.voltage
-            self.pH = self.voltage * self.m + self.b  
-            if Config.debug: 
-                print(f"ph_voltage = {self.voltage}")
-        except:
-            print("ADS1115 not connected properly")
+        super.getVoltage()
+        self.pH = self.voltage * self.m + self.b
+        if Config.debug: 
+            print(f"ph_voltage = {self.voltage}")
         return self.pH
 
-
-class TDSMeter:
-    def __init__(self, ADSchan):
+class TDSMeter(AnalogSensor):
+    def __init__(self, ADSchan, compCoeff=0, compVoltage=0):
+        super.__init__(ADSchan)
         self.type = "solution_EC"
-        self.chan = ADSchan
-        self.voltage = None
-        self.compensationCoefficient = 0
-        self.compensationVoltage = 0 
+        self.compensationCoefficient = compCoeff
+        self.compensationVoltage = compVoltage
         self.TDS = 0
         self.EC = 0 
 
-    def getSolutionEC(self, water_temperature):
+    def getSolutionEC(self, water_temperature=25.0):
+        super.getVoltage()
         self.compensationCoefficient = 1.0 + 0.02 *(water_temperature-25.0)
-        try:
-            self.voltage = self.chan.voltage
-            self.compensationVoltage = self.voltage / self.compensationCoefficient
-            self.TDS = (133.42*self.compensationVoltage**3 - 255.86*self.compensationVoltage**2 + 857.39*self.compensationVoltage)*0.5
-            self.EC = self.TDS / 500  
-            if Config.debug:
-                print(f"ec_voltage = {self.voltage}")
-        except:
-            print("ADS1115 not connected properly")
+        self.compensationVoltage = self.voltage / self.compensationCoefficient
+        self.TDS = (133.42*self.compensationVoltage**3 - 255.86*self.compensationVoltage**2 + 857.39*self.compensationVoltage)*0.5
+        self.EC = self.TDS / 500  
+        if Config.debug:
+            print(f"ec_voltage = {self.voltage}")
         return self.EC
 
 class ADS1115:
@@ -453,7 +462,7 @@ class ADS1115:
             if sensor.type == "solution_EC":
                 if Config.debug:
                     print(sensor.voltage)
-                solutionEC_values.append(sensor.getSolutionEC(water_temperature))
+                solutionEC_values.append(sensor.getSolutionEC())
         if Config.debug:
             print()
         return solutionEC_values  
@@ -468,19 +477,26 @@ class BH1750:
         except:
             print("error adding BH1750 on channel {}".format(i2c))
             
-        self.lightintensity = None
+        self.lightIntensity = None
+        self.prevLightIntensity = None
 
     def getLightIntensity(self):
-        sleep(0.5)
-        self.lightintensity = None
-        for i in range(5):  
+        self.lightIntensity = None
+        total_light = 0
+        valid_readings = 0
+        for i in range(5):
             try:
-                self.lightintensity = self.sensor.lux
-                break
+                total_light += self.sensor.lux
+                valid_readings += 1
             except Exception as err:
                 print(err)
-            sleep(0.5) 
-        return self.lightintensity
+            sleep(0.5)
+        if (valid_readings > 0):
+            self.lightIntensity = total_light / valid_readings
+            self.prevLightIntensity = self.lightIntensity
+        else:
+            self.lightIntensity = self.prevLightIntensity
+        return self.lightIntensity
 
 class TCA9548A:
     def __init__(self, i2c, address=112):

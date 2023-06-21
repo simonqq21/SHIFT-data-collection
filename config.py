@@ -70,12 +70,9 @@ class Config(object):
     cameraCaptureInterval = timedelta(minutes=60)
 
     # times of the day when plants will be watered and length of time the pumps will be on
-    pumps_start_duration = [[(time(hour=6, minute=0), timedelta(seconds=8)), \
-                                (time(hour=12, minute=0), timedelta(seconds=8))],
-                            [(time(hour=6, minute=0), timedelta(seconds=8)), \
-                                (time(hour=12, minute=0), timedelta(seconds=8))],
-                            [(time(hour=6, minute=0), timedelta(seconds=8)), \
-                                (time(hour=12, minute=0), timedelta(seconds=8))]]
+    pumps_start_duration = [[(time(hour=14, minute=0), timedelta(seconds=8)),],
+                            [(time(hour=14, minute=0), timedelta(seconds=8)),],
+                            [(time(hour=14, minute=0), timedelta(seconds=8)),]]
 
     # times of the day when grow lights will be automatically switched on
     growlights_on_times_durations = [(time(hour=6, minute=0), timedelta(hours=16))]
