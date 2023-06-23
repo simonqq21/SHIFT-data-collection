@@ -3,8 +3,8 @@ import os
 
 class Config(object):
     # debugging and email switches
-    debug = 1
-    email = 1 
+    debug = True
+    email = True
 
     # root dir of the program
     program_root = os.path.realpath(os.path.dirname(__file__))
