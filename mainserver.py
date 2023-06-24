@@ -9,6 +9,7 @@ try:
 
     import socket
     from _thread import *
+    from hardware.buttons import FunctionButtons
 
 except Exception as e:
     print(e)
@@ -35,6 +36,12 @@ class SyncServer():
         self.growLightStatus = 0
         self.whiteLightStatus = 0
 
+        '''
+        initialize camera and pump trigger buttons in the system
+        '''
+        self.functionButtons = FunctionButtons()
+        self.functionButtons.setCameraButtonCallback(self.cameraCapture)
+        self.functionButtons.setPumpsButtonCallback(self.switchOnAllPumps)
 
     def connect(self, server, HOST, PORT, retries=8, timeout_per_retry=5):
         for i in range(retries):
@@ -71,6 +78,14 @@ class SyncServer():
             server.send(command.encode('utf-8'))
             if Config.debug:
                 print("sent pumps command")
+
+    '''
+    button callback function to switch on all pumps for a default of 6 seconds.
+    '''
+    def switchOnAllPumps(self, duration=timedelta(seconds=6)):
+        # for each pump in pumps
+        for i in range(len(Config.pumps_start_duration)):
+            self.pumpsControl(i, duration)
 
     def pumpsThreadLoop(self):
         '''
@@ -169,7 +184,7 @@ class SyncServer():
                 #     print("new day")
                 # insert code to run at the start of each day
 
-                # tell the lights module to turn on the grow lights to the correct mode
+            # tell the lights module to turn on the grow lights to the correct mode
             for (start, duration) in Config.growlights_on_times_durations:
                 # if Config.debug:
                 #     print(f"start={start}")
@@ -190,7 +205,13 @@ class SyncServer():
                         print("sent growlights on command")
             sleep(1)
 
+    '''
+    also a button callback function for camera capture
+    '''
     def cameraCapture(self):
+        # flash the white light and capture an image
+        cameraLightThread = threading.Thread(target=self.lightsControl, args=("flash", timedelta(seconds=6)))
+        cameraLightThread.start()
         PORT = 12004
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -208,8 +229,8 @@ class SyncServer():
         while True:
             # code to run at the start of each day
             dayStart = datetime.combine(self.dateNow, time(hour=0, minute=0, second=0))
-            if (self.datetimenow >= dayStart and self.datetimenow <= dayStart + timedelta(seconds=59)):
-                pass
+            # if (self.datetimenow >= dayStart and self.datetimenow <= dayStart + timedelta(seconds=59)):
+            #     pass
                 # if Config.debug:
                 # print("new day")
                 # insert code to run at the start of each day
@@ -223,9 +244,6 @@ class SyncServer():
                 self.datetimenow >= datetime.combine(self.dateNow, Config.camera_capture_start) and
                     self.datetimenow <= datetime.combine(self.dateNow, Config.camera_capture_end)):
                 self.timeLastCameraCaptured = self.datetimenow
-                # flash the white light and capture an image
-                cameraLightThread = threading.Thread(target=self.lightsControl, args=("flash", timedelta(seconds=7)))
-                cameraLightThread.start()
                 # capture the image
                 cameraCaptureThread = threading.Thread(target=self.cameraCapture)
                 cameraCaptureThread.start()

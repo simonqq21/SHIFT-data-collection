@@ -3,8 +3,6 @@ import sys
 here = os.path.dirname(__file__)
 sys.path.append(os.path.join(here, '..'))
 
-from time import sleep
-from datetime import datetime, date, time, timedelta
 import threading
 try:
     from gpiozero import Button
@@ -14,9 +12,14 @@ except Exception as e:
     print(e)
 from config import Config
 
-class SystemButtons:
+class FunctionButtons:
     def __init__(self):
         self.cameraButton = Button(Config.cameraButtonPin)
         self.pumpButton = Button(Config.pumpButtonPin)
 
-    def setCameraButtonCallback(self, func, 
+    def setCameraButtonCallback(self, cameraCaptureFunc):
+        self.cameraButton.when_pressed = cameraCaptureFunc
+    
+    def setPumpsButtonCallback(self, pumpsStartFunc):
+        self.pumpButton.when_pressed = pumpsStartFunc
+    
