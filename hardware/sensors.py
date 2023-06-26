@@ -334,7 +334,7 @@ class AnalogSensor:
 
 class SoilMoistureSensor(AnalogSensor):
     def __init__(self, ADSchan, m, b):
-        super.__init__(ADSchan)
+        super().__init__(ADSchan)
         self.type = "soil_moisture"
         self.soilMoisture = None 
         # calibration data 
@@ -342,7 +342,7 @@ class SoilMoistureSensor(AnalogSensor):
         self.b = b
 
     def getSoilMoisture(self):
-        super.getVoltage()
+        super().getVoltage()
         self.soilMoisture = self.voltage * self.m + self.b
         if self.soilMoisture < 0:
             self.soilMoisture = 0
@@ -354,7 +354,7 @@ class SoilMoistureSensor(AnalogSensor):
 
 class PH4502C(AnalogSensor):
     def __init__(self, ADSchan, m, b):
-        super.__init__(ADSchan)
+        super().__init__(ADSchan)
         self.type = "solution_pH"
         self.pH = None 
         # calibration data 
@@ -362,7 +362,7 @@ class PH4502C(AnalogSensor):
         self.b = b
 
     def getSolutionpH(self):
-        super.getVoltage()
+        super().getVoltage()
         self.pH = self.voltage * self.m + self.b
         if Config.debug: 
             print(f"ph_voltage = {self.voltage}")
@@ -370,7 +370,7 @@ class PH4502C(AnalogSensor):
 
 class TDSMeter(AnalogSensor):
     def __init__(self, ADSchan, compCoeff=0, compVoltage=0):
-        super.__init__(ADSchan)
+        super().__init__(ADSchan)
         self.type = "solution_EC"
         self.compensationCoefficient = compCoeff
         self.compensationVoltage = compVoltage
@@ -378,7 +378,7 @@ class TDSMeter(AnalogSensor):
         self.EC = 0 
 
     def getSolutionEC(self, water_temperature=25.0):
-        super.getVoltage()
+        super().getVoltage()
         self.compensationCoefficient = 1.0 + 0.02 *(water_temperature-25.0)
         self.compensationVoltage = self.voltage / self.compensationCoefficient
         self.TDS = (133.42*self.compensationVoltage**3 - 255.86*self.compensationVoltage**2 + 857.39*self.compensationVoltage)*0.5
