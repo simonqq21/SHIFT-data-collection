@@ -104,15 +104,15 @@ class Sensors():
         # self.adss[2].addSoilMoistureSensor(m=-2.049180328, b=8.422131148)
 
         # current calibration
-        self.adss[0].addSoilMoistureSensor(m=-1.61, b=5.73)
-        self.adss[0].addSoilMoistureSensor(m=-1.03, b=3.86)
-        self.adss[0].addSoilMoistureSensor(m=-1.09, b=3.55)
-        self.adss[0].addSoilMoistureSensor(m=-1.97, b=7.03)
-        self.adss[1].addSoilMoistureSensor(m=-2.97, b=6.51)
-        self.adss[1].addSoilMoistureSensor(m=-2.46, b=8.16)
-        self.adss[1].addSoilMoistureSensor(m=-2.26, b=9.15)
-        self.adss[1].addSoilMoistureSensor(m=-1.84, b=7.56)
-        self.adss[2].addSoilMoistureSensor(m=-2.06, b=4.77)
+        self.adss[0].addSoilMoistureSensor(m=-1.61, b=5.63)
+        self.adss[0].addSoilMoistureSensor(m=-1.03, b=3.76)
+        self.adss[0].addSoilMoistureSensor(m=-1.09, b=3.45)
+        self.adss[0].addSoilMoistureSensor(m=-1.97, b=6.93)
+        self.adss[1].addSoilMoistureSensor(m=-2.97, b=6.41)
+        self.adss[1].addSoilMoistureSensor(m=-2.46, b=8.06)
+        self.adss[1].addSoilMoistureSensor(m=-2.26, b=9.05)
+        self.adss[1].addSoilMoistureSensor(m=-1.84, b=7.46)
+        self.adss[2].addSoilMoistureSensor(m=-2.06, b=4.67)
 
         # add 1 pH sensor to channel 1 of ADS1115 index 2
         self.adss[2].addPH4502C(m=-0.1723776224, b=3.77251049)
