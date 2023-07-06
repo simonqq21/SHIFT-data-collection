@@ -32,6 +32,7 @@ class Lights:
 
         # mutex lock for timed growlights 
         self.growLightsLock = threading.Lock()
+        self.disableGrowLights = threading.Lock()
 
         # initialize GPIOzero outputs
         try:
@@ -93,8 +94,11 @@ class Lights:
             else:
                 # acquire the timed growlight lock
                 self.growLightsLock.acquire()
-                self.switchGrowLights(1)
                 while (self.purpleOnTime > 0):
+                    if self.disableGrowLights.locked():
+                        self.switchGrowLights(0)
+                    else:
+                        self.switchGrowLights(1)
                     sleep(1)
                     if Config.debug:
                         print("{}s of purple light left".format(self.purpleOnTime))
@@ -113,7 +117,6 @@ class Lights:
     def cameraLightOn(self, onTime):
         self.whiteOnTime = onTime
         if self.whiteOnTime > 0:
-            self.growLightsLock
             self.switchCameraLights(1)
             while (self.whiteOnTime > 0):
                 sleep(1)
@@ -136,8 +139,11 @@ class Lights:
         if (self.growlightval):
             growLightsWereOn = True
         self.switchGrowLights(0) 
+        self.disableGrowLights.acquire()
         self.cameraLightOn(flashTime)
         # revert the growlights state
+        self.disableGrowLights.release()
         if (growLightsWereOn and self.purpleOnTime > 0):
             self.switchGrowLights(1)
+        self.disableGrowLights.release()
 
