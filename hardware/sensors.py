@@ -109,10 +109,10 @@ class Sensors():
         self.adss[0].addSoilMoistureSensor(m=-1.09, b=3.20)
         self.adss[0].addSoilMoistureSensor(m=-1.97, b=6.70)
         self.adss[1].addSoilMoistureSensor(m=-2.97, b=6.20)
-        self.adss[1].addSoilMoistureSensor(m=-2.46, b=7.80)
+        self.adss[1].addSoilMoistureSensor(m=-2.46, b=7.50)
         self.adss[1].addSoilMoistureSensor(m=-2.26, b=8.80)
         self.adss[1].addSoilMoistureSensor(m=-1.84, b=7.20)
-        self.adss[2].addSoilMoistureSensor(m=-2.06, b=4.40)
+        self.adss[2].addSoilMoistureSensor(m=-2.06, b=4.80)
 
         # self.adss[0].addSoilMoistureSensor(m=-1.61, b=5.63)
         # self.adss[0].addSoilMoistureSensor(m=-1.03, b=3.76)
